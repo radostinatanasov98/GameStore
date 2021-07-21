@@ -1,6 +1,5 @@
 ﻿namespace GameStore.Data.Models
 {
-    using GameStore.Data.Models.Enums;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -40,6 +39,8 @@
         public string PublisherId { get; init; }
 
         public Publisher Publisher { get; init; }
+
+        public string PegiRatingId { get; init; }
 
         public PegiRating PegiRating { get; init; }
 

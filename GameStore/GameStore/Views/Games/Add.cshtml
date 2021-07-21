@@ -1,0 +1,32 @@
+﻿@model AddGameFormModel
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" placeholder="Enter name.">
+    </div>
+    <div class="form-group">
+        <label asp-for="Description">Description of the game</label>
+        <textarea  asp-for="Description" class="form-control" placeholder="Enter description." rows="6"></textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="CoverImageUrl">Cover Image Url</label>
+        <input asp-for="CoverImageUrl" class="form-control" placeholder="Enter shortened url.">
+    </div>
+    <div class="form-group">
+        <label asp-for="Price">Game price</label>
+        <input asp-for="Price" class="form-control" placeholder="Enter price.">
+    </div>
+    <div class="form-group">
+        <label asp-for="PegiRating">Pegi Rating</label>
+        <select asp-for="PegiRating" class="form-control">
+            <option selected>Choose Pegi Rating.</option>
+            <option>PEGI 3</option>
+            <option>PEGI 7</option>
+            <option>PEGI 12</option>
+            <option>PEGI 16</option>
+            <option>PEGI 18</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

@@ -19,16 +19,14 @@
             data.Database.Migrate();
 
             SeedGenres(data);
+            SeedPegiRatings(data);
 
             return app;
         }
 
         private static void SeedGenres(GameStoreDbContext data)
         {
-            if (data.Genres.Any())
-            {
-                return;
-            }
+            if (data.Genres.Any()) return;
 
             data.Genres.AddRange(new[]
             {
@@ -47,6 +45,22 @@
                 new Genre { Name = "MOBA"},
                 new Genre { Name = "Sandbox"},
                 new Genre { Name = "Simulator"},
+            });
+
+            data.SaveChanges();
+        }
+
+        private static void SeedPegiRatings(GameStoreDbContext data)
+        {
+            if (data.PegiRatings.Any()) return;
+
+            data.PegiRatings.AddRange(new PegiRating[]
+            {
+                new PegiRating { Name = "PEGI 3"},
+                new PegiRating { Name = "PEGI 7"},
+                new PegiRating { Name = "PEGI 12"},
+                new PegiRating { Name = "PEGI 16"},
+                new PegiRating { Name = "PEGI 18"}
             });
 
             data.SaveChanges();

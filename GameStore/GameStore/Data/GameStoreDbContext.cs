@@ -28,6 +28,8 @@
 
         public DbSet<GameGenre> GameGenres { get; init; }
 
+        public DbSet<PegiRating> PegiRatings { get; init; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder
@@ -56,6 +58,13 @@
                 .HasOne<Client>()
                 .WithMany(c => c.Reviews)
                 .HasForeignKey(r => r.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .Entity<Game>()
+                .HasOne<PegiRating>()
+                .WithMany(p => p.Games)
+                .HasForeignKey(g => g.PegiRatingId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
