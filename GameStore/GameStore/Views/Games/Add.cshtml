@@ -1,32 +1,80 @@
 ﻿@model AddGameFormModel
 
 <form method="post">
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" placeholder="Enter name.">
+    <div class="col-md-6 offset-md-3 col-sm-3 text-center bold">
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" placeholder="Enter name.">
+        </div>
+        <div class="form-group">
+            <label asp-for="Description">Description of the game</label>
+            <textarea asp-for="Description" class="form-control" placeholder="Enter description." rows="6"></textarea>
+        </div>
+        <div class="form-group">
+            <label asp-for="CoverImageUrl">Cover Image Url</label>
+            <input asp-for="CoverImageUrl" class="form-control" placeholder="Enter shortened url.">
+        </div>
+        <div class="form-group">
+            <label asp-for="Price">Game price</label>
+            <input asp-for="Price" class="form-control" placeholder="Enter price.">
+        </div>
+        <div class="form-group">
+            <label asp-for="PegiRating">Pegi Rating</label>
+            <select asp-for="PegiRating" class="form-control">
+                @foreach (var pegiRating in Model.PegiRatings)
+                {
+                    <option value="@pegiRating.Id">@pegiRating.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label asp-for="CPU">Minimum CPU Name</label>
+            <input asp-for="CPU" class="form-control" placeholder="Enter CPU name.">
+        </div>
+        <div class="form-group">
+            <label asp-for="GPU">Minimum GPU Name</label>
+            <input asp-for="GPU" class="form-control" placeholder="Enter GPU name.">
+        </div>
+        <div class="form-group">
+            <label asp-for="RAM">Minimum RAM</label>
+            <input asp-for="RAM" class="form-control" placeholder="Enter RAM.">
+        </div>
+        <div class="form-group">
+            <label asp-for="VRAM">Minimum VRAM</label>
+            <input asp-for="VRAM" class="form-control" placeholder="Enter VRAM.">
+        </div>
+        <div class="form-group">
+            <label asp-for="Storage">Minimum storage</label>
+            <input asp-for="Storage" class="form-control" placeholder="Enter storage in GB.">
+        </div>
+        <div class="form-group">
+            <label asp-for="OS">Minimum OS</label>
+            <input asp-for="OS" class="form-control" placeholder="Enter OS names.">
+        </div>
+        <div class="form-group">
+            <label asp-for="CPU">Recommended CPU Name</label>
+            <input asp-for="CPU" class="form-control" placeholder="Enter CPU name.">
+        </div>
+        <div class="form-group">
+            <label asp-for="GPU">Recommended GPU Name</label>
+            <input asp-for="GPU" class="form-control" placeholder="Enter GPU name.">
+        </div>
+        <div class="form-group">
+            <label asp-for="RAM">Recommended RAM</label>
+            <input asp-for="RAM" class="form-control" placeholder="Enter RAM.">
+        </div>
+        <div class="form-group">
+            <label asp-for="VRAM">Recommended VRAM</label>
+            <input asp-for="VRAM" class="form-control" placeholder="Enter VRAM.">
+        </div>
+        <div class="form-group">
+            <label asp-for="Storage">Recommended storage</label>
+            <input asp-for="Storage" class="form-control" placeholder="Enter storage in GB.">
+        </div>
+        <div class="form-group">
+            <label asp-for="OS">Recommended OS</label>
+            <input asp-for="OS" class="form-control" placeholder="Enter OS names.">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </div>
-    <div class="form-group">
-        <label asp-for="Description">Description of the game</label>
-        <textarea  asp-for="Description" class="form-control" placeholder="Enter description." rows="6"></textarea>
-    </div>
-    <div class="form-group">
-        <label asp-for="CoverImageUrl">Cover Image Url</label>
-        <input asp-for="CoverImageUrl" class="form-control" placeholder="Enter shortened url.">
-    </div>
-    <div class="form-group">
-        <label asp-for="Price">Game price</label>
-        <input asp-for="Price" class="form-control" placeholder="Enter price.">
-    </div>
-    <div class="form-group">
-        <label asp-for="PegiRating">Pegi Rating</label>
-        <select asp-for="PegiRating" class="form-control">
-            <option selected>Choose Pegi Rating.</option>
-            <option>PEGI 3</option>
-            <option>PEGI 7</option>
-            <option>PEGI 12</option>
-            <option>PEGI 16</option>
-            <option>PEGI 18</option>
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
 </form>

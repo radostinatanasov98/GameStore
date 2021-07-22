@@ -2,11 +2,11 @@
 {
     public class GameGenre
     {
-        public string GameId { get; init; }
+        public int GameId { get; init; }
 
         public Game Game { get; init; }
 
-        public string GenreId { get; init; }
+        public int GenreId { get; init; }
 
         public Genre Genre { get; init; }
     }

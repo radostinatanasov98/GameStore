@@ -7,7 +7,7 @@
     {
         [Required]
         [Key]
-        public string Id { get; init; } = Guid.NewGuid().ToString();
+        public int Id { get; init; }
 
         [MaxLength(25)]
         public string Caption { get; init; }
@@ -18,12 +18,12 @@
         public int Rating { get; init; }
 
         [Required]
-        public string GameId { get; init; }
+        public int GameId { get; init; }
 
         public Game Game { get; init; }
 
         [Required]
-        public string ClientId { get; set; }
+        public int ClientId { get; set; }
 
         public Client Client { get; init; }
     }

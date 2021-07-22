@@ -8,7 +8,7 @@
     {
         [Required]
         [Key]
-        public string Id { get; init; } = Guid.NewGuid().ToString();
+        public int Id { get; init; }
 
         public string Name { get; init; }
 

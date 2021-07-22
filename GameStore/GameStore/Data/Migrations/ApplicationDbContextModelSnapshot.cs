@@ -21,8 +21,10 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.Client", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -43,17 +45,17 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.ClientGame", b =>
                 {
-                    b.Property<string>("ClientId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("GameId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("ClientId1")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("int");
 
-                    b.Property<string>("GameId1")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("GameId1")
+                        .HasColumnType("int");
 
                     b.HasKey("ClientId", "GameId");
 
@@ -68,8 +70,10 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.Game", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CoverImageUrl")
                         .IsRequired()
@@ -81,34 +85,31 @@ namespace GameStore.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("MinimumRequirementsId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MinimumRequirementsId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<string>("PegiRatingId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("PegiRatingId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("PegiRatingId1")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("PegiRatingId1")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("PublisherId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("PublisherId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("PublisherId1")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("PublisherId1")
+                        .HasColumnType("int");
 
-                    b.Property<string>("RecommendedRequirementsId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("RecommendedRequirementsId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -131,17 +132,17 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.GameGenre", b =>
                 {
-                    b.Property<string>("GameId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("GenreId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("GameId1")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("GameId1")
+                        .HasColumnType("int");
 
-                    b.Property<string>("GenreId1")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("GenreId1")
+                        .HasColumnType("int");
 
                     b.HasKey("GameId", "GenreId");
 
@@ -156,8 +157,10 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.Genre", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -169,8 +172,10 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.PegiRating", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -182,8 +187,10 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.Publisher", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -204,8 +211,10 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.Requirements", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CPU")
                         .IsRequired()
@@ -217,14 +226,10 @@ namespace GameStore.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("GameId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("OS")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<int>("RAM")
                         .HasColumnType("int");
@@ -237,37 +242,35 @@ namespace GameStore.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GameId");
-
                     b.ToTable("Requirements");
                 });
 
             modelBuilder.Entity("GameStore.Data.Models.Review", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Caption")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("ClientId1")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("int");
 
                     b.Property<string>("Content")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("GameId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("GameId1")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("GameId1")
+                        .HasColumnType("int");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
@@ -532,7 +535,8 @@ namespace GameStore.Data.Migrations
                     b.HasOne("GameStore.Data.Models.PegiRating", null)
                         .WithMany("Games")
                         .HasForeignKey("PegiRatingId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("GameStore.Data.Models.PegiRating", "PegiRating")
                         .WithMany()
@@ -597,17 +601,6 @@ namespace GameStore.Data.Migrations
                         .HasForeignKey("GameStore.Data.Models.Publisher", "UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("GameStore.Data.Models.Requirements", b =>
-                {
-                    b.HasOne("GameStore.Data.Models.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("GameStore.Data.Models.Review", b =>

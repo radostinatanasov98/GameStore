@@ -8,7 +8,7 @@
     {
         [Required]
         [Key]
-        public string Id { get; init; } = Guid.NewGuid().ToString();
+        public int Id { get; init; }
 
         [Required]
         [MaxLength(25)]
@@ -25,22 +25,22 @@
         public decimal Price { get; init; }
 
         [Required]
-        public string MinimumRequirementsId { get; init; }
+        public int MinimumRequirementsId { get; init; }
 
         public Requirements MinimumRequirements { get; init; }
 
 
         [Required]
-        public string RecommendedRequirementsId { get; init; }
+        public int RecommendedRequirementsId { get; init; }
 
         public Requirements RecommendedRequirements { get; init; }
 
         [Required]
-        public string PublisherId { get; init; }
+        public int PublisherId { get; init; }
 
         public Publisher Publisher { get; init; }
 
-        public string PegiRatingId { get; init; }
+        public int PegiRatingId { get; init; }
 
         public PegiRating PegiRating { get; init; }
 

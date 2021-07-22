@@ -7,7 +7,7 @@
     {
         [Required]
         [Key]
-        public string Id { get; init; } = Guid.NewGuid().ToString();
+        public int Id { get; init; }
 
         [Required]
         [MaxLength(50)]
@@ -24,12 +24,7 @@
         public int Storage { get; init; }
 
         [Required]
-        [MaxLength(20)]
+        [MaxLength(25)]
         public string OS { get; init; }
-
-        [Required]
-        public string GameId { get; init; }
-
-        public Game Game { get; init; }
     }
 }

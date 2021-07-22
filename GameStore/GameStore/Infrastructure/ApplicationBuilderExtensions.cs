@@ -56,8 +56,8 @@
 
             data.PegiRatings.AddRange(new PegiRating[]
             {
-                new PegiRating { Name = "PEGI 3"},
-                new PegiRating { Name = "PEGI 7"},
+                new PegiRating { Name = "PEGI 03"},
+                new PegiRating { Name = "PEGI 07"},
                 new PegiRating { Name = "PEGI 12"},
                 new PegiRating { Name = "PEGI 16"},
                 new PegiRating { Name = "PEGI 18"}
