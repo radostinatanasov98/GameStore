@@ -1,6 +1,5 @@
 ﻿namespace GameStore.Data.Models
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
@@ -21,6 +20,10 @@
         [Required]
         [MaxLength(25)]
         public string CoverImageUrl { get; init; }
+
+        [Required]
+        [MaxLength(25)]
+        public string TrailerUrl { get; init; }
 
         public decimal Price { get; init; }
 

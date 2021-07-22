@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameStore.Data.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    [Migration("20210722020524_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20210722150606_AddedTrailerUrlToGamesTable")]
+    partial class AddedTrailerUrlToGamesTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -53,19 +53,9 @@ namespace GameStore.Data.Migrations
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ClientId1")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("GameId1")
-                        .HasColumnType("int");
-
                     b.HasKey("ClientId", "GameId");
 
-                    b.HasIndex("ClientId1");
-
                     b.HasIndex("GameId");
-
-                    b.HasIndex("GameId1");
 
                     b.ToTable("ClientGames");
                 });
@@ -98,20 +88,19 @@ namespace GameStore.Data.Migrations
                     b.Property<int>("PegiRatingId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PegiRatingId1")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("PublisherId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PublisherId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("RecommendedRequirementsId")
                         .HasColumnType("int");
+
+                    b.Property<string>("TrailerUrl")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.HasKey("Id");
 
@@ -120,11 +109,7 @@ namespace GameStore.Data.Migrations
 
                     b.HasIndex("PegiRatingId");
 
-                    b.HasIndex("PegiRatingId1");
-
                     b.HasIndex("PublisherId");
-
-                    b.HasIndex("PublisherId1");
 
                     b.HasIndex("RecommendedRequirementsId")
                         .IsUnique();
@@ -140,19 +125,9 @@ namespace GameStore.Data.Migrations
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("GameId1")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("GenreId1")
-                        .HasColumnType("int");
-
                     b.HasKey("GameId", "GenreId");
 
-                    b.HasIndex("GameId1");
-
                     b.HasIndex("GenreId");
-
-                    b.HasIndex("GenreId1");
 
                     b.ToTable("GameGenres");
                 });
@@ -261,17 +236,11 @@ namespace GameStore.Data.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ClientId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("GameId1")
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
@@ -281,11 +250,7 @@ namespace GameStore.Data.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("ClientId1");
-
                     b.HasIndex("GameId");
-
-                    b.HasIndex("GameId1");
 
                     b.ToTable("Reviews");
                 });
@@ -501,25 +466,17 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.ClientGame", b =>
                 {
-                    b.HasOne("GameStore.Data.Models.Client", null)
+                    b.HasOne("GameStore.Data.Models.Client", "Client")
                         .WithMany("ClientGames")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("GameStore.Data.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId1");
-
-                    b.HasOne("GameStore.Data.Models.Game", null)
-                        .WithMany("ClientGames")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GameStore.Data.Models.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameId1");
+                        .WithMany("ClientGames")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Client");
 
@@ -534,25 +491,17 @@ namespace GameStore.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("GameStore.Data.Models.PegiRating", null)
+                    b.HasOne("GameStore.Data.Models.PegiRating", "PegiRating")
                         .WithMany("Games")
                         .HasForeignKey("PegiRatingId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("GameStore.Data.Models.PegiRating", "PegiRating")
-                        .WithMany()
-                        .HasForeignKey("PegiRatingId1");
-
-                    b.HasOne("GameStore.Data.Models.Publisher", null)
+                    b.HasOne("GameStore.Data.Models.Publisher", "Publisher")
                         .WithMany("Games")
                         .HasForeignKey("PublisherId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("GameStore.Data.Models.Publisher", "Publisher")
-                        .WithMany()
-                        .HasForeignKey("PublisherId1");
 
                     b.HasOne("GameStore.Data.Models.Requirements", "RecommendedRequirements")
                         .WithOne()
@@ -571,25 +520,17 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.GameGenre", b =>
                 {
-                    b.HasOne("GameStore.Data.Models.Game", null)
+                    b.HasOne("GameStore.Data.Models.Game", "Game")
                         .WithMany("GameGenres")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("GameStore.Data.Models.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameId1");
-
-                    b.HasOne("GameStore.Data.Models.Genre", null)
-                        .WithMany("GameGenres")
-                        .HasForeignKey("GenreId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GameStore.Data.Models.Genre", "Genre")
-                        .WithMany()
-                        .HasForeignKey("GenreId1");
+                        .WithMany("GameGenres")
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Game");
 
@@ -607,25 +548,17 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.Review", b =>
                 {
-                    b.HasOne("GameStore.Data.Models.Client", null)
+                    b.HasOne("GameStore.Data.Models.Client", "Client")
                         .WithMany("Reviews")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("GameStore.Data.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId1");
-
-                    b.HasOne("GameStore.Data.Models.Game", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GameStore.Data.Models.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameId1");
+                        .WithMany("Reviews")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Client");
 

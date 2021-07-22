@@ -103,9 +103,7 @@ namespace GameStore.Data.Migrations
                     MinimumRequirementsId = table.Column<int>(type: "int", nullable: false),
                     RecommendedRequirementsId = table.Column<int>(type: "int", nullable: false),
                     PublisherId = table.Column<int>(type: "int", nullable: false),
-                    PublisherId1 = table.Column<int>(type: "int", nullable: true),
-                    PegiRatingId = table.Column<int>(type: "int", nullable: false),
-                    PegiRatingId1 = table.Column<int>(type: "int", nullable: true)
+                    PegiRatingId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,20 +115,8 @@ namespace GameStore.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Games_PegiRatings_PegiRatingId1",
-                        column: x => x.PegiRatingId1,
-                        principalTable: "PegiRatings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Games_Publishers_PublisherId",
                         column: x => x.PublisherId,
-                        principalTable: "Publishers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Games_Publishers_PublisherId1",
-                        column: x => x.PublisherId1,
                         principalTable: "Publishers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -153,9 +139,7 @@ namespace GameStore.Data.Migrations
                 columns: table => new
                 {
                     ClientId = table.Column<int>(type: "int", nullable: false),
-                    GameId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<int>(type: "int", nullable: true),
-                    GameId1 = table.Column<int>(type: "int", nullable: true)
+                    GameId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -165,25 +149,13 @@ namespace GameStore.Data.Migrations
                         column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ClientGames_Clients_ClientId1",
-                        column: x => x.ClientId1,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ClientGames_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ClientGames_Games_GameId1",
-                        column: x => x.GameId1,
-                        principalTable: "Games",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,9 +163,7 @@ namespace GameStore.Data.Migrations
                 columns: table => new
                 {
                     GameId = table.Column<int>(type: "int", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: false),
-                    GameId1 = table.Column<int>(type: "int", nullable: true),
-                    GenreId1 = table.Column<int>(type: "int", nullable: true)
+                    GenreId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -203,25 +173,13 @@ namespace GameStore.Data.Migrations
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_GameGenres_Games_GameId1",
-                        column: x => x.GameId1,
-                        principalTable: "Games",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_GameGenres_Genres_GenreId",
                         column: x => x.GenreId,
                         principalTable: "Genres",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_GameGenres_Genres_GenreId1",
-                        column: x => x.GenreId1,
-                        principalTable: "Genres",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -234,9 +192,7 @@ namespace GameStore.Data.Migrations
                     Content = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     GameId = table.Column<int>(type: "int", nullable: false),
-                    GameId1 = table.Column<int>(type: "int", nullable: true),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    ClientId1 = table.Column<int>(type: "int", nullable: true)
+                    ClientId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -246,41 +202,19 @@ namespace GameStore.Data.Migrations
                         column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Reviews_Clients_ClientId1",
-                        column: x => x.ClientId1,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reviews_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Reviews_Games_GameId1",
-                        column: x => x.GameId1,
-                        principalTable: "Games",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ClientGames_ClientId1",
-                table: "ClientGames",
-                column: "ClientId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientGames_GameId",
                 table: "ClientGames",
                 column: "GameId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ClientGames_GameId1",
-                table: "ClientGames",
-                column: "GameId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clients_UserId",
@@ -289,19 +223,9 @@ namespace GameStore.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_GameGenres_GameId1",
-                table: "GameGenres",
-                column: "GameId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GameGenres_GenreId",
                 table: "GameGenres",
                 column: "GenreId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GameGenres_GenreId1",
-                table: "GameGenres",
-                column: "GenreId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Games_MinimumRequirementsId",
@@ -315,19 +239,9 @@ namespace GameStore.Data.Migrations
                 column: "PegiRatingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Games_PegiRatingId1",
-                table: "Games",
-                column: "PegiRatingId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Games_PublisherId",
                 table: "Games",
                 column: "PublisherId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Games_PublisherId1",
-                table: "Games",
-                column: "PublisherId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Games_RecommendedRequirementsId",
@@ -347,19 +261,9 @@ namespace GameStore.Data.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_ClientId1",
-                table: "Reviews",
-                column: "ClientId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Reviews_GameId",
                 table: "Reviews",
                 column: "GameId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reviews_GameId1",
-                table: "Reviews",
-                column: "GameId1");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

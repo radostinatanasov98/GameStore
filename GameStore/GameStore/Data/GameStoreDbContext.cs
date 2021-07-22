@@ -47,23 +47,16 @@
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
-                .Entity<Review>()
-                .HasOne<Game>()
-                .WithMany(g => g.Reviews)
-                .HasForeignKey(r => r.GameId)
+                .Entity<Publisher>()
+                .HasMany(p => p.Games)
+                .WithOne(g => g.Publisher)
+                .HasForeignKey(g => g.PublisherId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
-                .Entity<Review>()
-                .HasOne<Client>()
-                .WithMany(c => c.Reviews)
-                .HasForeignKey(r => r.ClientId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
-                .Entity<Game>()
-                .HasOne<PegiRating>()
-                .WithMany(p => p.Games)
+                .Entity<PegiRating>()
+                .HasMany(p => p.Games)
+                .WithOne(g => g.PegiRating)
                 .HasForeignKey(g => g.PegiRatingId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -82,47 +75,12 @@
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
-                .Entity<Game>()
-                .HasOne<Publisher>()
-                .WithMany(p => p.Games)
-                .HasForeignKey(g => g.PublisherId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
                 .Entity<ClientGame>()
                 .HasKey(x => new { x.ClientId, x.GameId });
 
             builder
-                .Entity<ClientGame>()
-                .HasOne<Game>()
-                .WithMany(g => g.ClientGames)
-                .HasForeignKey(cg => cg.GameId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
-                .Entity<ClientGame>()
-                .HasOne<Client>()
-                .WithMany(g => g.ClientGames)
-                .HasForeignKey(cg => cg.ClientId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
                 .Entity<GameGenre>()
                 .HasKey(x => new { x.GameId, x.GenreId });
-
-            builder
-                .Entity<GameGenre>()
-                .HasOne<Game>()
-                .WithMany(g => g.GameGenres)
-                .HasForeignKey(gg => gg.GameId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
-                .Entity<GameGenre>()
-                .HasOne<Genre>()
-                .WithMany(g => g.GameGenres)
-                .HasForeignKey(gg => gg.GenreId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(builder);
         }
