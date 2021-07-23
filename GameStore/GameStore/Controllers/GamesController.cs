@@ -1,7 +1,10 @@
 ﻿namespace GameStore.Controllers
 {
     using GameStore.Data;
+    using GameStore.Data.Models;
+    using GameStore.Infrastructure;
     using GameStore.Models.Games;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,18 +16,80 @@
         public GamesController(GameStoreDbContext data)
             => this.data = data;
 
-        public IActionResult All => View();
+        public IActionResult All() => View();
 
-        public IActionResult Add() => View(new AddGameFormModel
+        [Authorize]
+        public IActionResult Add()
         {
-            PegiRatings = this.GetPegiRatings()
-        });
+            if (!IsUserPublisher())
+            {
+                return BadRequest();
+            }
 
+            return View(new AddGameFormModel 
+            {
+                PegiRatings = this.GetPegiRatings()
+            });
+        }
+
+        [Authorize]
         [HttpPost]
         public IActionResult Add(AddGameFormModel game)
         {
-            return View();
+            if (!IsUserPublisher())
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                game.PegiRatings = this.GetPegiRatings();
+
+                return View(game);
+            }
+
+            var validGame = new Game
+            {
+                Name = game.Name,
+                Description = game.Description,
+                CoverImageUrl = game.CoverImageUrl,
+                TrailerUrl = game.TrailerUrl,
+                Price = game.Price,
+                PegiRatingId = game.PegiRatingId,
+                MinimumRequirements = new Requirements
+                {
+                    CPU = game.MinimumCPU,
+                    GPU = game.MinimumGPU,
+                    RAM = game.MinimumRAM,
+                    VRAM = game.MinimumVRAM,
+                    Storage = game.MinimumStorage,
+                    OS = game.MinimumOS
+                },
+                RecommendedRequirements = new Requirements
+                {
+                    CPU = game.RecommendedCPU,
+                    GPU = game.RecommendedGPU,
+                    RAM = game.RecommendedRAM,
+                    VRAM = game.RecommendedVRAM,
+                    Storage = game.RecommendedStorage,
+                    OS = game.RecommendedOS
+                },
+                PublisherId = this.data
+                                  .Publishers
+                                  .Where(p => p.UserId == this.User.GetId())
+                                  .FirstOrDefault()
+                                  .Id
+            };
+
+            this.data.Games.Add(validGame);
+
+            this.data.SaveChanges();
+
+            return Redirect("/Index");
         }
+
+        private bool IsUserPublisher()
+            => data.Publishers.Any(p => p.UserId == this.User.GetId());
 
         private IEnumerable<PegiRatingViewModel> GetPegiRatings()
             => this.data

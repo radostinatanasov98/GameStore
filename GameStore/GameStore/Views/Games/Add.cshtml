@@ -15,12 +15,16 @@
             <input asp-for="CoverImageUrl" class="form-control" placeholder="Enter shortened url.">
         </div>
         <div class="form-group">
+            <label asp-for="TrailerUrl">Trailer Url</label>
+            <input asp-for="TrailerUrl" class="form-control" placeholder="Enter shortened url.">
+        </div>
+        <div class="form-group">
             <label asp-for="Price">Game price</label>
             <input asp-for="Price" class="form-control" placeholder="Enter price.">
         </div>
         <div class="form-group">
-            <label asp-for="PegiRating">Pegi Rating</label>
-            <select asp-for="PegiRating" class="form-control">
+            <label asp-for="PegiRatingId">Pegi Rating</label>
+            <select asp-for="PegiRatingId" class="form-control">
                 @foreach (var pegiRating in Model.PegiRatings)
                 {
                     <option value="@pegiRating.Id">@pegiRating.Name</option>
@@ -28,52 +32,52 @@
             </select>
         </div>
         <div class="form-group">
-            <label asp-for="CPU">Minimum CPU Name</label>
-            <input asp-for="CPU" class="form-control" placeholder="Enter CPU name.">
+            <label asp-for="MinimumCPU">Minimum CPU Name</label>
+            <input asp-for="MinimumCPU" class="form-control" placeholder="Enter CPU name.">
         </div>
         <div class="form-group">
-            <label asp-for="GPU">Minimum GPU Name</label>
-            <input asp-for="GPU" class="form-control" placeholder="Enter GPU name.">
+            <label asp-for="MinimumGPU">Minimum GPU Name</label>
+            <input asp-for="MinimumGPU" class="form-control" placeholder="Enter GPU name.">
         </div>
         <div class="form-group">
-            <label asp-for="RAM">Minimum RAM</label>
-            <input asp-for="RAM" class="form-control" placeholder="Enter RAM.">
+            <label asp-for="MinimumRAM">Minimum RAM</label>
+            <input asp-for="MinimumRAM" class="form-control" placeholder="Enter RAM.">
         </div>
         <div class="form-group">
-            <label asp-for="VRAM">Minimum VRAM</label>
-            <input asp-for="VRAM" class="form-control" placeholder="Enter VRAM.">
+            <label asp-for="MinimumVRAM">Minimum VRAM</label>
+            <input asp-for="MinimumVRAM" class="form-control" placeholder="Enter VRAM.">
         </div>
         <div class="form-group">
-            <label asp-for="Storage">Minimum storage</label>
-            <input asp-for="Storage" class="form-control" placeholder="Enter storage in GB.">
+            <label asp-for="MinimumStorage">Minimum storage</label>
+            <input asp-for="MinimumStorage" class="form-control" placeholder="Enter storage in GB.">
         </div>
         <div class="form-group">
-            <label asp-for="OS">Minimum OS</label>
-            <input asp-for="OS" class="form-control" placeholder="Enter OS names.">
+            <label asp-for="MinimumOS">Minimum OS</label>
+            <input asp-for="MinimumOS" class="form-control" placeholder="Enter OS names.">
         </div>
         <div class="form-group">
-            <label asp-for="CPU">Recommended CPU Name</label>
-            <input asp-for="CPU" class="form-control" placeholder="Enter CPU name.">
+            <label asp-for="RecommendedCPU">Recommended CPU Name</label>
+            <input asp-for="RecommendedCPU" class="form-control" placeholder="Enter CPU name.">
         </div>
         <div class="form-group">
-            <label asp-for="GPU">Recommended GPU Name</label>
-            <input asp-for="GPU" class="form-control" placeholder="Enter GPU name.">
+            <label asp-for="RecommendedGPU">Recommended GPU Name</label>
+            <input asp-for="RecommendedGPU" class="form-control" placeholder="Enter GPU name.">
         </div>
         <div class="form-group">
-            <label asp-for="RAM">Recommended RAM</label>
-            <input asp-for="RAM" class="form-control" placeholder="Enter RAM.">
+            <label asp-for="RecommendedRAM">Recommended RAM</label>
+            <input asp-for="RecommendedRAM" class="form-control" placeholder="Enter RAM.">
         </div>
         <div class="form-group">
-            <label asp-for="VRAM">Recommended VRAM</label>
-            <input asp-for="VRAM" class="form-control" placeholder="Enter VRAM.">
+            <label asp-for="RecommendedVRAM">Recommended VRAM</label>
+            <input asp-for="RecommendedVRAM" class="form-control" placeholder="Enter VRAM.">
         </div>
         <div class="form-group">
-            <label asp-for="Storage">Recommended storage</label>
-            <input asp-for="Storage" class="form-control" placeholder="Enter storage in GB.">
+            <label asp-for="RecommendedStorage">Recommended storage</label>
+            <input asp-for="RecommendedStorage" class="form-control" placeholder="Enter storage in GB.">
         </div>
         <div class="form-group">
-            <label asp-for="OS">Recommended OS</label>
-            <input asp-for="OS" class="form-control" placeholder="Enter OS names.">
+            <label asp-for="RecommendedOS">Recommended OS</label>
+            <input asp-for="RecommendedOS" class="form-control" placeholder="Enter OS names.">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </div>

@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using static DataConstants.Client;
 
     public class Client
     {
@@ -10,7 +11,7 @@
         public int Id { get; init; }
 
         [Required]
-        [MaxLength(25)]
+        [MaxLength(NameMaxLength)]
         public string Name { get; init; }
 
         [Required]

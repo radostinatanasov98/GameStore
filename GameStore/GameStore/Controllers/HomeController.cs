@@ -9,6 +9,8 @@
 
         public IActionResult Index()
         {
+            //If user is authenticaed && isn't publisher nor client display only buttons for choosing one
+
             return View();
         }
 

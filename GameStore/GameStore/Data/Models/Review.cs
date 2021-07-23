@@ -1,6 +1,7 @@
 ﻿namespace GameStore.Data.Models
 {
     using System.ComponentModel.DataAnnotations;
+    using static DataConstants.Review;
 
     public class Review
     {
@@ -8,10 +9,10 @@
         [Key]
         public int Id { get; init; }
 
-        [MaxLength(25)]
+        [MaxLength(CaptionLength)]
         public string Caption { get; init; }
 
-        [MaxLength(500)]
+        [MaxLength(ContentMaxLength)]
         public string Content { get; init; }
 
         public int Rating { get; init; }

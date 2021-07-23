@@ -1,6 +1,7 @@
 ﻿namespace GameStore.Data.Models
 {
     using System.ComponentModel.DataAnnotations;
+    using static DataConstants.Requirements;
 
     public class Requirements
     {
@@ -9,11 +10,11 @@
         public int Id { get; init; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(CPULength)]
         public string CPU { get; init; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(GPULength)]
         public string GPU { get; init; }
 
         public int VRAM { get; init; }
@@ -23,7 +24,7 @@
         public int Storage { get; init; }
 
         [Required]
-        [MaxLength(25)]
+        [MaxLength(OSLength)]
         public string OS { get; init; }
     }
 }

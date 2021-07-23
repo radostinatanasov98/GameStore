@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using static DataConstants.Game;
 
     public class Game
     {
@@ -10,22 +11,22 @@
         public int Id { get; init; }
 
         [Required]
-        [MaxLength(25)]
+        [MaxLength(NameMaxLength)]
         public string Name { get; init; }
 
         [Required]
-        [MaxLength(500)]
+        [MaxLength(DescriptionMaxLength)]
         public string Description { get; set; }
 
         [Required]
-        [MaxLength(25)]
+        [MaxLength(UrlMaxLength)]
         public string CoverImageUrl { get; init; }
 
         [Required]
-        [MaxLength(25)]
+        [MaxLength(UrlMaxLength)]
         public string TrailerUrl { get; init; }
 
-        public decimal Price { get; init; }
+        public decimal Price { get; set; }
 
         [Required]
         public int MinimumRequirementsId { get; init; }
