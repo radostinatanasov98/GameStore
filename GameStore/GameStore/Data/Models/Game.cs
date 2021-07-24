@@ -19,11 +19,9 @@
         public string Description { get; set; }
 
         [Required]
-        [MaxLength(UrlMaxLength)]
         public string CoverImageUrl { get; init; }
 
         [Required]
-        [MaxLength(UrlMaxLength)]
         public string TrailerUrl { get; init; }
 
         public decimal Price { get; set; }

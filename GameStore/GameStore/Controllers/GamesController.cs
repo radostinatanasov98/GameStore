@@ -16,7 +16,23 @@
         public GamesController(GameStoreDbContext data)
             => this.data = data;
 
-        public IActionResult All() => View();
+        public IActionResult All()
+        {
+            var gamesQuery = this.data
+                    .Games
+                    .Select(g => new GameListingViewModel
+                    {
+                        Id = g.Id,
+                        Name = g.Name,
+                        PublisherName = g.Publisher.Name,
+                        CoverImageUrl = g.CoverImageUrl,
+                        PegiRating = g.PegiRating.Name,
+                        Genres = g.GameGenres.Select(gg => gg.Genre.Name)
+                    })
+                    .ToList();
+
+            return View(gamesQuery);
+        }
 
         [Authorize]
         public IActionResult Add()
@@ -85,7 +101,7 @@
 
             this.data.SaveChanges();
 
-            return Redirect("/Index");
+            return Redirect("All");
         }
 
         private bool IsUserPublisher()

@@ -1,1 +1,22 @@
-﻿<h1>Test All Header</h1>
+﻿@model List<GameListingViewModel>
+
+<div class="row">
+    @foreach (var game in Model)
+    {
+        <div class="col-sm-4">
+            <div class="card" style="margin-top: 10px; width: 360px; height: 325px;">
+                <div class="card-header" style="text-align: center; font-weight: bold; font-size: 150%;">
+                    @game.Name
+                </div>
+                <div class="card-body">
+                    <img src="@game.CoverImageUrl" class="img" style="height: 225px; width: 150px; float: left;" />
+                    <div style="text-align: center; margin-top: 50px; margin-left: 25px;">
+                        <h5 class="card-title">@game.PublisherName</h5>
+                        <p class="card-text">@game.PegiRating</p>
+                        <a href="#" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
