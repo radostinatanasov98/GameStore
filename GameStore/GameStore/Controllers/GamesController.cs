@@ -104,6 +104,28 @@
             return Redirect("All");
         }
 
+        public IActionResult Details(int GameId)
+        {
+            var gamesQuery = this.data
+                    .Games
+                    .Where(g => g.Id == GameId)
+                    .Select(g => new GameDetailsViewModel
+                    {
+                        Name = g.Name,
+                        PublisherName = g.Publisher.Name,
+                        Price = g.Price,
+                        CoverImageUrl = g.CoverImageUrl,
+                        TrailerUrl = g.TrailerUrl,
+                        PegiRating = g.PegiRating.Name,
+                        MinimumRequirementsId = g.MinimumRequirementsId,
+                        RecommendedRequirementsId = g.RecommendedRequirementsId,
+                        Genres = g.GameGenres.Select(gg => gg.Genre.Name)
+                    })
+                    .FirstOrDefault();
+
+            return View(gamesQuery);
+        }
+
         private bool IsUserPublisher()
             => data.Publishers.Any(p => p.UserId == this.User.GetId());
 

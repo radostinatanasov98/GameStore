@@ -14,7 +14,7 @@
 
         public class Game
         {
-            public const int NameMaxLength = 25;
+            public const int NameMaxLength = 50;
             public const int DescriptionMinLength = 10;
             public const int DescriptionMaxLength = 5000;
             public const int UrlMaxLength = 25;

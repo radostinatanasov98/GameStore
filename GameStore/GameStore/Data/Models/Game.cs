@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
     using static DataConstants.Game;
 
     public class Game
@@ -19,11 +20,12 @@
         public string Description { get; set; }
 
         [Required]
-        public string CoverImageUrl { get; init; }
+        public string CoverImageUrl { get; set; }
 
         [Required]
-        public string TrailerUrl { get; init; }
+        public string TrailerUrl { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
         [Required]
