@@ -3,26 +3,32 @@
 <h1>Add Game</h1>
 <form method="post">
     <div class="col-md-6 offset-md-3 col-sm-3 text-center bold">
+
         <div class="form-group">
             <label asp-for="Name"></label>
             <input asp-for="Name" class="form-control" placeholder="Enter name.">
         </div>
+
         <div class="form-group">
             <label asp-for="Description">Description of the game</label>
             <textarea asp-for="Description" class="form-control" placeholder="Enter description." rows="6"></textarea>
         </div>
+
         <div class="form-group">
             <label asp-for="CoverImageUrl">Cover Image Url</label>
             <input asp-for="CoverImageUrl" class="form-control" placeholder="Enter shortened url.">
         </div>
+
         <div class="form-group">
             <label asp-for="TrailerUrl">Trailer Url</label>
             <input asp-for="TrailerUrl" class="form-control" placeholder="Enter shortened url.">
         </div>
+
         <div class="form-group">
             <label asp-for="Price">Game price</label>
             <input asp-for="Price" class="form-control" placeholder="Enter price.">
         </div>
+
         <div class="form-group">
             <label asp-for="PegiRatingId">Pegi Rating</label>
             <select asp-for="PegiRatingId" class="form-control">
@@ -32,54 +38,75 @@
                 }
             </select>
         </div>
+
+        <div class="form-group">
+            <label>Game Genres</label>
+                @foreach (var genre in Model.Genres)
+                {
+                    <input name="GenreIds" asp-for="@genre.Selected" type="checkbox" value="@genre.Id" />@genre.Name
+                }
+        </div>
+
         <div class="form-group">
             <label asp-for="MinimumCPU">Minimum CPU Name</label>
             <input asp-for="MinimumCPU" class="form-control" placeholder="Enter CPU name.">
         </div>
+
         <div class="form-group">
             <label asp-for="MinimumGPU">Minimum GPU Name</label>
             <input asp-for="MinimumGPU" class="form-control" placeholder="Enter GPU name.">
         </div>
+
         <div class="form-group">
             <label asp-for="MinimumRAM">Minimum RAM</label>
             <input asp-for="MinimumRAM" class="form-control" placeholder="Enter RAM.">
         </div>
+
         <div class="form-group">
             <label asp-for="MinimumVRAM">Minimum VRAM</label>
             <input asp-for="MinimumVRAM" class="form-control" placeholder="Enter VRAM.">
         </div>
+
         <div class="form-group">
             <label asp-for="MinimumStorage">Minimum storage</label>
             <input asp-for="MinimumStorage" class="form-control" placeholder="Enter storage in GB.">
         </div>
+
         <div class="form-group">
             <label asp-for="MinimumOS">Minimum OS</label>
             <input asp-for="MinimumOS" class="form-control" placeholder="Enter OS names.">
         </div>
+
         <div class="form-group">
             <label asp-for="RecommendedCPU">Recommended CPU Name</label>
             <input asp-for="RecommendedCPU" class="form-control" placeholder="Enter CPU name.">
         </div>
+
         <div class="form-group">
             <label asp-for="RecommendedGPU">Recommended GPU Name</label>
             <input asp-for="RecommendedGPU" class="form-control" placeholder="Enter GPU name.">
         </div>
+
         <div class="form-group">
             <label asp-for="RecommendedRAM">Recommended RAM</label>
             <input asp-for="RecommendedRAM" class="form-control" placeholder="Enter RAM.">
         </div>
+
         <div class="form-group">
             <label asp-for="RecommendedVRAM">Recommended VRAM</label>
             <input asp-for="RecommendedVRAM" class="form-control" placeholder="Enter VRAM.">
         </div>
+
         <div class="form-group">
             <label asp-for="RecommendedStorage">Recommended storage</label>
             <input asp-for="RecommendedStorage" class="form-control" placeholder="Enter storage in GB.">
         </div>
+
         <div class="form-group">
             <label asp-for="RecommendedOS">Recommended OS</label>
             <input asp-for="RecommendedOS" class="form-control" placeholder="Enter OS names.">
         </div>
+
         <button type="submit" class="btn btn-primary">Publish</button>
     </div>
 </form>

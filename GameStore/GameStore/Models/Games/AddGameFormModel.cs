@@ -62,6 +62,10 @@
         [MaxLength(Requirements.OSLength)]
         public string RecommendedOS { get; init; }
 
+        public IEnumerable<int> GenreIds { get; set; }
+
         public IEnumerable<PegiRatingViewModel> PegiRatings { get; set; }
+
+        public IEnumerable<GenreViewModel> Genres { get; set; }
     }
 }

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using static DataConstants.Genre;
+
     public class Genre
     {
         [Required]

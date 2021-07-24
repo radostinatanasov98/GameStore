@@ -6,6 +6,7 @@
     using GameStore.Models.Games;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -42,9 +43,10 @@
                 return BadRequest();
             }
 
-            return View(new AddGameFormModel 
+            return View(new AddGameFormModel
             {
-                PegiRatings = this.GetPegiRatings()
+                PegiRatings = this.GetPegiRatings(),
+                Genres = this.GetGenres()
             });
         }
 
@@ -60,6 +62,7 @@
             if (!ModelState.IsValid)
             {
                 game.PegiRatings = this.GetPegiRatings();
+                game.Genres = this.GetGenres();
 
                 return View(game);
             }
@@ -99,6 +102,20 @@
 
             this.data.Games.Add(validGame);
 
+            foreach (var genreId in game.GenreIds)
+            {
+                var genre = this.data
+                    .Genres
+                    .Where(g => g.Id == genreId)
+                    .FirstOrDefault();
+
+                this.data.GameGenres.Add(new GameGenre
+                {
+                    Game = validGame,
+                    Genre = genre
+                });
+            }
+
             this.data.SaveChanges();
 
             return Redirect("All");
@@ -136,6 +153,16 @@
             {
                 Id = pr.Id,
                 Name = pr.Name
+            })
+            .ToList();
+
+        private IEnumerable<GenreViewModel> GetGenres()
+            => this.data
+            .Genres
+            .Select(g => new GenreViewModel
+            {
+                Id = g.Id,
+                Name = g.Name
             })
             .ToList();
     }
