@@ -8,8 +8,6 @@ namespace GameStore.Models.Games
 
         public string Name { get; init; }
 
-        public string PublisherName { get; init; }
-
         public string CoverImageUrl { get; init; }
 
         public string PegiRating { get; init; }

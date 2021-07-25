@@ -41,10 +41,14 @@
 
         <div class="form-group">
             <label>Game Genres</label>
+            <ul style="column-count: 3; list-style: none;">
                 @foreach (var genre in Model.Genres)
                 {
-                    <input name="GenreIds" asp-for="@genre.Selected" type="checkbox" value="@genre.Id" />@genre.Name
+                    <li style="text-align: left">
+                        <input name="GenreIds" asp-for="@genre.Selected" type="checkbox" value="@genre.Id"/>@genre.Name
+                    </li>
                 }
+            </ul>
         </div>
 
         <div class="form-group">

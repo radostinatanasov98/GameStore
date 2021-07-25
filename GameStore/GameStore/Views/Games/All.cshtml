@@ -12,7 +12,9 @@
                 <div class="card-body">
                     <img src="@game.CoverImageUrl" class="img" style="height: 225px; width: 150px; float: left;" />
                     <div style="text-align: center; margin-top: 50px; margin-left: 165px;">
-                        <h5 class="card-title">@game.PublisherName</h5>
+                        <h5 class="card-title">
+                            @string.Join(", ", game.Genres)
+                        </h5>
                         <p class="card-text">@game.PegiRating</p>
                         <a asp-area="" asp-controller="Games" asp-action="Details" asp-route-GameId="@game.Id" class="btn btn-primary">Details</a>
                     </div>

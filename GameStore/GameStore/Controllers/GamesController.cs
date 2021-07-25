@@ -25,10 +25,12 @@
                     {
                         Id = g.Id,
                         Name = g.Name,
-                        PublisherName = g.Publisher.Name,
                         CoverImageUrl = g.CoverImageUrl,
                         PegiRating = g.PegiRating.Name,
-                        Genres = g.GameGenres.Select(gg => gg.Genre.Name)
+                        Genres = g.GameGenres
+                            .Where(gg => gg.GameId == g.Id)
+                            .Select(gg => gg.Genre.Name)
+                            .ToList()
                     })
                     .ToList();
 
@@ -67,12 +69,16 @@
                 return View(game);
             }
 
+            var trailerUrlTokens = game.TrailerUrl.Split("watch?v=");
+
+            var embedUrl = trailerUrlTokens[0] + "embed/" + trailerUrlTokens[1];
+
             var validGame = new Game
             {
                 Name = game.Name,
                 Description = game.Description,
                 CoverImageUrl = game.CoverImageUrl,
-                TrailerUrl = game.TrailerUrl,
+                TrailerUrl = embedUrl,
                 Price = game.Price,
                 PegiRatingId = game.PegiRatingId,
                 MinimumRequirements = new Requirements
@@ -131,6 +137,7 @@
                         Name = g.Name,
                         PublisherName = g.Publisher.Name,
                         Price = g.Price,
+                        Description = g.Description,
                         CoverImageUrl = g.CoverImageUrl,
                         TrailerUrl = g.TrailerUrl,
                         PegiRating = g.PegiRating.Name,
