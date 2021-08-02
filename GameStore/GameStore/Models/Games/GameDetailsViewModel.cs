@@ -4,6 +4,8 @@
 
     public class GameDetailsViewModel
     {
+        public int Id { get; init; }
+
         public string Name { get; init; }
 
         public string Description { get; init; }
@@ -13,7 +15,7 @@
         public string TrailerUrl { get; init; }
 
         public decimal Price { get; init; }
-
+        
         public int MinimumRequirementsId { get; init; }
 
         public int RecommendedRequirementsId { get; init; }

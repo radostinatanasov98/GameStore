@@ -1,0 +1,38 @@
+﻿@model RequirementsViewModel[];
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Minimum Requirements</th>
+            <th scope="col">Recommended Requirements</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">Processor</th>
+            <td>@Model[0].CPU</td>
+            <td>@Model[1].CPU</td>
+        </tr>
+        <tr>
+            <th scope="row">Graphics Card</th>
+            <td>@Model[0].GPU @Model[0].VRAM GB</td>
+            <td>@Model[1].GPU @Model[1].VRAM GB</td>
+        </tr>
+        <tr>
+            <th scope="row">RAM</th>
+            <td>@Model[0].RAM GB</td>
+            <td>@Model[1].RAM GB</td>
+        </tr>
+        <tr>
+            <th scope="row">Operating System</th>
+            <td>@Model[0].OS</td>
+            <td>@Model[1].OS</td>
+        </tr>
+        <tr>
+            <th scope="row">Storage</th>
+            <td>@Model[0].Storage</td>
+            <td>@Model[1].Storage</td>
+        </tr>
+    </tbody>
+</table>

@@ -134,6 +134,7 @@
                     .Where(g => g.Id == GameId)
                     .Select(g => new GameDetailsViewModel
                     {
+                        Id = GameId,
                         Name = g.Name,
                         PublisherName = g.Publisher.Name,
                         Price = g.Price,
@@ -148,6 +149,31 @@
                     .FirstOrDefault();
 
             return View(gamesQuery);
+        }
+
+        public IActionResult Remove(int Id)
+        {
+            var game = this.data
+                    .Games
+                    .Where(g => g.Id == Id)
+                    .FirstOrDefault();
+
+            var minRequirements = this.data
+                .Requirements
+                .Where(r => r.Id == game.MinimumRequirementsId)
+                .FirstOrDefault();
+
+            var recRequirements = this.data
+                .Requirements
+                .Where(r => r.Id == game.RecommendedRequirementsId)
+                .FirstOrDefault();
+
+            this.data.Games.Remove(game);
+            this.data.Requirements.Remove(minRequirements);
+            this.data.Requirements.Remove(recRequirements);
+            this.data.SaveChanges();
+
+            return Redirect("/Games/All");
         }
 
         private bool IsUserPublisher()
