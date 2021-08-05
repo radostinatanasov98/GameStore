@@ -1,0 +1,10 @@
+﻿@model ButtonsViewModel
+
+@if (Model.IsPublisher)
+{
+    <a asp-area="" asp-controller="Games" asp-action="Remove" asp-route-GameId="@Model.GameId" class="btn btn-primary">Remove</a>
+}
+else
+{
+    <a asp-area="" asp-controller="Games" asp-action="Purchase" asp-route-GameId="@Model.GameId" class="btn btn-primary">PURCHASE @Model.Price$</a>
+}
