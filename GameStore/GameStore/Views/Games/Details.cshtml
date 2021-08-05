@@ -17,8 +17,7 @@
                 <p style="float: right;"></p>
                 @await Component.InvokeAsync("Requirements", new { minId = Model.MinimumRequirementsId, recId = Model.RecommendedRequirementsId })
                 <h6>Publisher: @Model.PublisherName</h6>
-                <a asp-area="" asp-controller="Games" asp-action="All" class="btn btn-primary">PURCHASE @Model.Price$</a>
-                <a asp-area="" asp-controller="Games" asp-action="Remove" asp-route-Id="@Model.Id" class="btn btn-primary">Remove</a>
+                @await Component.InvokeAsync("GameButtons", new { GameId = Model.Id, price = Model.Price })
             </div>
         </div>
     </div>

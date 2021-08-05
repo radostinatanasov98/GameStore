@@ -6,7 +6,6 @@
     using GameStore.Models.Games;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -151,11 +150,16 @@
             return View(gamesQuery);
         }
 
-        public IActionResult Remove(int Id)
+        [Authorize]
+        public IActionResult Remove(int GameId)
         {
+            var gamePublisher = this.data.Publishers.Where(p => p.Games.Any(g => g.Id == GameId)).FirstOrDefault();
+
+            if (gamePublisher.UserId != this.User.GetId()) return BadRequest();
+
             var game = this.data
                     .Games
-                    .Where(g => g.Id == Id)
+                    .Where(g => g.Id == GameId)
                     .FirstOrDefault();
 
             var minRequirements = this.data
@@ -176,8 +180,52 @@
             return Redirect("/Games/All");
         }
 
+        [Authorize]
+        public IActionResult Purchase()
+        {
+            if (!IsClient()) return BadRequest();
+
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult Purchase(PurchaseFormModel model)
+        {
+            if (!IsClient()) return BadRequest();
+
+            var gameQuery = this.data
+                .Games
+                .Where(g => g.Id == model.GameId)
+                .FirstOrDefault();
+
+            if (gameQuery == null) return BadRequest();
+
+            var clientQuery = this.data
+                .Clients
+                .Where(c => c.UserId == this.User.GetId())
+                .FirstOrDefault();
+
+            if (clientQuery == null) return BadRequest();
+
+            this.data
+                .ClientGames
+                .Add(new ClientGame
+                {
+                    Client = clientQuery,
+                    Game = gameQuery
+                });
+
+            this.data.SaveChanges();
+
+            return Redirect("/Clients/Library");
+        }
+
         private bool IsUserPublisher()
             => data.Publishers.Any(p => p.UserId == this.User.GetId());
+
+        private bool IsClient()
+    => this.data.Clients.Any(p => p.UserId == this.User.GetId());
 
         private IEnumerable<PegiRatingViewModel> GetPegiRatings()
             => this.data
