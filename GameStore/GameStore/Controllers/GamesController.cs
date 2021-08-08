@@ -4,6 +4,7 @@
     using GameStore.Data.Models;
     using GameStore.Infrastructure;
     using GameStore.Models.Games;
+    using GameStore.Models.Reviews;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
@@ -221,11 +222,74 @@
             return Redirect("/Clients/Library");
         }
 
+        public IActionResult Reviews(int GameId)
+        {
+            var model = new AllReviewsViewModel
+            {
+                Name = this.data.Games.FirstOrDefault(g => g.Id == GameId).Name,
+                GameId = GameId,
+                Reviews = this.data
+                            .Reviews
+                            .Where(r => r.GameId == GameId)
+                            .Select(r => new ReviewViewModel
+                            {
+                                Username = this.data.Clients.FirstOrDefault(c => c.UserId == this.User.GetId()).Name,
+                                Caption = r.Caption,
+                                Content = r.Content,
+                                Rating = r.Rating
+                            })
+                            .ToList(),
+            };
+
+            return View(model);
+        }
+
+        public IActionResult PostReview(int GameId)
+        {
+            return View( new PostReviewFormModel 
+            { 
+                Ratings = new List<int> { 1, 2, 3, 4, 5}
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult PostReview(int GameId, PostReviewFormModel model)
+        {
+            if (!IsClient()) return BadRequest();
+
+            var clientId = this.data
+                .Clients
+                .FirstOrDefault(c => c.UserId == this.User.GetId())
+                .Id;
+
+            var ownsGame = this.data
+                .ClientGames
+                .Any(cg => cg.ClientId == clientId && cg.GameId == GameId);
+
+            if (!ownsGame) return BadRequest();
+
+            var review = new Review
+            {
+                Caption = model.Caption,
+                Content = model.Content,
+                Rating = model.Rating,
+                ClientId = clientId,
+                GameId = GameId
+            };
+
+            this.data.Reviews.Add(review);
+
+            this.data.SaveChanges();
+
+            return Redirect("/Games/Reviews?GameId=" + GameId);
+        }
+
         private bool IsUserPublisher()
             => data.Publishers.Any(p => p.UserId == this.User.GetId());
 
         private bool IsClient()
-    => this.data.Clients.Any(p => p.UserId == this.User.GetId());
+            => this.data.Clients.Any(p => p.UserId == this.User.GetId());
 
         private IEnumerable<PegiRatingViewModel> GetPegiRatings()
             => this.data

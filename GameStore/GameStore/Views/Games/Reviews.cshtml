@@ -1,0 +1,26 @@
+﻿@model AllReviewsViewModel
+
+<a asp-area="" asp-controller="Games" asp-action="PostReview" asp-route-GameId="@Model.GameId" class="btn btn-primary">Write a review</a>
+
+<div class="container" style="margin-bottom: 50px; margin-top: 25px;">
+    <div class="card" style="margin-top: 10px; width: auto; height: auto;">
+        <div class="card-header" style="text-align: center; font-weight: bold; font-size: 150%;">
+            All Reviews for '@Model.Name'
+        </div>
+        @foreach(var review in Model.Reviews)
+        {
+        <div class="card-body">
+            <div class="card">
+                <div class="card-header">@review.Username</div>
+                <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                        <h3>@review.Caption</h3>
+                        <p>@review.Content</p>
+                        <footer style="font-size: 15px; color: dimgray;">@review.Rating / 5</footer>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>
