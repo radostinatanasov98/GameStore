@@ -1,6 +1,6 @@
 ﻿@model ButtonsViewModel
 
-<link rel="stylesheet" href="~/css/ratingBox.css"/>
+<link rel="stylesheet" href="~/css/ratingBox.css" />
 
 <div class="d-flex justify-content-center">
     <div class="content text-center">
@@ -19,5 +19,5 @@
 }
 else
 {
-    <a asp-area="" asp-controller="Games" asp-action="Purchase" asp-route-GameId="@Model.GameId" class="btn btn-primary">PURCHASE @Model.Price$</a>
+    <button type="submit" class="btn btn-primary">Add To Cart</button>
 }

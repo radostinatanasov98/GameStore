@@ -48,6 +48,8 @@
 
         public PegiRating PegiRating { get; init; }
 
+        public IEnumerable<ShoppingCartProduct> ShoppingCartProducts { get; init; } = new List<ShoppingCartProduct>();
+
         public IEnumerable<Review> Reviews { get; init; } = new List<Review>();
 
         public IEnumerable<ClientGame> ClientGames { get; init; } = new List<ClientGame>();

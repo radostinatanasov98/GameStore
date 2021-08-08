@@ -4,14 +4,16 @@ using GameStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GameStore.Data.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210808133406_AddedShoppingCartColumnToClients")]
+    partial class AddedShoppingCartColumnToClients
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,17 +33,14 @@ namespace GameStore.Data.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
-                    b.Property<int>("ShoppingCartId")
-                        .HasColumnType("int");
+                    b.Property<string>("ShoppingCart")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ShoppingCartId")
-                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -261,43 +260,6 @@ namespace GameStore.Data.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("GameStore.Data.Models.ShoppingCart", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ShoppingCarts");
-                });
-
-            modelBuilder.Entity("GameStore.Data.Models.ShoppingCartProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ShoppingCartId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("ShoppingCartId");
-
-                    b.ToTable("ShoppingCartProducts");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -500,19 +462,11 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.Client", b =>
                 {
-                    b.HasOne("GameStore.Data.Models.ShoppingCart", "ShoppingCart")
-                        .WithOne("Client")
-                        .HasForeignKey("GameStore.Data.Models.Client", "ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithOne()
                         .HasForeignKey("GameStore.Data.Models.Client", "UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("ShoppingCart");
                 });
 
             modelBuilder.Entity("GameStore.Data.Models.ClientGame", b =>
@@ -616,25 +570,6 @@ namespace GameStore.Data.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("GameStore.Data.Models.ShoppingCartProduct", b =>
-                {
-                    b.HasOne("GameStore.Data.Models.Game", "Game")
-                        .WithMany("ShoppingCartProducts")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GameStore.Data.Models.ShoppingCart", "ShoppingCart")
-                        .WithMany("ShoppingCartProducts")
-                        .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("ShoppingCart");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -700,8 +635,6 @@ namespace GameStore.Data.Migrations
                     b.Navigation("GameGenres");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("ShoppingCartProducts");
                 });
 
             modelBuilder.Entity("GameStore.Data.Models.Genre", b =>
@@ -717,13 +650,6 @@ namespace GameStore.Data.Migrations
             modelBuilder.Entity("GameStore.Data.Models.Publisher", b =>
                 {
                     b.Navigation("Games");
-                });
-
-            modelBuilder.Entity("GameStore.Data.Models.ShoppingCart", b =>
-                {
-                    b.Navigation("Client");
-
-                    b.Navigation("ShoppingCartProducts");
                 });
 #pragma warning restore 612, 618
         }

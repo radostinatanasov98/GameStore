@@ -4,14 +4,16 @@ using GameStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GameStore.Data.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210808161917_FixedRelations")]
+    partial class FixedRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,14 +36,16 @@ namespace GameStore.Data.Migrations
                     b.Property<int>("ShoppingCartId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ShoppingCartId2")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ShoppingCartId")
-                        .IsUnique();
+                    b.HasIndex("ShoppingCartId2");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -273,6 +277,9 @@ namespace GameStore.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClientId")
+                        .IsUnique();
+
                     b.ToTable("ShoppingCarts");
                 });
 
@@ -501,10 +508,8 @@ namespace GameStore.Data.Migrations
             modelBuilder.Entity("GameStore.Data.Models.Client", b =>
                 {
                     b.HasOne("GameStore.Data.Models.ShoppingCart", "ShoppingCart")
-                        .WithOne("Client")
-                        .HasForeignKey("GameStore.Data.Models.Client", "ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("ShoppingCartId2");
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithOne()
@@ -616,18 +621,29 @@ namespace GameStore.Data.Migrations
                     b.Navigation("Game");
                 });
 
+            modelBuilder.Entity("GameStore.Data.Models.ShoppingCart", b =>
+                {
+                    b.HasOne("GameStore.Data.Models.Client", "Client")
+                        .WithOne()
+                        .HasForeignKey("GameStore.Data.Models.ShoppingCart", "ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("GameStore.Data.Models.ShoppingCartProduct", b =>
                 {
                     b.HasOne("GameStore.Data.Models.Game", "Game")
                         .WithMany("ShoppingCartProducts")
                         .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("GameStore.Data.Models.ShoppingCart", "ShoppingCart")
                         .WithMany("ShoppingCartProducts")
                         .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Game");
@@ -721,8 +737,6 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.ShoppingCart", b =>
                 {
-                    b.Navigation("Client");
-
                     b.Navigation("ShoppingCartProducts");
                 });
 #pragma warning restore 612, 618

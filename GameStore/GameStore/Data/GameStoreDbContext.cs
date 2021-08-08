@@ -30,6 +30,10 @@
 
         public DbSet<PegiRating> PegiRatings { get; init; }
 
+        public DbSet<ShoppingCart> ShoppingCarts { get; init; }
+
+        public DbSet<ShoppingCartProduct> ShoppingCartProducts { get; init; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder
@@ -37,6 +41,13 @@
                 .HasOne<IdentityUser>()
                 .WithOne()
                 .HasForeignKey<Client>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .Entity<Client>()
+                .HasOne<ShoppingCart>(c => c.ShoppingCart)
+                .WithOne(sc => sc.Client)
+                .HasForeignKey<Client>(c => c.ShoppingCartId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
@@ -81,6 +92,18 @@
             builder
                 .Entity<GameGenre>()
                 .HasKey(x => new { x.GameId, x.GenreId });
+
+            builder
+                .Entity<ShoppingCartProduct>()
+                .HasOne<ShoppingCart>(scp => scp.ShoppingCart)
+                .WithMany(sc => sc.ShoppingCartProducts)
+                .HasForeignKey(scp => scp.ShoppingCartId);
+
+            builder
+                .Entity<ShoppingCartProduct>()
+                .HasOne<Game>(scp => scp.Game)
+                .WithMany(g => g.ShoppingCartProducts)
+                .HasForeignKey(scp => scp.GameId);
 
             base.OnModelCreating(builder);
         }

@@ -17,6 +17,10 @@
         [Required]
         public string UserId { get; init; }
 
+        public int ShoppingCartId { get; init; }
+
+        public ShoppingCart ShoppingCart { get; init; }
+
         public IEnumerable<ClientGame> ClientGames { get; init; } = new List<ClientGame>();
 
         public IEnumerable<Review> Reviews { get; init; } = new List<Review>();

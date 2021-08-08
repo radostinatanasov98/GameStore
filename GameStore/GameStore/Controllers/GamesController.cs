@@ -152,6 +152,30 @@
         }
 
         [Authorize]
+        [HttpPost]
+        [ActionName("Details")]
+        public IActionResult DetailsPost(int GameId)
+        {
+            var shoppingCartQuery = this.data
+                .ShoppingCarts
+                .FirstOrDefault(sc => sc.Client.UserId == this.User.GetId());
+
+            if (shoppingCartQuery.ShoppingCartProducts.Any(scp => scp.GameId == GameId)) return BadRequest();
+
+            this.data
+                .ShoppingCartProducts
+                .Add(new ShoppingCartProduct
+                {
+                    GameId = GameId,
+                    ShoppingCartId = shoppingCartQuery.Id
+                });
+
+            this.data.SaveChanges();
+
+            return Redirect("/Clients/ShoppingCart");
+        }
+
+        [Authorize]
         public IActionResult Remove(int GameId)
         {
             var gamePublisher = this.data.Publishers.Where(p => p.Games.Any(g => g.Id == GameId)).FirstOrDefault();
@@ -179,47 +203,6 @@
             this.data.SaveChanges();
 
             return Redirect("/Games/All");
-        }
-
-        [Authorize]
-        public IActionResult Purchase()
-        {
-            if (!IsClient()) return BadRequest();
-
-            return View();
-        }
-
-        [Authorize]
-        [HttpPost]
-        public IActionResult Purchase(PurchaseFormModel model)
-        {
-            if (!IsClient()) return BadRequest();
-
-            var gameQuery = this.data
-                .Games
-                .Where(g => g.Id == model.GameId)
-                .FirstOrDefault();
-
-            if (gameQuery == null) return BadRequest();
-
-            var clientQuery = this.data
-                .Clients
-                .Where(c => c.UserId == this.User.GetId())
-                .FirstOrDefault();
-
-            if (clientQuery == null) return BadRequest();
-
-            this.data
-                .ClientGames
-                .Add(new ClientGame
-                {
-                    Client = clientQuery,
-                    Game = gameQuery
-                });
-
-            this.data.SaveChanges();
-
-            return Redirect("/Clients/Library");
         }
 
         public IActionResult Reviews(int GameId)
