@@ -1,5 +1,6 @@
 ﻿namespace GameStore.Data.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
@@ -27,6 +28,9 @@
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
+
+        [Required]
+        public DateTime DateAdded { get; init; }
 
         [Required]
         public int MinimumRequirementsId { get; init; }

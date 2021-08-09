@@ -7,6 +7,7 @@
     using GameStore.Models.Reviews;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -81,6 +82,7 @@
                 TrailerUrl = embedUrl,
                 Price = game.Price,
                 PegiRatingId = game.PegiRatingId,
+                DateAdded = DateTime.UtcNow,
                 MinimumRequirements = new Requirements
                 {
                     CPU = game.MinimumCPU,
@@ -239,7 +241,7 @@
         [HttpPost]
         public IActionResult PostReview(int GameId, PostReviewFormModel model)
         {
-            if (!IsClient()) return BadRequest();
+            if (!IsUserClient()) return BadRequest();
 
             var clientId = this.data
                 .Clients
@@ -271,7 +273,7 @@
         private bool IsUserPublisher()
             => data.Publishers.Any(p => p.UserId == this.User.GetId());
 
-        private bool IsClient()
+        private bool IsUserClient()
             => this.data.Clients.Any(p => p.UserId == this.User.GetId());
 
         private IEnumerable<PegiRatingViewModel> GetPegiRatings()

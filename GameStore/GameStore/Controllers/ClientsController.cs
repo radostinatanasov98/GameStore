@@ -60,12 +60,14 @@
 
             this.data.SaveChanges();
 
-            return Redirect("/Games/ClientTest");
+            return Redirect("/Games/All");
         }
 
         [Authorize]
         public IActionResult Library()
         {
+            if (!IsUserClient()) return BadRequest();
+
             var gamesQuery = this.data
                 .ClientGames
                 .Where(cg => cg.Client.UserId == this.User.GetId())
@@ -86,8 +88,11 @@
             return View(gamesQuery);
         }
 
+        [Authorize]
         public IActionResult ShoppingCart()
         {
+            if (!IsUserClient()) return BadRequest();
+
             var clientQuery = this.data
                 .Clients
                 .FirstOrDefault(c => c.UserId == this.User.GetId());
