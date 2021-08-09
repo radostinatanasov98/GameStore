@@ -10,5 +10,7 @@
         public IEnumerable<GameHomePageViewModel> TopRatedGames { get; init; } = new List<GameHomePageViewModel>();
 
         public IEnumerable<GameHomePageViewModel> LatestGames { get; init; } = new List<GameHomePageViewModel>();
+
+        public IEnumerable<GameHomePageViewModel> ReccommendedGames { get; init; } = new List<GameHomePageViewModel>();
     }
 }

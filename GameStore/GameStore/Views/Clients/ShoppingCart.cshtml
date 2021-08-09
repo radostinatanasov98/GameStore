@@ -18,8 +18,8 @@ else
                             <ul class="cart_list">
                                 @foreach (var game in Model.Games)
                                 {
-                <li class="cart_item clearfix">
-                    <div class="cart_item_image"><img src="@game.ImageUrl" alt="Game cover image."></div>
+                <li class="cart_item clearfix" style="margin-bottom: 15px;">
+                    <div class="cart_item_image"><img src="@game.ImageUrl" alt="Game cover image." style="height: 150px; width: 100px;"></div>
                     <div class="cart_item_info d-flex flex-md-row flex-column justify-content-between">
                         <div class="cart_item_name cart_info_col">
                             <div class="cart_item_title">Name</div>
@@ -37,6 +37,9 @@ else
                             <div class="cart_item_title">Price</div>
                             <div class="cart_item_text">@game.Price$</div>
                         </div>
+                        <div class="cart_item_price cart_info_col">
+                            <a asp-area="" asp-controller="Clients" asp-action="ShoppingCartRemove" asp-route-GameId="@game.Id" class="button cart_button_clear cart_item_text" style="background-color: red; color: white;">Remove</a>
+                        </div>
                     </div>
                 </li>}
                             </ul>
@@ -44,14 +47,13 @@ else
                         <div class="order_total">
                             <div class="order_total_content text-md-right">
                                 <div class="order_total_title">Order Total:</div>
-                                <div class="order_total_amount">@Model.TotalPrice</div>
+                                <div class="order_total_amount">@Model.TotalPrice$</div>
                             </div>
                         </div>
-                        <div class="cart_buttons"> <button type="button" class="button cart_button_clear">Continue Shopping</button> <button type="submit" class="button cart_button_checkout">Purchase</button> </div>
+                        <div class="cart_buttons"> <a asp-area="" asp-controller="Games" asp-action="All" class="button cart_button_clear">Continue Shopping</a> <button type="submit" class="button cart_button_checkout">Purchase</button> </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</form>
-}
+</form>}

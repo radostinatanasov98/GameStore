@@ -104,6 +104,7 @@
             var gamesQuery = shoppingCartProductsQuery
                 .Select(p => new GameShoppingCartViewModel
                 {
+                    Id = p.Game.Id,
                     Name = p.Game.Name,
                     Publisher = p.Game.Publisher.Name,
                     PegiRating = p.Game.PegiRating.Name,
@@ -149,6 +150,23 @@
             this.data.SaveChanges();
 
             return Redirect("/Clients/Library");
+        }
+
+        public IActionResult ShoppingCartRemove(int GameId)
+        {
+            var product = this.data
+                .ShoppingCartProducts
+                .FirstOrDefault(scp => scp.GameId == GameId);
+
+            if (product == null) return BadRequest();
+
+            this.data
+                .ShoppingCartProducts
+                .Remove(product);
+
+            this.data.SaveChanges();
+
+            return Redirect("/Clients/ShoppingCart");
         }
         private bool IsUserPublisher()
             => this.data.Publishers.Any(p => p.UserId == this.User.GetId());

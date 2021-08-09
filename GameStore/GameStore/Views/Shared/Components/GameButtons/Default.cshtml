@@ -19,5 +19,12 @@
 }
 else
 {
-    <button type="submit" class="btn btn-primary">Add To Cart</button>
+    if (!Model.IsOwned)
+    {
+        <button type="submit" class="btn btn-primary">Add To Cart</button>
+    }
+    else
+    {
+        <button disabled class="btn btn-primary">OWNED</button>
+    }
 }

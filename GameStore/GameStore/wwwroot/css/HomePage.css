@@ -8,9 +8,12 @@
 }
 
 .image {
-  display: block;
-  width: 150px;
-  height: 225px;
+    display: block;
+    width: 150px;
+    height: 225px;
+    border-style: solid;
+    border-width: medium;
+    border-color: dimgray;
 }
 
 .overlay {

@@ -131,7 +131,7 @@
 
         public IActionResult Details(int GameId)
         {
-            var gamesQuery = this.data
+            var gameQuery = this.data
                     .Games
                     .Where(g => g.Id == GameId)
                     .Select(g => new GameDetailsViewModel
@@ -150,7 +150,7 @@
                     })
                     .FirstOrDefault();
 
-            return View(gamesQuery);
+            return View(gameQuery);
         }
 
         [Authorize]
@@ -158,10 +158,19 @@
         [ActionName("Details")]
         public IActionResult DetailsPost(int GameId)
         {
+            if (!IsUserClient()) return BadRequest();
+
             var shoppingCartQuery = this.data
                 .ShoppingCarts
                 .FirstOrDefault(sc => sc.Client.UserId == this.User.GetId());
 
+            var client = this.data.Clients.First(c => c.UserId == this.User.GetId());
+
+            var userOwnsGame = this.data
+                .ClientGames
+                .Any(cg => cg.ClientId == client.Id && cg.GameId == GameId);
+
+            if (userOwnsGame) return BadRequest();
             if (shoppingCartQuery.ShoppingCartProducts.Any(scp => scp.GameId == GameId)) return BadRequest();
 
             this.data

@@ -32,9 +32,19 @@
             var model = new ButtonsViewModel
             {
                 IsPublisher = isPublisher,
+                IsOwned = false,
                 GameId = GameId,
                 Price = price
             };
+
+            var client = this.data
+                .Clients
+                .FirstOrDefault(c => c.UserId == this.UserClaimsPrincipal.GetId());
+
+            if (client != null)
+            {
+                if (this.data.ClientGames.Any(cg => cg.ClientId == client.Id && cg.GameId == GameId)) model.IsOwned = true;
+            }
 
             return View(model);
         }
