@@ -18,57 +18,102 @@
         public GamesController(GameStoreDbContext data)
             => this.data = data;
 
-        public IActionResult All(string searchQuery)
+        public IActionResult All(string searchQuery, string sortQuery, string searchByQuery)
         {
-            var gamesQuery = new List<GameListingViewModel>();
+            var games = new List<GameListingViewModel>();
+
+
+            var gamesQuery = this.data.Games.ToList();
 
             if (searchQuery != null)
             {
                 var tokens = searchQuery.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                foreach (var token in tokens)
+                if (searchByQuery == "" || searchByQuery == "Name")
                 {
-                    var game = this.data
-                        .Games
-                        .Where(g => g.Name.Contains(token))
-                        .Select(g => new GameListingViewModel
-                        {
-                            Id = g.Id,
-                            Name = g.Name,
-                            CoverImageUrl = g.CoverImageUrl,
-                            PegiRating = g.PegiRating.Name,
-                            Genres = g.GameGenres
-                            .Where(gg => gg.GameId == g.Id)
-                            .Select(gg => gg.Genre.Name)
-                            .ToList()
-                        })
-                        .FirstOrDefault();
+                    foreach (var token in tokens)
+                    {
+                        var game = gamesQuery
+                            .Where(g => g.Name.Contains(token))
+                            .Select(g => new GameListingViewModel
+                            {
+                                Id = g.Id,
+                                Name = g.Name,
+                                CoverImageUrl = g.CoverImageUrl,
+                                PegiRating = g.PegiRating.Name,
+                                Genres = GetGameGenreNames(g, this.data),
+                                DateAdded = g.DateAdded.ToString(),
+                                Rating = this.data.Reviews.Any(r => r.GameId == g.Id) ? this.data.Reviews.Where(r => r.GameId == g.Id).Average(r => r.Rating) : 0
+                            })
+                            .FirstOrDefault();
 
-                    if (game != null && !gamesQuery.Any(g => g.Id == game.Id)) gamesQuery.Add(game);
+                        if (game != null && !games.Any(g => g.Id == game.Id)) games.Add(game);
+                    }
+                }
+
+                if (searchByQuery == "Genre")
+                {
+                    foreach (var currentGame in gamesQuery)
+                    {
+                        bool isGenre = true;
+
+                        foreach (var token in tokens)
+                        {
+                            var genre = this.data.Genres.FirstOrDefault(g => g.Name.ToLower() == token.ToLower());
+                            isGenre = genre != null && this.data.GameGenres.Any(gg => gg.GameId == currentGame.Id && gg.GenreId == genre.Id);
+                            if (isGenre == false) break;
+                        }
+
+                        if (isGenre)
+                        {
+
+
+                            var game = new GameListingViewModel
+                            {
+                                Id = currentGame.Id,
+                                Name = currentGame.Name,
+                                CoverImageUrl = currentGame.CoverImageUrl,
+                                PegiRating = this.data.PegiRatings.First(pr => pr.Id == currentGame.PegiRatingId).Name,
+                                Genres = GetGameGenreNames(currentGame, this.data),
+                                DateAdded = currentGame.DateAdded.ToString(),
+                                Rating = this.data.Reviews.Any(r => r.GameId == currentGame.Id) ? this.data.Reviews.Where(r => r.GameId == currentGame.Id).Average(r => r.Rating) : 0
+                            };
+
+                            games.Add(game);
+                        }
+                    }
                 }
             }
             else
             {
-                gamesQuery = this.data
-                    .Games
+                games = gamesQuery
                     .Select(g => new GameListingViewModel
                     {
                         Id = g.Id,
                         Name = g.Name,
                         CoverImageUrl = g.CoverImageUrl,
-                        PegiRating = g.PegiRating.Name,
-                        Genres = g.GameGenres
-                            .Where(gg => gg.GameId == g.Id)
-                            .Select(gg => gg.Genre.Name)
-                            .ToList()
+                        PegiRating = this.data.PegiRatings.First(pr => pr.Id == g.PegiRatingId).Name,
+                        Genres = GetGameGenreNames(g, this.data),
+                        DateAdded = g.DateAdded.ToString(),
+                        Rating = this.data.Reviews.Any(r => r.GameId == g.Id) ? this.data.Reviews.Where(r => r.GameId == g.Id).Average(r => r.Rating) : 0
                     })
                     .ToList();
             }
 
+            games = sortQuery switch
+            {
+                "Name" => games.OrderBy(gq => gq.Name).ToList(),
+                "Rating" => games.OrderByDescending(gq => gq.Rating).ToList(),
+                "Newest" => games.OrderByDescending(gq => gq.DateAdded).ToList(),
+                "Oldest" => games.OrderBy(gq => gq.DateAdded).ToList(),
+                _ => games.OrderBy(gq => gq.Id).ToList(),
+            };
+
             var model = new AllGamesViewModel
             {
-                Games = gamesQuery,
-                SearchQuery = searchQuery
+                Games = games,
+                SearchQuery = searchQuery,
+                Genres = GetGenres()
             };
 
             return View(model);
@@ -276,9 +321,9 @@
 
         public IActionResult PostReview(int GameId)
         {
-            return View( new PostReviewFormModel 
-            { 
-                Ratings = new List<int> { 1, 2, 3, 4, 5}
+            return View(new PostReviewFormModel
+            {
+                Ratings = new List<int> { 1, 2, 3, 4, 5 }
             });
         }
 
@@ -340,5 +385,23 @@
                 Name = g.Name
             })
             .ToList();
+
+        private static IEnumerable<string> GetGameGenreNames(Game game, GameStoreDbContext data)
+        {
+            var genreIds = data
+                .GameGenres
+                .Where(gg => gg.GameId == game.Id)
+                .Select(gg => gg.GenreId)
+                .ToList();
+
+                var genres = new List<string>();
+
+                foreach (var id in genreIds)
+                {
+                    genres.Add(data.Genres.First(g => g.Id == id).Name);
+                }
+
+            return genres;
+        }
     }
 }

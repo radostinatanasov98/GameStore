@@ -4,7 +4,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-<link rel="stylesheet" href="~/css/HomePage.css" />
+<link rel="stylesheet" href="~/css/HomePage.css"/>
 
 <div class="text-center">
     @if (!Model.BecomeUserType.IsClient && !Model.BecomeUserType.IsPublisher)
@@ -64,7 +64,7 @@
                 }
             </div>
             <div class="card-footer text-muted">
-                <a asp-area="" asp-controller="Games" asp-action="All" class="btn btn-primary">All Games By Rating</a>
+                <a asp-area="" asp-controller="Games" asp-action="All" asp-route-SortQuery="Rating" class="btn btn-primary">All Games By Rating</a>
             </div>
         </div>
     </div>
@@ -86,7 +86,7 @@
                 }
             </div>
             <div class="card-footer text-muted">
-                <a asp-area="" asp-controller="Games" asp-action="All" class="btn btn-primary">All Games By Release Date</a>
+                <a asp-area="" asp-controller="Games" asp-action="All" asp-route-SortQuery="Newest" class="btn btn-primary">All Games By Release Date</a>
             </div>
         </div>
     </div>

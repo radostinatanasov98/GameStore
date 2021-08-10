@@ -2,16 +2,32 @@
 
 <h1 style="text-align: center">All Games</h1>
 
-<form method="get">
-    <div class="container">
-        <div>
-            <input asp-for="SearchQuery" class="form-control form-control-lg form-control-borderless" placeholder="Search...">
-            <div style="text-align: center; margin-top: 5px;">
-                <button asp-area="" asp-controller="Games" asp-action="All" asp-route-searchQuery="@Model.SearchQuery" class="btn btn-lg btn-primary" type="submit" style="t">Search</button>
+<div class="search-box">
+    <form method="get">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <select asp-for="SortQuery" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <option class="dropdown-item btn-primary" value="">Sort by</option>
+                    <option class="dropdown-item btn-primary" value="Name">Name</option>
+                    <option class="dropdown-item btn-primary" value="Rating">Rating</option>
+                    <option class="dropdown-item btn-primary" value="Newest">Date (Newest first)</option>
+                    <option class="dropdown-item btn-primary" value="Oldest">Date (Oldest first)</option>
+                </select>
+            </div>
+            <div class="input-group-prepend">
+                <select asp-for="SearchByQuery" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <option class="dropdown-item btn-primary" value="">Search by</option>
+                    <option class="dropdown-item btn-primary" value="Name">Name</option>
+                    <option class="dropdown-item btn-primary" value="Genre">Genre</option>
+                </select>
+            </div>
+            <input asp-for="SearchQuery" class="form-control form-control-lg" placeholder="Search by name or genre">
+            <div class="input-group-append">
+                <button asp-area="" asp-controller="Games" asp-action="All" asp-route-searchQuery="@Model.SearchQuery" class="btn btn-lg btn-primary" type="submit">Search</button>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 
 <div class="row">
     @foreach (var game in Model.Games)
