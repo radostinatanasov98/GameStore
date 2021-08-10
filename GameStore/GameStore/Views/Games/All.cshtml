@@ -1,8 +1,20 @@
-﻿@model List<GameListingViewModel>
+﻿@model AllGamesViewModel
 
 <h1 style="text-align: center">All Games</h1>
+
+<form method="get">
+    <div class="container">
+        <div>
+            <input asp-for="SearchQuery" class="form-control form-control-lg form-control-borderless" placeholder="Search...">
+            <div style="text-align: center; margin-top: 5px;">
+                <button asp-area="" asp-controller="Games" asp-action="All" asp-route-searchQuery="@Model.SearchQuery" class="btn btn-lg btn-primary" type="submit" style="t">Search</button>
+            </div>
+        </div>
+    </div>
+</form>
+
 <div class="row">
-    @foreach (var game in Model)
+    @foreach (var game in Model.Games)
     {
         <div class="col-sm-4">
             <div class="card" style="margin-top: 10px; width: 370px; height: 325px;">

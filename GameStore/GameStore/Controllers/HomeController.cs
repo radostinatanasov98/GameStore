@@ -40,7 +40,8 @@
                         .Select(g => new GameHomePageViewModel
                         {
                             CoverImageUrl = g.CoverImageUrl,
-                            GameId = g.Id
+                            GameId = g.Id,
+                            Name = this.data.Games.First(gm => gm.Id == g.Id).Name
                         })
                         .First());
                 }

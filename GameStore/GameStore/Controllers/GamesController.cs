@@ -18,9 +18,38 @@
         public GamesController(GameStoreDbContext data)
             => this.data = data;
 
-        public IActionResult All()
+        public IActionResult All(string searchQuery)
         {
-            var gamesQuery = this.data
+            var gamesQuery = new List<GameListingViewModel>();
+
+            if (searchQuery != null)
+            {
+                var tokens = searchQuery.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
+
+                foreach (var token in tokens)
+                {
+                    var game = this.data
+                        .Games
+                        .Where(g => g.Name.Contains(token))
+                        .Select(g => new GameListingViewModel
+                        {
+                            Id = g.Id,
+                            Name = g.Name,
+                            CoverImageUrl = g.CoverImageUrl,
+                            PegiRating = g.PegiRating.Name,
+                            Genres = g.GameGenres
+                            .Where(gg => gg.GameId == g.Id)
+                            .Select(gg => gg.Genre.Name)
+                            .ToList()
+                        })
+                        .FirstOrDefault();
+
+                    if (game != null && !gamesQuery.Any(g => g.Id == game.Id)) gamesQuery.Add(game);
+                }
+            }
+            else
+            {
+                gamesQuery = this.data
                     .Games
                     .Select(g => new GameListingViewModel
                     {
@@ -34,8 +63,15 @@
                             .ToList()
                     })
                     .ToList();
+            }
 
-            return View(gamesQuery);
+            var model = new AllGamesViewModel
+            {
+                Games = gamesQuery,
+                SearchQuery = searchQuery
+            };
+
+            return View(model);
         }
 
         [Authorize]
