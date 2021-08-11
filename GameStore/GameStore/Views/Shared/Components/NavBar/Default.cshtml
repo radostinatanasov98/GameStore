@@ -1,0 +1,29 @@
+﻿@model NavBarViewModel
+
+@if (Model.IsClient == true)
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Clients" asp-action="ShoppingCart">Shopping Cart</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Clients" asp-action="Library">Library</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Clients" asp-action="Profile" asp-route-ClientId="@Model.Id">Profile</a>
+    </li>
+}
+else if (Model.IsPublisher == true)
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Games" asp-action="Add">Add game</a>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Publishers" asp-action="Become">Become Publisher</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Clients" asp-action="Become">Become Client</a>
+    </li>
+}

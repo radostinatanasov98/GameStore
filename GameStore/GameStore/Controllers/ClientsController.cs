@@ -5,6 +5,7 @@
     using GameStore.Infrastructure;
     using GameStore.Models.Clients;
     using GameStore.Models.Games;
+    using GameStore.Models.Reviews;
     using GameStore.Models.ShoppingCart;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -167,6 +168,50 @@
             this.data.SaveChanges();
 
             return Redirect("/Clients/ShoppingCart");
+        }
+
+        public IActionResult Profile(int clientId)
+        {
+            var client = this.data
+                .Clients
+                .FirstOrDefault(c => c.Id == clientId);
+
+            if (client == null) return BadRequest();
+
+            var model = new ClientProfileViewModel
+            {
+                Id = clientId,
+                Username = client.Name,
+                Games = this.data
+                    .ClientGames
+                    .Where(cg => cg.ClientId == clientId)
+                    .Select(cg => new GameHoverViewModel
+                    {
+                        GameId = cg.GameId,
+                        CoverImageUrl = this.data.Games.First(g => g.Id == cg.GameId).CoverImageUrl,
+                        Name = this.data.Games.First(g => g.Id == cg.GameId).Name
+                    })
+                    .Take(6)
+                    .ToList(),
+                AreGamesPrivate = client.AreGamesPrivate,
+                AreFriendsPrivate = client.AreFriendsPrivate,
+                Description = client.Description,
+                Friends = this.data.ClientRelationships.Where(r => r.ClientId == client.Id).ToList(),
+                ProfilePictureUrl = client.ProfilePictureUrl,
+                Reviews = this.data
+                    .Reviews
+                    .Where(r => r.ClientId == client.Id && r.Content != null && r.Caption != null)
+                    .Select(r => new ReviewViewModel
+                    {
+                        Username = client.Name,
+                        Caption = r.Caption,
+                        Content = r.Content,
+                        Rating = r.Rating
+                    })
+
+            };
+
+            return View(model);
         }
         private bool IsUserPublisher()
             => this.data.Publishers.Any(p => p.UserId == this.User.GetId());

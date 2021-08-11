@@ -34,6 +34,8 @@
 
         public DbSet<ShoppingCartProduct> ShoppingCartProducts { get; init; }
 
+        public DbSet<ClientRelationship> ClientRelationships { get; init; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder
@@ -48,6 +50,14 @@
                 .HasOne<ShoppingCart>(c => c.ShoppingCart)
                 .WithOne(sc => sc.Client)
                 .HasForeignKey<Client>(c => c.ShoppingCartId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .Entity<Client>()
+                .HasMany<ClientRelationship>(c => c.Friends)
+                .WithOne(cr => cr.Client)
+                .HasForeignKey(cr => cr.ClientId)
+                .HasForeignKey(cr => cr.FirendId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder

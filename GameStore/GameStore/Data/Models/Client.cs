@@ -17,6 +17,14 @@
         [Required]
         public string UserId { get; init; }
 
+        public string Description { get; init; }
+
+        public string ProfilePictureUrl { get; init; }
+
+        public bool AreFriendsPrivate { get; init; }
+
+        public bool AreGamesPrivate { get; init; }
+
         public int ShoppingCartId { get; init; }
 
         public ShoppingCart ShoppingCart { get; init; }
@@ -24,5 +32,7 @@
         public IEnumerable<ClientGame> ClientGames { get; init; } = new List<ClientGame>();
 
         public IEnumerable<Review> Reviews { get; init; } = new List<Review>();
+
+        public IEnumerable<ClientRelationship> Friends { get; init; } = new List<ClientRelationship>();
     }
 }

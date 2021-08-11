@@ -7,10 +7,10 @@
     {
         public BecomePublisherOrClientHomeViewModel BecomeUserType { get; init; }
 
-        public IEnumerable<GameHomePageViewModel> TopRatedGames { get; init; } = new List<GameHomePageViewModel>();
+        public IEnumerable<GameHoverViewModel> TopRatedGames { get; init; } = new List<GameHoverViewModel>();
 
-        public IEnumerable<GameHomePageViewModel> LatestGames { get; init; } = new List<GameHomePageViewModel>();
+        public IEnumerable<GameHoverViewModel> LatestGames { get; init; } = new List<GameHoverViewModel>();
 
-        public IEnumerable<GameHomePageViewModel> ReccommendedGames { get; init; } = new List<GameHomePageViewModel>();
+        public IEnumerable<GameHoverViewModel> ReccommendedGames { get; init; } = new List<GameHoverViewModel>();
     }
 }

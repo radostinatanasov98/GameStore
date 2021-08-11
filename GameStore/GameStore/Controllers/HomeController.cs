@@ -28,22 +28,25 @@
                 .Take(6)
                 .ToList();
 
-            var games = new List<GameHomePageViewModel>();
+            var games = new List<GameHoverViewModel>();
 
             if (this.data.Reviews.Count() > 0)
             {
                 foreach (var gameId in gameIdsByRatingQuery)
                 {
-                    games.Add(this.data
-                        .Games
-                        .Where(g => g.Id == gameId)
-                        .Select(g => new GameHomePageViewModel
-                        {
-                            CoverImageUrl = g.CoverImageUrl,
-                            GameId = g.Id,
-                            Name = this.data.Games.First(gm => gm.Id == g.Id).Name
-                        })
-                        .First());
+                    if (!games.Any(g => g.GameId == gameId))
+                    {
+                        games.Add(this.data
+                            .Games
+                            .Where(g => g.Id == gameId)
+                            .Select(g => new GameHoverViewModel
+                            {
+                                CoverImageUrl = g.CoverImageUrl,
+                                GameId = g.Id,
+                                Name = this.data.Games.First(gm => gm.Id == g.Id).Name
+                            })
+                            .First());
+                    }
                 }
             }
             else
@@ -51,7 +54,7 @@
                 games = this.data
                     .Games
                     .Take(6)
-                    .Select(g => new GameHomePageViewModel
+                    .Select(g => new GameHoverViewModel
                     {
                         CoverImageUrl = g.CoverImageUrl,
                         GameId = g.Id,
@@ -64,7 +67,7 @@
                 .Games
                 .OrderByDescending(g => g.DateAdded)
                 .Take(6)
-                .Select(g => new GameHomePageViewModel
+                .Select(g => new GameHoverViewModel
                 {
                     CoverImageUrl = g.CoverImageUrl,
                     GameId = g.Id,
@@ -78,7 +81,7 @@
                 IsPublisher = false,
             };
 
-            var reccommendedGames = new List<GameHomePageViewModel>();
+            var reccommendedGames = new List<GameHoverViewModel>();
 
             if (this.User.Identity.IsAuthenticated)
             {
@@ -124,7 +127,7 @@
                         var allGamesFromCurrentGenre = this.data
                             .Games
                             .Where(g => g.GameGenres.Any(gg => gg.GenreId == currentGenre))
-                            .Select(g => new GameHomePageViewModel
+                            .Select(g => new GameHoverViewModel
                             {
                                 CoverImageUrl = g.CoverImageUrl,
                                 GameId = g.Id,
@@ -153,7 +156,7 @@
                         var allGamesFromCurrentGenre = this.data
                             .Games
                             .Where(g => g.GameGenres.Any(gg => gg.GenreId == currentGenre))
-                            .Select(g => new GameHomePageViewModel
+                            .Select(g => new GameHoverViewModel
                             {
                                 CoverImageUrl = g.CoverImageUrl,
                                 GameId = g.Id,
@@ -180,7 +183,7 @@
                         var allGamesFromCurrentGenre = this.data
                             .Games
                             .Where(g => g.GameGenres.Any(gg => gg.GenreId == currentGenre))
-                            .Select(g => new GameHomePageViewModel
+                            .Select(g => new GameHoverViewModel
                             {
                                 CoverImageUrl = g.CoverImageUrl,
                                 GameId = g.Id,

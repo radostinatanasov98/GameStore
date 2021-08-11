@@ -1,6 +1,6 @@
 ﻿namespace GameStore.Models.Games
 {
-    public class GameHomePageViewModel
+    public class GameHoverViewModel
     {
         public string CoverImageUrl { get; init; }
 
