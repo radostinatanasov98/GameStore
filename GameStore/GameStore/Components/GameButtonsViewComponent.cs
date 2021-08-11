@@ -20,6 +20,7 @@
         public IViewComponentResult Invoke(int GameId, decimal price)
         {
             bool isPublisher = false;
+            bool isOwned = false;
 
             if (this.User.Identity.IsAuthenticated)
             {
@@ -27,24 +28,24 @@
                     .Publishers
                     .Where(p => p.UserId == this.UserClaimsPrincipal.GetId())
                     .Any(p => p.Games.Any(g => g.Id == GameId));
+
+                var client = this.data
+                    .Clients
+                    .FirstOrDefault(c => c.UserId == this.UserClaimsPrincipal.GetId());
+
+                if (client != null)
+                {
+                    isOwned = this.data.ClientGames.Any(cg => cg.ClientId == client.Id && cg.GameId == GameId);
+                }
             }
 
             var model = new ButtonsViewModel
             {
                 IsPublisher = isPublisher,
-                IsOwned = false,
+                IsOwned = isOwned,
                 GameId = GameId,
                 Price = price
             };
-
-            var client = this.data
-                .Clients
-                .FirstOrDefault(c => c.UserId == this.UserClaimsPrincipal.GetId());
-
-            if (client != null)
-            {
-                if (this.data.ClientGames.Any(cg => cg.ClientId == client.Id && cg.GameId == GameId)) model.IsOwned = true;
-            }
 
             return View(model);
         }

@@ -18,6 +18,16 @@
                     <p style="float: right;"></p>
                     @await Component.InvokeAsync("Requirements", new { minId = Model.MinimumRequirementsId, recId = Model.RecommendedRequirementsId })
                     <h6>Publisher: @Model.PublisherName</h6>
+                    <div class="d-flex justify-content-center">
+                        <div class="content text-center">
+                            <div class="ratings">
+                                <h3>Ratings & Reveiws</h3>
+                                <span class="product-rating">@Model.Rating.ToString("F2")</span><span>/5</span>
+                                <div class="rating-text"> <span>@Model.RatingsCount ratings & @Model.ReviewsCount reviews</span> </div>
+                                <a asp-area="" asp-controller="Games" asp-action="Reviews" asp-route-GameId="@Model.Id" class="btn btn-primary">View Reveiws</a>
+                            </div>
+                        </div>
+                    </div>
                     @await Component.InvokeAsync("GameButtons", new { GameId = Model.Id, price = Model.Price })
                 </div>
             </div>

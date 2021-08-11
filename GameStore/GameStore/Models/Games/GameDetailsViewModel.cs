@@ -15,7 +15,7 @@
         public string TrailerUrl { get; init; }
 
         public decimal Price { get; init; }
-        
+
         public int MinimumRequirementsId { get; init; }
 
         public int RecommendedRequirementsId { get; init; }
@@ -23,6 +23,12 @@
         public string PublisherName { get; init; }
 
         public string PegiRating { get; init; }
+
+        public double Rating { get; init; }
+
+        public int RatingsCount { get; init; }
+
+        public int ReviewsCount { get; init; }
 
         public IEnumerable<string> Genres { get; init; } = new List<string>();
     }

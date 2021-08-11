@@ -2,17 +2,6 @@
 
 <link rel="stylesheet" href="~/css/ratingBox.css" />
 
-<div class="d-flex justify-content-center">
-    <div class="content text-center">
-        <div class="ratings">
-            <h3>Ratings & Reveiws</h3>
-            <span class="product-rating">4.6</span><span>/10</span>
-            <div class="rating-text"> <span>46 ratings & 15 reviews</span> </div>
-            <a asp-area="" asp-controller="Games" asp-action="Reviews" asp-route-GameId="@Model.GameId" class="btn btn-primary">View Reveiws</a>
-        </div>
-    </div>
-</div>
-
 @if (Model.IsPublisher)
 {
     <a asp-area="" asp-controller="Games" asp-action="Remove" asp-route-GameId="@Model.GameId" class="btn btn-primary">Remove</a>

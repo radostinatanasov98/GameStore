@@ -212,6 +212,8 @@
 
         public IActionResult Details(int GameId)
         {
+            var game = this.data.Reviews.Where(r => r.GameId == GameId).ToList();
+
             var gameQuery = this.data
                     .Games
                     .Where(g => g.Id == GameId)
@@ -227,6 +229,9 @@
                         PegiRating = g.PegiRating.Name,
                         MinimumRequirementsId = g.MinimumRequirementsId,
                         RecommendedRequirementsId = g.RecommendedRequirementsId,
+                        Rating = this.data.Reviews.Where(r => r.GameId == GameId).Average(r => r.Rating),
+                        ReviewsCount = this.data.Reviews.Count(r => r.GameId == GameId && r.Content != null && r.Caption != null),
+                        RatingsCount = this.data.Reviews.Count(r => r.GameId == GameId),
                         Genres = g.GameGenres.Select(gg => gg.Genre.Name)
                     })
                     .FirstOrDefault();
@@ -305,10 +310,10 @@
                 GameId = GameId,
                 Reviews = this.data
                             .Reviews
-                            .Where(r => r.GameId == GameId)
+                            .Where(r => r.GameId == GameId && r.Content != null && r.Caption != null)
                             .Select(r => new ReviewViewModel
                             {
-                                Username = this.data.Clients.FirstOrDefault(c => c.UserId == this.User.GetId()).Name,
+                                Username = this.data.Clients.FirstOrDefault(c => c.Id == r.ClientId).Name,
                                 Caption = r.Caption,
                                 Content = r.Content,
                                 Rating = r.Rating
@@ -320,18 +325,18 @@
         }
 
         public IActionResult PostReview(int GameId)
-        {
-            return View(new PostReviewFormModel
-            {
-                Ratings = new List<int> { 1, 2, 3, 4, 5 }
-            });
-        }
+            => View(new PostReviewFormModel
+                {
+                    Ratings = new List<int> { 1, 2, 3, 4, 5 }
+                });
 
         [Authorize]
         [HttpPost]
         public IActionResult PostReview(int GameId, PostReviewFormModel model)
         {
             if (!IsUserClient()) return BadRequest();
+
+            if ((model.Caption == null && model.Content != null) || (model.Caption != null && model.Content == null)) return BadRequest();
 
             var clientId = this.data
                 .Clients
@@ -342,7 +347,11 @@
                 .ClientGames
                 .Any(cg => cg.ClientId == clientId && cg.GameId == GameId);
 
-            if (!ownsGame) return BadRequest();
+            var alreadyReviewed = this.data
+                .Reviews
+                .Any(r => r.ClientId == clientId && r.GameId == GameId);
+
+            if (!ownsGame || alreadyReviewed) return BadRequest();
 
             var review = new Review
             {
@@ -394,12 +403,12 @@
                 .Select(gg => gg.GenreId)
                 .ToList();
 
-                var genres = new List<string>();
+            var genres = new List<string>();
 
-                foreach (var id in genreIds)
-                {
-                    genres.Add(data.Genres.First(g => g.Id == id).Name);
-                }
+            foreach (var id in genreIds)
+            {
+                genres.Add(data.Genres.First(g => g.Id == id).Name);
+            }
 
             return genres;
         }
