@@ -170,21 +170,26 @@
             return Redirect("/Clients/ShoppingCart");
         }
 
-        public IActionResult Profile(int clientId)
+        [Authorize]
+        public IActionResult Profile(int profileId)
         {
-            var client = this.data
-                .Clients
-                .FirstOrDefault(c => c.Id == clientId);
+            if (!IsUserClient()) return BadRequest();
 
-            if (client == null) return BadRequest();
+            var profile = this.data
+                .Clients
+                .FirstOrDefault(c => c.Id == profileId);
+
+            if (profile == null) return BadRequest();
+
 
             var model = new ClientProfileViewModel
             {
-                Id = clientId,
-                Username = client.Name,
+                ClientId = GetClientId(),
+                ProfileId = profileId,
+                Username = profile.Name,
                 Games = this.data
                     .ClientGames
-                    .Where(cg => cg.ClientId == clientId)
+                    .Where(cg => cg.ClientId == profileId)
                     .Select(cg => new GameHoverViewModel
                     {
                         GameId = cg.GameId,
@@ -193,30 +198,120 @@
                     })
                     .Take(6)
                     .ToList(),
-                AreGamesPrivate = client.AreGamesPrivate,
-                AreFriendsPrivate = client.AreFriendsPrivate,
-                Description = client.Description,
-                Friends = this.data.ClientRelationships.Where(r => r.ClientId == client.Id).ToList(),
-                ProfilePictureUrl = client.ProfilePictureUrl,
+                AreGamesPrivate = profile.AreGamesPrivate,
+                AreFriendsPrivate = profile.AreFriendsPrivate,
+                Description = profile.Description,
+                Friends = this.data
+                    .ClientRelationships
+                    .Where(cr => cr.ClientId == profileId && (cr.HasFriendRequest || cr.AreFriends))
+                    .Select(cr => new FriendsViewModel
+                    {
+                        Id = cr.Id,
+                        FriendId = cr.FriendId,
+                        ClientId = cr.ClientId,
+                        OwnerId = GetClientId(),
+                        HasRequest = cr.HasFriendRequest,
+                        ProfilePictureUrl = this.data.Clients.First(c => c.Id == cr.FriendId).ProfilePictureUrl,
+                        Username = this.data.Clients.First(c => c.Id == cr.FriendId).Name
+                    })
+                    .ToList(),
+                ProfilePictureUrl = profile.ProfilePictureUrl,
                 Reviews = this.data
                     .Reviews
-                    .Where(r => r.ClientId == client.Id && r.Content != null && r.Caption != null)
+                    .Where(r => r.ClientId == profile.Id && r.Content != null && r.Caption != null)
                     .Select(r => new ReviewViewModel
                     {
-                        Username = client.Name,
+                        Username = profile.Name,
                         Caption = r.Caption,
                         Content = r.Content,
                         Rating = r.Rating
-                    })
-
+                    }),
+                ReviewsCount = this.data.Reviews.Where(r => r.ClientId == profileId).Count(),
+                AvarageRating = this.data.Reviews.Where(r => r.ClientId == profileId).Average(r => r.Rating)
             };
 
             return View(model);
         }
+
+        [HttpPost]
+        [Authorize]
+        [ActionName("Profile")]
+        public IActionResult ProfilePost(int profileId)
+        {
+            if (!IsUserClient()) return BadRequest();
+
+            var clinet = this.data
+                .Clients
+                .First(c => c.UserId == this.User.GetId());
+
+            if (clinet.Id == profileId || this.data.ClientRelationships.Any(cr => cr.ClientId == clinet.Id && cr.FriendId == profileId)) return BadRequest();
+
+            var clientRelationship = new ClientRelationship
+            {
+                ClientId = GetClientId(),
+                FriendId = profileId,
+                AreFriends = false,
+                HasFriendRequest = false,
+            };
+
+            var friendRelationship = new ClientRelationship
+            {
+                ClientId = profileId,
+                FriendId = GetClientId(),
+                AreFriends = false,
+                HasFriendRequest = true
+            };
+
+            this.data.ClientRelationships.AddRange(clientRelationship, friendRelationship);
+
+            this.data.SaveChanges();
+
+            return Redirect("~/");
+        }
+
+        [Authorize]
+        public IActionResult Accept(int requestId)
+        {
+            var clientRelationship = this.data.ClientRelationships.First(cr => cr.Id == requestId);
+
+            if (GetClientId() != clientRelationship.ClientId) return BadRequest();
+
+            clientRelationship.AreFriends = true;
+            clientRelationship.HasFriendRequest = false;
+
+            this.data.ClientRelationships.First(cr => cr.ClientId == clientRelationship.FriendId).AreFriends = true;
+
+            this.data.SaveChanges();
+
+            return Redirect("/Games/All");
+        }
+
+        [Authorize]
+        public IActionResult Decline(int requestId)
+        {
+            var clientRelationship = this.data.ClientRelationships.First(cr => cr.Id == requestId);
+
+            if (GetClientId() != clientRelationship.ClientId) return BadRequest();
+
+            clientRelationship.AreFriends = false;
+            clientRelationship.HasFriendRequest = false;
+
+            var friendRelationship = this.data.ClientRelationships.First(cr => cr.ClientId == clientRelationship.FriendId);
+
+            this.data.Remove(clientRelationship);
+            this.data.Remove(friendRelationship);
+            this.data.SaveChanges();
+
+            return Redirect("/Games/All");
+        }
+
         private bool IsUserPublisher()
             => this.data.Publishers.Any(p => p.UserId == this.User.GetId());
 
         private bool IsUserClient()
             => this.data.Clients.Any(p => p.UserId == this.User.GetId());
+
+        private int GetClientId()
+            => this.data.Clients.First(c => c.UserId == this.User.GetId()).Id;
     }
 }

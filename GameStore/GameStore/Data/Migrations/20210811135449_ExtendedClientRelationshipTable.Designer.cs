@@ -4,14 +4,16 @@ using GameStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GameStore.Data.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210811135449_ExtendedClientRelationshipTable")]
+    partial class ExtendedClientRelationshipTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,10 +91,7 @@ namespace GameStore.Data.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FriendId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("FriendId1")
+                    b.Property<int>("FirendId")
                         .HasColumnType("int");
 
                     b.Property<bool>("HasFriendRequest")
@@ -100,9 +99,9 @@ namespace GameStore.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FriendId");
+                    b.HasIndex("ClientId");
 
-                    b.HasIndex("FriendId1");
+                    b.HasIndex("FirendId");
 
                     b.ToTable("ClientRelationships");
                 });
@@ -582,15 +581,17 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Models.ClientRelationship", b =>
                 {
-                    b.HasOne("GameStore.Data.Models.Client", "Client")
-                        .WithMany("Friends")
-                        .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("GameStore.Data.Models.Client", "Friend")
                         .WithMany()
-                        .HasForeignKey("FriendId1");
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameStore.Data.Models.Client", "Client")
+                        .WithMany("Friends")
+                        .HasForeignKey("FirendId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Client");
 

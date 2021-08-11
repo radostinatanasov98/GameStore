@@ -57,7 +57,7 @@
                 .HasMany<ClientRelationship>(c => c.Friends)
                 .WithOne(cr => cr.Client)
                 .HasForeignKey(cr => cr.ClientId)
-                .HasForeignKey(cr => cr.FirendId)
+                .HasForeignKey(cr => cr.FriendId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder

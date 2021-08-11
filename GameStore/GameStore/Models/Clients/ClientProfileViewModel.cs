@@ -7,7 +7,9 @@
 
     public class ClientProfileViewModel
     {
-        public int Id { get; init; }
+        public int ProfileId { get; init; }
+
+        public int ClientId { get; init; }
 
         public string Username { get; init; }
 
@@ -15,13 +17,17 @@
 
         public string ProfilePictureUrl { get; init; }
 
+        public int ReviewsCount { get; init; }
+
+        public double AvarageRating { get; init; }
+
         public bool AreFriendsPrivate { get; init; }
 
         public bool AreGamesPrivate { get; init; }
 
         public IEnumerable<GameHoverViewModel> Games { get; init; } = new List<GameHoverViewModel>();
 
-        public IEnumerable<ClientRelationship> Friends { get; init; } = new List<ClientRelationship>();
+        public IEnumerable<FriendsViewModel> Friends { get; init; } = new List<FriendsViewModel>();
 
         public IEnumerable<ReviewViewModel> Reviews { get; init; } = new List<ReviewViewModel>();
     }

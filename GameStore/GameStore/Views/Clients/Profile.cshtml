@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="profile-img">
-                    <img src="@Model.ProfilePictureUrl" alt="" />
+                    <img src="@Model.ProfilePictureUrl" style="width: 150px; height: 225px;" />
                 </div>
             </div>
             <div class="col-md-6">
@@ -16,12 +16,10 @@
                         @Model.Username
                     </h5>
                     <h6>
-                        @if (Model.Description != null)
-                        {
-            @Model.Description}
+                        @Model.Description
                     </h6>
-                    <p class="proile-rating">Reviews Count : <span>8/10</span></p>
-                    <p class="proile-rating">Avarage Rating : <span>8/10</span></p>
+                    <p class="proile-rating">Reviews Count : <span>@Model.ReviewsCount</span></p>
+                    <p class="proile-rating">Avarage Rating : <span>@Model.AvarageRating.ToString("F2")/5</span></p>
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link btn btn-primary active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Games</a>
@@ -36,8 +34,14 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <input type="submit" class="btn btn-primary" name="btnAddMore" value="Edit Profile" />
-                <input type="submit" class="btn btn-primary" value="Account" style="margin-top: 5px;" />
+                @if (Model.ProfileId == Model.ClientId)
+                {
+    <input type="submit" class="btn btn-primary" name="btnAddMore" value="Edit Profile" />
+
+                    <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" value="Account" style="margin-top: 5px;">Account</a> }
+                else
+                {
+    <input type="submit" asp-area="" asp-controller="Clients" asp-action="Profile" asp-route-ProfileId="@Model.ProfileId" class="btn btn-primary" value="Add Friend" style="margin-top: 5px;" />}
             </div>
         </div>
         <div class="row">
@@ -51,13 +55,12 @@
                             <div class="col-md-12">
                                 @foreach (var game in Model.Games)
                                 {
-                                    <div class="img-container" style="margin-top: 15px;">
-                                        <img src="@game.CoverImageUrl" class="image">
-                                        <a asp-area="" asp-controller="Games" asp-action="Details" asp-route-GameId="@game.GameId" class="overlay">
-                                            <div class="text">@game.Name</div>
-                                        </a>
-                                    </div>
-                                }
+                    <div class="img-container" style="margin-top: 15px;">
+                        <img src="@game.CoverImageUrl" class="image">
+                        <a asp-area="" asp-controller="Games" asp-action="Details" asp-route-GameId="@game.GameId" class="overlay">
+                            <div class="text">@game.Name</div>
+                        </a>
+                    </div>}
                             </div>
                         </div>
                     </div>
@@ -66,26 +69,42 @@
                             <div class="col-md-12">
                                 @foreach (var review in Model.Reviews)
                                 {
-                                    <div class="card-body">
-                                        <div class="card">
-                                            <div class="card-header">@review.Username</div>
-                                            <div class="card-body">
-                                                <blockquote class="blockquote mb-0">
-                                                    <h3>@review.Caption</h3>
-                                                    <p>@review.Content</p>
-                                                    <footer style="font-size: 15px; color: dimgray;">@review.Rating / 5</footer>
-                                                </blockquote>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
+                    <div class="card-body">
+                        <div class="card">
+                            <div class="card-header">@review.Username</div>
+                            <div class="card-body">
+                                <blockquote class="blockquote mb-0">
+                                    <h3>@review.Caption</h3>
+                                    <p>@review.Content</p>
+                                    <footer style="font-size: 15px; color: dimgray;">@review.Rating / 5</footer>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>}
                             </div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
                         <div class="row">
                             <div class="col-md-12">
-                                <p>FRIENDS</p>
+                                @foreach (var friend in Model.Friends)
+                                {
+                                <div class="card" style="width: 14rem">
+                                    <div class="img-container" style="margin-top: 15px;">
+                                        <img src="@friend.ProfilePictureUrl" class="image">
+                                        <a asp-area="" asp-controller="Clients" asp-action="Profile" asp-route-ProfileId="@friend.FriendId" class="overlay">
+                                            <div class="text">@friend.Username</div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">@friend.Username</h5>
+                                        @if (friend.HasRequest && friend.OwnerId == friend.ClientId)
+                                        {
+                                <a type="submit" asp-area="" asp-controller="Clients" asp-action="Accept" asp-route-RequestId="@friend.Id" class="btn btn-primary">Accept</a>
+                                                    <a type="submit" asp-area="" asp-controller="Clients" asp-action="Decline" asp-route-RequestId="@friend.Id" class="btn btn-primary">Decline</a>}
+                                    </div>
+                                </div>
+                                   }
                             </div>
                         </div>
                     </div>

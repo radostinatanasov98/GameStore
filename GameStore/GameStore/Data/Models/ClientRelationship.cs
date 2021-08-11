@@ -11,8 +11,12 @@
 
         public Client Client { get; init; }
 
-        public int FirendId { get; init; }
+        public int FriendId { get; init; }
 
         public Client Friend { get; init; }
+
+        public bool AreFriends { get; set; }
+
+        public bool HasFriendRequest { get; set; }
     }
 }
