@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="profile-img">
-                    <img src="@Model.ProfilePictureUrl" style="width: 150px; height: 225px;" />
+                    <img src="@Model.ProfilePictureUrl" style="width: 225px; height: 300px;" />
                 </div>
             </div>
             <div class="col-md-6">
@@ -36,12 +36,19 @@
             <div class="col-md-2">
                 @if (Model.ProfileId == Model.ClientId)
                 {
-    <input type="submit" class="btn btn-primary" name="btnAddMore" value="Edit Profile" />
+            <a asp-area="" asp-controller="Clients" asp-action="Edit" asp-route-ProfileId="@Model.ProfileId" class="btn btn-primary">Edit Profile</a>
 
-                    <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" value="Account" style="margin-top: 5px;">Account</a> }
-                else
-                {
-    <input type="submit" asp-area="" asp-controller="Clients" asp-action="Profile" asp-route-ProfileId="@Model.ProfileId" class="btn btn-primary" value="Add Friend" style="margin-top: 5px;" />}
+                            <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage" value="Account" style="margin-top: 5px;">Account</a> }
+                        else if (Model.ProfileId != Model.ClientId)
+                        {
+                            if (!Model.AreFriends)
+                            {
+            <input type="submit" asp-area="" asp-controller="Clients" asp-action="Profile" asp-route-ProfileId="@Model.ProfileId" class="btn btn-primary" value="Add Friend" style="margin-top: 5px;" /> }
+                            else if (Model.AreFriends)
+                            {
+                                <input type="submit" asp-area="" asp-controller="Clients" asp-action="Decline" asp-route-RequestId="@Model.RelationId" class="btn btn-primary" value="Remove Friend" style="margin-top: 5px;" />
+                            }
+                        }
             </div>
         </div>
         <div class="row">
@@ -89,22 +96,39 @@
                             <div class="col-md-12">
                                 @foreach (var friend in Model.Friends)
                                 {
-                                <div class="card" style="width: 14rem">
-                                    <div class="img-container" style="margin-top: 15px;">
-                                        <img src="@friend.ProfilePictureUrl" class="image">
-                                        <a asp-area="" asp-controller="Clients" asp-action="Profile" asp-route-ProfileId="@friend.FriendId" class="overlay">
-                                            <div class="text">@friend.Username</div>
-                                        </a>
-                                    </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title">@friend.Username</h5>
-                                        @if (friend.HasRequest && friend.OwnerId == friend.ClientId)
-                                        {
-                                <a type="submit" asp-area="" asp-controller="Clients" asp-action="Accept" asp-route-RequestId="@friend.Id" class="btn btn-primary">Accept</a>
-                                                    <a type="submit" asp-area="" asp-controller="Clients" asp-action="Decline" asp-route-RequestId="@friend.Id" class="btn btn-primary">Decline</a>}
-                                    </div>
+                                    if (friend.AreFriends)
+                                    {
+                            <div class="card" style="width: 12rem;">
+                                <div class="img-container" style="margin-top: 15px; margin-left: 10%; margin-right: 10%;">
+                                    <img src="@friend.ProfilePictureUrl" class="image">
+                                    <a asp-area="" asp-controller="Clients" asp-action="Profile" asp-route-ProfileId="@friend.FriendId" class="overlay">
+                                        <div class="text">@friend.Username</div>
+                                    </a>
                                 </div>
-                                   }
+                                <div class="card-body">
+                                    <h5 class="card-title">@friend.Username</h5>
+                                    @if (friend.OwnerId == friend.ClientId)
+                                    {
+                            <a type="submit" asp-area="" asp-controller="Clients" asp-action="Decline" asp-route-RequestId="@friend.Id" class="btn btn-primary">Unfriend</a>}
+                                </div>
+                            </div> }
+                                            else if (friend.OwnerId == friend.ClientId && friend.HasRequest)
+                                            {
+                                                <div class="card" style="width: 12rem;">
+                                                    <div class="img-container" style="margin-top: 15px; margin-left: 10%; margin-right: 10%;">
+                                                        <img src="@friend.ProfilePictureUrl" class="image">
+                                                        <a asp-area="" asp-controller="Clients" asp-action="Profile" asp-route-ProfileId="@friend.FriendId" class="overlay">
+                                                            <div class="text">@friend.Username</div>
+                                                        </a>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">@friend.Username</h5>
+                                                    <a type="submit" asp-area="" asp-controller="Clients" asp-action="Accept" asp-route-RequestId="@friend.Id" class="btn btn-primary">Accept</a>
+                                                                            <a type="submit" asp-area="" asp-controller="Clients" asp-action="Decline" asp-route-RequestId="@friend.Id" class="btn btn-primary">Decline</a>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
                             </div>
                         </div>
                     </div>

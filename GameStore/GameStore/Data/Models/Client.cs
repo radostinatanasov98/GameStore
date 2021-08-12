@@ -17,9 +17,9 @@
         [Required]
         public string UserId { get; init; }
 
-        public string Description { get; init; }
+        public string Description { get; set; }
 
-        public string ProfilePictureUrl { get; init; }
+        public string ProfilePictureUrl { get; set; }
 
         public bool AreFriendsPrivate { get; init; }
 

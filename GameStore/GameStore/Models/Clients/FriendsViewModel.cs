@@ -14,6 +14,8 @@
 
         public int Id { get; init; }
 
+        public bool AreFriends { get; init; }
+
         public bool HasRequest { get; init; }
     }
 }

@@ -9,7 +9,6 @@
     using GameStore.Models.ShoppingCart;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using System.Collections.Generic;
     using System.Linq;
 
     public class ClientsController : Controller
@@ -135,7 +134,7 @@
             var shoppingCartProductsQuery = this.data
                 .ShoppingCartProducts
                 .Where(scp => scp.ShoppingCartId == clientQuery.ShoppingCartId)
-                .Select(scp => new 
+                .Select(scp => new
                 {
                     GameId = scp.GameId
                 })
@@ -181,11 +180,22 @@
 
             if (profile == null) return BadRequest();
 
+            var hasRelation = false;
+            int? relationId = null;
+            var relationExists = this.data.ClientRelationships.FirstOrDefault(cr => cr.ClientId == GetClientId() && cr.FriendId == profileId);
+
+            if (relationExists != null)
+            {
+                relationId = relationExists.Id;
+                hasRelation = relationExists.AreFriends;
+            }
 
             var model = new ClientProfileViewModel
             {
+                RelationId = relationId,
                 ClientId = GetClientId(),
                 ProfileId = profileId,
+                AreFriends = hasRelation,
                 Username = profile.Name,
                 Games = this.data
                     .ClientGames
@@ -211,6 +221,7 @@
                         ClientId = cr.ClientId,
                         OwnerId = GetClientId(),
                         HasRequest = cr.HasFriendRequest,
+                        AreFriends = cr.AreFriends,
                         ProfilePictureUrl = this.data.Clients.First(c => c.Id == cr.FriendId).ProfilePictureUrl,
                         Username = this.data.Clients.First(c => c.Id == cr.FriendId).Name
                     })
@@ -287,8 +298,10 @@
         }
 
         [Authorize]
-        public IActionResult Decline(int requestId)
+        public IActionResult Decline(int? requestId)
         {
+            if (requestId == null) return BadRequest();
+
             var clientRelationship = this.data.ClientRelationships.First(cr => cr.Id == requestId);
 
             if (GetClientId() != clientRelationship.ClientId) return BadRequest();
@@ -303,6 +316,35 @@
             this.data.SaveChanges();
 
             return Redirect("/Games/All");
+        }
+
+        [Authorize]
+        public IActionResult Edit(int profileId, EditProfileFormModel model)
+        {
+            if (profileId != GetClientId()) return BadRequest();
+
+            model.ProfileId = profileId;
+
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult Edit(EditProfileFormModel inputModel)
+        {
+            if (inputModel.ProfileId != GetClientId()) return BadRequest();
+
+            var profile = this.data
+                .Clients
+                .FirstOrDefault(c => c.Id == inputModel.ProfileId);
+
+            if (inputModel.PictureUrl != null) profile.ProfilePictureUrl = inputModel.PictureUrl;
+
+            if (inputModel.Description != null) profile.Description = inputModel.Description;
+
+            this.data.SaveChanges();
+
+            return Redirect("/Clients/Profile?ProfileId=" + inputModel.ProfileId);
         }
 
         private bool IsUserPublisher()

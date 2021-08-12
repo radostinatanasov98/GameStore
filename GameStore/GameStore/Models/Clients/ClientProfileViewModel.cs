@@ -7,9 +7,13 @@
 
     public class ClientProfileViewModel
     {
+        public int? RelationId { get; init; }
+
         public int ProfileId { get; init; }
 
         public int ClientId { get; init; }
+
+        public bool AreFriends { get; init; }
 
         public string Username { get; init; }
 
