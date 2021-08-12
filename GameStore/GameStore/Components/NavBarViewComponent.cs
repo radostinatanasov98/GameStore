@@ -20,6 +20,7 @@
         {
             bool isClient = false;
             bool isPublisher = false;
+            int id = -1;
 
             if (this.User.Identity.IsAuthenticated)
             {
@@ -27,11 +28,16 @@
                 isPublisher = this.data.Publishers.Any(p => p.UserId == this.UserClaimsPrincipal.GetId());
             }
 
+            if (this.data.Clients.Any(c => c.UserId == this.UserClaimsPrincipal.GetId()))
+            {
+                id = this.data.Clients.FirstOrDefault(c => c.UserId == this.UserClaimsPrincipal.GetId()).Id;
+            }
+
             var model = new NavBarViewModel
             {
                 IsClient = isClient,
                 IsPublisher = isPublisher,
-                Id = this.data.Clients.First(c => c.UserId == this.UserClaimsPrincipal.GetId()).Id
+                Id = id
             };
 
             return View(model);

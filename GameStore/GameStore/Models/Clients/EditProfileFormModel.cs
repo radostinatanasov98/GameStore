@@ -7,5 +7,9 @@
         public string PictureUrl { get; init; }
 
         public string Description { get; init; }
+
+        public bool AreFriendsPrivate { get; init; }
+
+        public bool AreGamesPrivate { get; init; }
     }
 }

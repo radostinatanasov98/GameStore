@@ -2,12 +2,10 @@
 {
     using GameStore.Data;
     using GameStore.Infrastructure;
-    using GameStore.Models;
     using GameStore.Models.Games;
     using GameStore.Models.Home;
     using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
 
     public class HomeController : Controller
@@ -214,11 +212,7 @@
             return View(model);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        public IActionResult Error() => View();
 
         private bool IsUserPublisher()
             => this.data.Publishers.Any(p => p.UserId == this.User.GetId());

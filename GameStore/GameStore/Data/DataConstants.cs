@@ -5,6 +5,7 @@
         public class Client
         {
             public const int NameMaxLength = 40;
+            public const string DefaultProfilePictureUrl = "https://www.clipartkey.com/mpngs/m/152-1520367_user-profile-default-image-png-clipart-png-download.png";
         }
 
         public class Publisher

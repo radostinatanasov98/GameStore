@@ -10,7 +10,7 @@
         public int ClientId { get; init; }
 
         public Client Client { get; init; }
-
+    
         public int FriendId { get; init; }
 
         public Client Friend { get; init; }

@@ -53,16 +53,16 @@
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
-                .Entity<Client>()
-                .HasMany<ClientRelationship>(c => c.Friends)
-                .WithOne(cr => cr.Client)
+                .Entity<ClientRelationship>()
+                .HasOne<Client>(cr => cr.Client)
+                .WithMany()
                 .HasForeignKey(cr => cr.ClientId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
-                .Entity<Client>()
-                .HasMany<ClientRelationship>(c => c.Friends)
-                .WithOne(cr => cr.Client)
+                .Entity<ClientRelationship>()
+                .HasOne<Client>(cr => cr.Friend)
+                .WithMany()
                 .HasForeignKey(cr => cr.FriendId)
                 .OnDelete(DeleteBehavior.Restrict);
 

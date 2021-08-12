@@ -9,7 +9,21 @@
     </div>
     <div class="form-group">
         <label asp-for="@Model.Description">Description</label>
-        <textarea  asp-for="@Model.Description" class="form-control" rows="3"></textarea>
+        <textarea asp-for="@Model.Description" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.AreFriendsPrivate">Friends visibility status:</label>
+        <select asp-for="@Model.AreFriendsPrivate" class="form-control">
+            <option value="false">Public</option>
+            <option value="true">Private</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.AreGamesPrivate">Games visibility status:</label>
+        <select asp-for="@Model.AreGamesPrivate" class="form-control">
+            <option value="false">Public</option>
+            <option value="true">Private</option>
+        </select>
     </div>
     <button class="btn btn-primary" type="submit">Submit</button>
- </form>
+</form>

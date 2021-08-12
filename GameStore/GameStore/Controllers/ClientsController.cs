@@ -4,24 +4,42 @@
     using GameStore.Data.Models;
     using GameStore.Infrastructure;
     using GameStore.Models.Clients;
-    using GameStore.Models.Games;
     using GameStore.Models.Reviews;
-    using GameStore.Models.ShoppingCart;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
+    using Services.Users;
+    using static Data.DataConstants.Client;
+    using Services.Clients;
+    using Services.Games;
+    using Services.ShoppingCart;
+    using Services.Reviews;
 
     public class ClientsController : Controller
     {
         private readonly GameStoreDbContext data;
+        private readonly IUserService userService;
+        private readonly IClientService clientService;
+        private readonly IGamesService gamesService;
+        private readonly IShoppingCartService shoppingCartService;
+        private readonly IReviewService reviewService;
 
         public ClientsController(GameStoreDbContext data)
-            => this.data = data;
+        {
+            this.data = data;
+            userService = new UserService(data);
+            clientService = new ClientService(data);
+            gamesService = new GamesService(data);
+            shoppingCartService = new ShoppingCartService(data);
+            reviewService = new ReviewService(data);
+        }
 
         [Authorize]
         public IActionResult Become()
         {
-            if (IsUserClient() || IsUserPublisher())
+            var userId = GetUserId();
+
+            if (this.userService.IsUserClient(userId) || this.userService.IsUserPublisher(userId))
             {
                 return BadRequest();
             }
@@ -31,59 +49,37 @@
 
         [Authorize]
         [HttpPost]
-        public IActionResult Become(BecomeClientFormModel client)
+        public IActionResult Become(BecomeClientFormModel inputModel)
         {
-            if (IsUserClient() || IsUserPublisher())
+            if (!this.User.Identity.IsAuthenticated) Redirect("Error");
+
+            var userId = GetUserId();
+
+            if (this.userService.IsUserClient(userId) || this.userService.IsUserPublisher(userId))
             {
-                return BadRequest();
+                return Redirect("Error");
             }
 
             if (!ModelState.IsValid)
             {
-                return View(client);
+                return View(inputModel);
             }
 
-            var validClient = new Client
-            {
-                Name = client.Name,
-                UserId = this.User.GetId()
-            };
-
-            this.data.Clients.Add(validClient);
-
-            var shoppingCart = new ShoppingCart
-            {
-                Client = validClient
-            };
-
-            this.data.ShoppingCarts.Add(shoppingCart);
-
-            this.data.SaveChanges();
-
+            this.clientService.BecomeClient(inputModel, userId);
+            
             return Redirect("/Games/All");
         }
 
         [Authorize]
         public IActionResult Library()
         {
-            if (!IsUserClient()) return BadRequest();
+            if (!this.User.Identity.IsAuthenticated) Redirect("Error");
 
-            var gamesQuery = this.data
-                .ClientGames
-                .Where(cg => cg.Client.UserId == this.User.GetId())
-                .Select(g => new GameListingViewModel
-                {
-                    Id = g.Game.Id,
-                    Name = g.Game.Name,
-                    CoverImageUrl = g.Game.CoverImageUrl,
-                    PegiRating = g.Game.PegiRating.Name,
-                    Genres = g.Game
-                            .GameGenres
-                            .Where(gg => gg.GameId == g.Game.Id)
-                            .Select(gg => gg.Genre.Name)
-                            .ToList()
-                })
-                .ToList();
+            var userId = GetUserId();
+
+            if (!userService.IsUserClient(userId)) return Redirect("Error");
+
+            var gamesQuery = this.gamesService.GetGamesForLibraryView(this.User.GetId());
 
             return View(gamesQuery);
         }
@@ -91,33 +87,17 @@
         [Authorize]
         public IActionResult ShoppingCart()
         {
-            if (!IsUserClient()) return BadRequest();
+            var userId = GetUserId();
 
-            var clientQuery = this.data
-                .Clients
-                .FirstOrDefault(c => c.UserId == this.User.GetId());
+            if (!this.userService.IsUserClient(userId)) return Redirect("Error");
 
-            var shoppingCartProductsQuery = this.data
-                    .ShoppingCartProducts
-                    .Where(scp => scp.ShoppingCartId == clientQuery.ShoppingCartId);
+            var clientQuery = clientService.GetClientByUserId(userId);
 
-            var gamesQuery = shoppingCartProductsQuery
-                .Select(p => new GameShoppingCartViewModel
-                {
-                    Id = p.Game.Id,
-                    Name = p.Game.Name,
-                    Publisher = p.Game.Publisher.Name,
-                    PegiRating = p.Game.PegiRating.Name,
-                    Price = p.Game.Price,
-                    ImageUrl = p.Game.CoverImageUrl
-                })
-                .ToList();
+            var shoppingCartProductsQuery = this.shoppingCartService.GetShoppingCartProducts(clientQuery.ShoppingCartId);
 
-            var shoppingCartViewModel = new ShoppingCartViewModel
-            {
-                Games = gamesQuery,
-                TotalPrice = gamesQuery.Sum(g => g.Price)
-            };
+            var gamesQuery = this.gamesService.GetGamesForShoppingCartView(shoppingCartProductsQuery);
+
+            var shoppingCartViewModel = this.shoppingCartService.GetShoppingCartViewModel(gamesQuery);
 
             return View(shoppingCartViewModel);
         }
@@ -127,44 +107,24 @@
         [ActionName("ShoppingCart")]
         public IActionResult ShoppingCartPost()
         {
-            var clientQuery = this.data
-                .Clients
-                .FirstOrDefault(c => c.UserId == this.User.GetId());
+            var clientQuery = this.clientService.GetClientByUserId(GetUserId());
 
-            var shoppingCartProductsQuery = this.data
-                .ShoppingCartProducts
-                .Where(scp => scp.ShoppingCartId == clientQuery.ShoppingCartId)
-                .Select(scp => new
-                {
-                    GameId = scp.GameId
-                })
-                .ToList();
+            var shoppingCartProductsQuery = this.shoppingCartService.GetProducts(clientQuery.ShoppingCartId);
 
-            foreach (var game in shoppingCartProductsQuery)
-            {
-                this.data.ClientGames.Add(new ClientGame { ClientId = clientQuery.Id, GameId = game.GameId });
-                var product = this.data.ShoppingCartProducts.First(scp => scp.GameId == game.GameId);
-                this.data.ShoppingCartProducts.Remove(product);
-            }
-
-            this.data.SaveChanges();
+            this.shoppingCartService.Purchase(shoppingCartProductsQuery, clientQuery.Id);
 
             return Redirect("/Clients/Library");
         }
 
-        public IActionResult ShoppingCartRemove(int GameId)
+        public IActionResult ShoppingCartRemove(int gameId)
         {
-            var product = this.data
-                .ShoppingCartProducts
-                .FirstOrDefault(scp => scp.GameId == GameId);
+            var clientQuery = this.clientService.GetClientByUserId(GetUserId());
 
-            if (product == null) return BadRequest();
+            var productQuery = this.shoppingCartService.GetProduct(gameId, clientQuery.ShoppingCartId);
 
-            this.data
-                .ShoppingCartProducts
-                .Remove(product);
+            if (productQuery == null) return Redirect("Error");
 
-            this.data.SaveChanges();
+            this.shoppingCartService.RemoveProdutc(productQuery);
 
             return Redirect("/Clients/ShoppingCart");
         }
@@ -172,74 +132,17 @@
         [Authorize]
         public IActionResult Profile(int profileId)
         {
-            if (!IsUserClient()) return BadRequest();
+            if (!this.userService.IsUserClient(GetUserId())) return Redirect("Error");
 
-            var profile = this.data
-                .Clients
-                .FirstOrDefault(c => c.Id == profileId);
+            var profile = this.clientService.GetClientById(profileId);
 
             if (profile == null) return BadRequest();
 
-            var hasRelation = false;
-            int? relationId = null;
-            var relationExists = this.data.ClientRelationships.FirstOrDefault(cr => cr.ClientId == GetClientId() && cr.FriendId == profileId);
+            var relationship = this.clientService.GetRelationship(GetClientId(), profileId);
+            var hasRelation = this.clientService.RelationCheck(relationship);
+            int? relationId = this.clientService.GetRelationId(hasRelation, relationship);
 
-            if (relationExists != null)
-            {
-                relationId = relationExists.Id;
-                hasRelation = relationExists.AreFriends;
-            }
-
-            var model = new ClientProfileViewModel
-            {
-                RelationId = relationId,
-                ClientId = GetClientId(),
-                ProfileId = profileId,
-                AreFriends = hasRelation,
-                Username = profile.Name,
-                Games = this.data
-                    .ClientGames
-                    .Where(cg => cg.ClientId == profileId)
-                    .Select(cg => new GameHoverViewModel
-                    {
-                        GameId = cg.GameId,
-                        CoverImageUrl = this.data.Games.First(g => g.Id == cg.GameId).CoverImageUrl,
-                        Name = this.data.Games.First(g => g.Id == cg.GameId).Name
-                    })
-                    .Take(6)
-                    .ToList(),
-                AreGamesPrivate = profile.AreGamesPrivate,
-                AreFriendsPrivate = profile.AreFriendsPrivate,
-                Description = profile.Description,
-                Friends = this.data
-                    .ClientRelationships
-                    .Where(cr => cr.ClientId == profileId && (cr.HasFriendRequest || cr.AreFriends))
-                    .Select(cr => new FriendsViewModel
-                    {
-                        Id = cr.Id,
-                        FriendId = cr.FriendId,
-                        ClientId = cr.ClientId,
-                        OwnerId = GetClientId(),
-                        HasRequest = cr.HasFriendRequest,
-                        AreFriends = cr.AreFriends,
-                        ProfilePictureUrl = this.data.Clients.First(c => c.Id == cr.FriendId).ProfilePictureUrl,
-                        Username = this.data.Clients.First(c => c.Id == cr.FriendId).Name
-                    })
-                    .ToList(),
-                ProfilePictureUrl = profile.ProfilePictureUrl,
-                Reviews = this.data
-                    .Reviews
-                    .Where(r => r.ClientId == profile.Id && r.Content != null && r.Caption != null)
-                    .Select(r => new ReviewViewModel
-                    {
-                        Username = profile.Name,
-                        Caption = r.Caption,
-                        Content = r.Content,
-                        Rating = r.Rating
-                    }),
-                ReviewsCount = this.data.Reviews.Where(r => r.ClientId == profileId).Count(),
-                AvarageRating = this.data.Reviews.Where(r => r.ClientId == profileId).Average(r => r.Rating)
-            };
+            var model = this.clientService.GetClientProfileViewModel(GetClientId(), profileId, relationId, hasRelation, profile);
 
             return View(model);
         }
@@ -249,33 +152,13 @@
         [ActionName("Profile")]
         public IActionResult ProfilePost(int profileId)
         {
-            if (!IsUserClient()) return BadRequest();
+            if (!this.userService.IsUserClient(GetUserId())) return Redirect("Error");
 
-            var clinet = this.data
-                .Clients
-                .First(c => c.UserId == this.User.GetId());
+            var client = this.clientService.GetClientByUserId(this.User.GetId());
 
-            if (clinet.Id == profileId || this.data.ClientRelationships.Any(cr => cr.ClientId == clinet.Id && cr.FriendId == profileId)) return BadRequest();
+            if (this.clientService.IsFriendRequestValid(client.Id, profileId)) return Redirect("Error");
 
-            var clientRelationship = new ClientRelationship
-            {
-                ClientId = GetClientId(),
-                FriendId = profileId,
-                AreFriends = false,
-                HasFriendRequest = false,
-            };
-
-            var friendRelationship = new ClientRelationship
-            {
-                ClientId = profileId,
-                FriendId = GetClientId(),
-                AreFriends = false,
-                HasFriendRequest = true
-            };
-
-            this.data.ClientRelationships.AddRange(clientRelationship, friendRelationship);
-
-            this.data.SaveChanges();
+            this.clientService.SendFriendRequest(client.Id, profileId);
 
             return Redirect("~/");
         }
@@ -283,20 +166,16 @@
         [Authorize]
         public IActionResult Accept(int requestId)
         {
-            var clientRelationship = this.data.ClientRelationships.First(cr => cr.Id == requestId);
+            var clientRelationship = this.clientService.GetRelationshipById(requestId);
 
-            if (GetClientId() != clientRelationship.ClientId) return BadRequest();
+            if (GetClientId() != clientRelationship.ClientId) return Redirect("Error");
 
-            clientRelationship.AreFriends = true;
-            clientRelationship.HasFriendRequest = false;
-
-            this.data.ClientRelationships.First(cr => cr.ClientId == clientRelationship.FriendId).AreFriends = true;
-
-            this.data.SaveChanges();
+            this.clientService.AcceptFriendRequest(clientRelationship);
 
             return Redirect("/Games/All");
         }
 
+        // TRANSFER TO SERVICES
         [Authorize]
         public IActionResult Decline(int? requestId)
         {
@@ -333,7 +212,6 @@
         public IActionResult Edit(EditProfileFormModel inputModel)
         {
             if (inputModel.ProfileId != GetClientId()) return BadRequest();
-
             var profile = this.data
                 .Clients
                 .FirstOrDefault(c => c.Id == inputModel.ProfileId);
@@ -342,11 +220,31 @@
 
             if (inputModel.Description != null) profile.Description = inputModel.Description;
 
+            profile.AreFriendsPrivate = inputModel.AreFriendsPrivate;
+            profile.AreGamesPrivate = inputModel.AreGamesPrivate;
+
             this.data.SaveChanges();
 
             return Redirect("/Clients/Profile?ProfileId=" + inputModel.ProfileId);
         }
 
+        [Authorize]
+        public IActionResult RemoveProfilePicture(int profileId)
+        {
+            if (GetClientId() != profileId) return BadRequest();
+
+            this.data
+                .Clients
+                .First(c => c.Id == GetClientId())
+                .ProfilePictureUrl = DefaultProfilePictureUrl;
+
+            this.data.SaveChanges();
+
+            return Redirect("/Clients/Profile?ProfileId=" + profileId);
+        }
+
+        private string GetUserId()
+            => this.User.GetId();
         private bool IsUserPublisher()
             => this.data.Publishers.Any(p => p.UserId == this.User.GetId());
 
