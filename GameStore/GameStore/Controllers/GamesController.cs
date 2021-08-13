@@ -10,278 +10,117 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Services.Games;
+    using GameStore.Services.Users;
+    using GameStore.Services.Requirements;
+    using GameStore.Services.Publishers;
+    using GameStore.Services.ShoppingCart;
+    using GameStore.Services.Clients;
 
     public class GamesController : Controller
     {
         private readonly GameStoreDbContext data;
+        private readonly IGamesService gamesService;
+        private readonly IUserService userService;
+        private readonly IRequirementsService requirementsService;
+        private readonly IPublisherService publisherService;
+        private readonly IShoppingCartService shoppingCartService;
+        private readonly IClientService clientService;
 
         public GamesController(GameStoreDbContext data)
-            => this.data = data;
+        {
+            this.data = data;
+            this.gamesService = new GamesService(data);
+            this.userService = new UserService(data);
+            this.requirementsService = new RequirementsService(data);
+            this.publisherService = new PublisherService(data);
+            this.shoppingCartService = new ShoppingCartService(data);
+            this.clientService = new ClientService(data);
+        }
 
         public IActionResult All(string searchQuery, string sortQuery, string searchByQuery)
-        {
-            var games = new List<GameListingViewModel>();
-
-
-            var gamesQuery = this.data.Games.ToList();
-
-            if (searchQuery != null)
-            {
-                var tokens = searchQuery.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
-
-                if (searchByQuery == "" || searchByQuery == "Name")
-                {
-                    foreach (var token in tokens)
-                    {
-                        var game = gamesQuery
-                            .Where(g => g.Name.Contains(token))
-                            .Select(g => new GameListingViewModel
-                            {
-                                Id = g.Id,
-                                Name = g.Name,
-                                CoverImageUrl = g.CoverImageUrl,
-                                PegiRating = g.PegiRating.Name,
-                                Genres = GetGameGenreNames(g, this.data),
-                                DateAdded = g.DateAdded.ToString(),
-                                Rating = this.data.Reviews.Any(r => r.GameId == g.Id) ? this.data.Reviews.Where(r => r.GameId == g.Id).Average(r => r.Rating) : 0
-                            })
-                            .FirstOrDefault();
-
-                        if (game != null && !games.Any(g => g.Id == game.Id)) games.Add(game);
-                    }
-                }
-
-                if (searchByQuery == "Genre")
-                {
-                    foreach (var currentGame in gamesQuery)
-                    {
-                        bool isGenre = true;
-
-                        foreach (var token in tokens)
-                        {
-                            var genre = this.data.Genres.FirstOrDefault(g => g.Name.ToLower() == token.ToLower());
-                            isGenre = genre != null && this.data.GameGenres.Any(gg => gg.GameId == currentGame.Id && gg.GenreId == genre.Id);
-                            if (isGenre == false) break;
-                        }
-
-                        if (isGenre)
-                        {
-
-
-                            var game = new GameListingViewModel
-                            {
-                                Id = currentGame.Id,
-                                Name = currentGame.Name,
-                                CoverImageUrl = currentGame.CoverImageUrl,
-                                PegiRating = this.data.PegiRatings.First(pr => pr.Id == currentGame.PegiRatingId).Name,
-                                Genres = GetGameGenreNames(currentGame, this.data),
-                                DateAdded = currentGame.DateAdded.ToString(),
-                                Rating = this.data.Reviews.Any(r => r.GameId == currentGame.Id) ? this.data.Reviews.Where(r => r.GameId == currentGame.Id).Average(r => r.Rating) : 0
-                            };
-
-                            games.Add(game);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                games = gamesQuery
-                    .Select(g => new GameListingViewModel
-                    {
-                        Id = g.Id,
-                        Name = g.Name,
-                        CoverImageUrl = g.CoverImageUrl,
-                        PegiRating = this.data.PegiRatings.First(pr => pr.Id == g.PegiRatingId).Name,
-                        Genres = GetGameGenreNames(g, this.data),
-                        DateAdded = g.DateAdded.ToString(),
-                        Rating = this.data.Reviews.Any(r => r.GameId == g.Id) ? this.data.Reviews.Where(r => r.GameId == g.Id).Average(r => r.Rating) : 0
-                    })
-                    .ToList();
-            }
-
-            games = sortQuery switch
-            {
-                "Name" => games.OrderBy(gq => gq.Name).ToList(),
-                "Rating" => games.OrderByDescending(gq => gq.Rating).ToList(),
-                "Newest" => games.OrderByDescending(gq => gq.DateAdded).ToList(),
-                "Oldest" => games.OrderBy(gq => gq.DateAdded).ToList(),
-                _ => games.OrderBy(gq => gq.Id).ToList(),
-            };
-
-            var model = new AllGamesViewModel
-            {
-                Games = games,
-                SearchQuery = searchQuery,
-                Genres = GetGenres()
-            };
-
-            return View(model);
-        }
+            => View(
+                this.gamesService.CreateAllGamesViewModel(
+                this.gamesService.HandleSortQuery(sortQuery, this.gamesService.HandleSearchQueries(searchQuery, searchByQuery)),
+                this.gamesService.GetGenres()
+                ));
 
         [Authorize]
         public IActionResult Add()
         {
-            if (!IsUserPublisher())
-            {
-                return BadRequest();
-            }
+            if (!this.userService.IsUserPublisher(this.User.GetId())) return Redirect("Error");
 
-            return View(new AddGameFormModel
-            {
-                PegiRatings = this.GetPegiRatings(),
-                Genres = this.GetGenres()
-            });
+            return View(this.gamesService.CreateAddGameFormModel());
         }
 
         [Authorize]
         [HttpPost]
-        public IActionResult Add(AddGameFormModel game)
+        public IActionResult Add(AddGameFormModel inputModel)
         {
-            if (!IsUserPublisher())
-            {
-                return BadRequest();
-            }
+            if (!this.userService.IsUserPublisher(this.User.GetId())) return Redirect("Error");
 
             if (!ModelState.IsValid)
             {
-                game.PegiRatings = this.GetPegiRatings();
-                game.Genres = this.GetGenres();
+                inputModel.PegiRatings = this.gamesService.GetPegiRatings();
+                inputModel.Genres = this.gamesService.GetGenres();
 
-                return View(game);
+                return View(inputModel);
             }
 
-            var trailerUrlTokens = game.TrailerUrl.Split("watch?v=");
-
-            var embedUrl = trailerUrlTokens[0] + "embed/" + trailerUrlTokens[1];
-
-            var validGame = new Game
-            {
-                Name = game.Name,
-                Description = game.Description,
-                CoverImageUrl = game.CoverImageUrl,
-                TrailerUrl = embedUrl,
-                Price = game.Price,
-                PegiRatingId = game.PegiRatingId,
-                DateAdded = DateTime.UtcNow,
-                MinimumRequirements = new Requirements
-                {
-                    CPU = game.MinimumCPU,
-                    GPU = game.MinimumGPU,
-                    RAM = game.MinimumRAM,
-                    VRAM = game.MinimumVRAM,
-                    Storage = game.MinimumStorage,
-                    OS = game.MinimumOS
-                },
-                RecommendedRequirements = new Requirements
-                {
-                    CPU = game.RecommendedCPU,
-                    GPU = game.RecommendedGPU,
-                    RAM = game.RecommendedRAM,
-                    VRAM = game.RecommendedVRAM,
-                    Storage = game.RecommendedStorage,
-                    OS = game.RecommendedOS
-                },
-                PublisherId = this.data
-                                  .Publishers
-                                  .Where(p => p.UserId == this.User.GetId())
-                                  .FirstOrDefault()
-                                  .Id
-            };
-
-            this.data.Games.Add(validGame);
-
-            foreach (var genreId in game.GenreIds)
-            {
-                var genre = this.data
-                    .Genres
-                    .Where(g => g.Id == genreId)
-                    .FirstOrDefault();
-
-                this.data.GameGenres.Add(new GameGenre
-                {
-                    Game = validGame,
-                    Genre = genre
-                });
-            }
-
-            this.data.SaveChanges();
+            this.gamesService.CreateGame(
+                inputModel,
+                this.requirementsService.CreateRequirements(
+                    inputModel.MinimumCPU,
+                    inputModel.MinimumGPU,
+                    inputModel.MinimumRAM,
+                    inputModel.MinimumVRAM,
+                    inputModel.MinimumStorage,
+                    inputModel.MinimumOS),
+                this.requirementsService.CreateRequirements(
+                    inputModel.RecommendedCPU,
+                    inputModel.RecommendedGPU,
+                    inputModel.RecommendedRAM,
+                    inputModel.RecommendedVRAM,
+                    inputModel.RecommendedStorage,
+                    inputModel.RecommendedOS),
+                this.publisherService.GetPublisherId(this.User.GetId()));
 
             return Redirect("All");
         }
 
-        public IActionResult Details(int GameId)
-        {
-            var game = this.data.Reviews.Where(r => r.GameId == GameId).ToList();
-
-            var gameQuery = this.data
-                    .Games
-                    .Where(g => g.Id == GameId)
-                    .Select(g => new GameDetailsViewModel
-                    {
-                        Id = GameId,
-                        Name = g.Name,
-                        PublisherName = g.Publisher.Name,
-                        Price = g.Price,
-                        Description = g.Description,
-                        CoverImageUrl = g.CoverImageUrl,
-                        TrailerUrl = g.TrailerUrl,
-                        PegiRating = g.PegiRating.Name,
-                        MinimumRequirementsId = g.MinimumRequirementsId,
-                        RecommendedRequirementsId = g.RecommendedRequirementsId,
-                        Rating = this.data.Reviews.Where(r => r.GameId == GameId).Average(r => r.Rating),
-                        ReviewsCount = this.data.Reviews.Count(r => r.GameId == GameId && r.Content != null && r.Caption != null),
-                        RatingsCount = this.data.Reviews.Count(r => r.GameId == GameId),
-                        Genres = g.GameGenres.Select(gg => gg.Genre.Name)
-                    })
-                    .FirstOrDefault();
-
-            return View(gameQuery);
-        }
+        public IActionResult Details(int gameId)
+            => View(this.gamesService.GetGameDetailsViewModel(gameId));
 
         [Authorize]
         [HttpPost]
         [ActionName("Details")]
-        public IActionResult DetailsPost(int GameId)
+        public IActionResult DetailsPost(int gameId)
         {
             if (!IsUserClient()) return BadRequest();
 
-            var shoppingCartQuery = this.data
-                .ShoppingCarts
-                .FirstOrDefault(sc => sc.Client.UserId == this.User.GetId());
+            var shoppingCartQuery = this.shoppingCartService.GetShoppingCart(this.User.GetId());
 
-            var client = this.data.Clients.First(c => c.UserId == this.User.GetId());
+            var client = this.clientService.GetClientByUserId(this.User.GetId());
 
-            var userOwnsGame = this.data
-                .ClientGames
-                .Any(cg => cg.ClientId == client.Id && cg.GameId == GameId);
+            if (this.clientService.ClientOwnsGame(client.Id, gameId)) return Redirect("Error");
+            if (this.shoppingCartService.GetShoppingCart(this.User.GetId()).ShoppingCartProducts.Any(scp => scp.GameId == gameId)) return Redirect("Error");
 
-            if (userOwnsGame) return BadRequest();
-            if (shoppingCartQuery.ShoppingCartProducts.Any(scp => scp.GameId == GameId)) return BadRequest();
-
-            this.data
-                .ShoppingCartProducts
-                .Add(new ShoppingCartProduct
-                {
-                    GameId = GameId,
-                    ShoppingCartId = shoppingCartQuery.Id
-                });
-
-            this.data.SaveChanges();
+            this.shoppingCartService.AddShoppingCartProduct(shoppingCartQuery.Id, gameId);
 
             return Redirect("/Clients/ShoppingCart");
         }
 
         [Authorize]
-        public IActionResult Remove(int GameId)
+        public IActionResult Remove(int gameId)
         {
-            var gamePublisher = this.data.Publishers.Where(p => p.Games.Any(g => g.Id == GameId)).FirstOrDefault();
+            var publisherId = this.data.Games.First(g => g.Id == gameId).PublisherId;
+            var publisher = this.data.Publishers.First(p => p.Id == publisherId);
 
-            if (gamePublisher.UserId != this.User.GetId()) return BadRequest();
+            if (publisher.UserId != this.User.GetId()) return BadRequest();
 
             var game = this.data
                     .Games
-                    .Where(g => g.Id == GameId)
+                    .Where(g => g.Id == gameId)
                     .FirstOrDefault();
 
             var minRequirements = this.data
@@ -326,9 +165,9 @@
 
         public IActionResult PostReview(int GameId)
             => View(new PostReviewFormModel
-                {
-                    Ratings = new List<int> { 1, 2, 3, 4, 5 }
-                });
+            {
+                Ratings = new List<int> { 1, 2, 3, 4, 5 }
+            });
 
         [Authorize]
         [HttpPost]

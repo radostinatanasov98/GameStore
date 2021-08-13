@@ -21,5 +21,9 @@
         public ShoppingCartProduct GetProduct(int gameId, int shoppingCartId);
 
         public void RemoveProdutc(ShoppingCartProduct product);
+
+        public ShoppingCart GetShoppingCart(string userId);
+
+        public void AddShoppingCartProduct(int id, int gameId);
     }
 }

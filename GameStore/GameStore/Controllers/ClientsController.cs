@@ -1,15 +1,12 @@
 ﻿namespace GameStore.Controllers
 {
     using GameStore.Data;
-    using GameStore.Data.Models;
     using GameStore.Infrastructure;
     using GameStore.Models.Clients;
-    using GameStore.Models.Reviews;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
     using Services.Users;
-    using static Data.DataConstants.Client;
     using Services.Clients;
     using Services.Games;
     using Services.ShoppingCart;
@@ -22,7 +19,6 @@
         private readonly IClientService clientService;
         private readonly IGamesService gamesService;
         private readonly IShoppingCartService shoppingCartService;
-        private readonly IReviewService reviewService;
 
         public ClientsController(GameStoreDbContext data)
         {
@@ -31,7 +27,6 @@
             clientService = new ClientService(data);
             gamesService = new GamesService(data);
             shoppingCartService = new ShoppingCartService(data);
-            reviewService = new ReviewService(data);
         }
 
         [Authorize]
@@ -175,24 +170,14 @@
             return Redirect("/Games/All");
         }
 
-        // TRANSFER TO SERVICES
         [Authorize]
-        public IActionResult Decline(int? requestId)
+        public IActionResult Decline(int requestId)
         {
-            if (requestId == null) return BadRequest();
+            var clientRelationship = this.clientService.GetRelationshipById(requestId);
 
-            var clientRelationship = this.data.ClientRelationships.First(cr => cr.Id == requestId);
+            if (GetClientId() != clientRelationship.ClientId) return Redirect("Error");
 
-            if (GetClientId() != clientRelationship.ClientId) return BadRequest();
-
-            clientRelationship.AreFriends = false;
-            clientRelationship.HasFriendRequest = false;
-
-            var friendRelationship = this.data.ClientRelationships.First(cr => cr.ClientId == clientRelationship.FriendId);
-
-            this.data.Remove(clientRelationship);
-            this.data.Remove(friendRelationship);
-            this.data.SaveChanges();
+            this.clientService.DeclineFriendRequest(clientRelationship);
 
             return Redirect("/Games/All");
         }
@@ -200,7 +185,7 @@
         [Authorize]
         public IActionResult Edit(int profileId, EditProfileFormModel model)
         {
-            if (profileId != GetClientId()) return BadRequest();
+            if (profileId != GetClientId()) return Redirect("Error");
 
             model.ProfileId = profileId;
 
@@ -211,19 +196,9 @@
         [HttpPost]
         public IActionResult Edit(EditProfileFormModel inputModel)
         {
-            if (inputModel.ProfileId != GetClientId()) return BadRequest();
-            var profile = this.data
-                .Clients
-                .FirstOrDefault(c => c.Id == inputModel.ProfileId);
+            if (inputModel.ProfileId != GetClientId()) return Redirect("Error");
 
-            if (inputModel.PictureUrl != null) profile.ProfilePictureUrl = inputModel.PictureUrl;
-
-            if (inputModel.Description != null) profile.Description = inputModel.Description;
-
-            profile.AreFriendsPrivate = inputModel.AreFriendsPrivate;
-            profile.AreGamesPrivate = inputModel.AreGamesPrivate;
-
-            this.data.SaveChanges();
+            this.clientService.EditProfile(inputModel);
 
             return Redirect("/Clients/Profile?ProfileId=" + inputModel.ProfileId);
         }
@@ -231,25 +206,15 @@
         [Authorize]
         public IActionResult RemoveProfilePicture(int profileId)
         {
-            if (GetClientId() != profileId) return BadRequest();
+            if (GetClientId() != profileId) return Redirect("Error");
 
-            this.data
-                .Clients
-                .First(c => c.Id == GetClientId())
-                .ProfilePictureUrl = DefaultProfilePictureUrl;
-
-            this.data.SaveChanges();
+            this.clientService.RemoveProfilePicture(profileId);
 
             return Redirect("/Clients/Profile?ProfileId=" + profileId);
         }
 
         private string GetUserId()
             => this.User.GetId();
-        private bool IsUserPublisher()
-            => this.data.Publishers.Any(p => p.UserId == this.User.GetId());
-
-        private bool IsUserClient()
-            => this.data.Clients.Any(p => p.UserId == this.User.GetId());
 
         private int GetClientId()
             => this.data.Clients.First(c => c.UserId == this.User.GetId()).Id;

@@ -16,6 +16,17 @@
             this.data = data;
         }
 
+        public void AddShoppingCartProduct(int id, int gameId)
+        {
+            this.data.ShoppingCartProducts.Add(new ShoppingCartProduct
+            {
+                ShoppingCartId = id,
+                GameId = gameId
+            });
+
+            this.data.SaveChanges();
+        }
+
         public ShoppingCart CreateShoppingCart(Client client)
             => new ShoppingCart
             {
@@ -31,6 +42,11 @@
                 .Where(scp => scp.ShoppingCartId == shoppingCartId)
                 .Select(scp => scp.GameId)
                 .ToList();
+
+        public ShoppingCart GetShoppingCart(string userId)
+            => this.data
+                .ShoppingCarts
+                .FirstOrDefault(sc => sc.Client.UserId == userId);
 
         public IQueryable<ShoppingCartProduct> GetShoppingCartProducts(int shoppingCartId)
             => this.data.ShoppingCartProducts.Where(scp => scp.ShoppingCartId == shoppingCartId);

@@ -31,5 +31,13 @@
         public bool IsFriendRequestValid(int clientId, int profileId);
 
         public void AcceptFriendRequest(ClientRelationship relationship);
+
+        public void DeclineFriendRequest(ClientRelationship relationship);
+
+        public void EditProfile(EditProfileFormModel inputModel);
+
+        public void RemoveProfilePicture(int profileId);
+
+        public bool ClientOwnsGame(int clientId, int gameId);
     }
 }

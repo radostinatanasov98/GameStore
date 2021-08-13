@@ -144,5 +144,41 @@
 
             this.data.SaveChanges();
         }
+
+        public void DeclineFriendRequest(ClientRelationship relationship)
+        {
+            var friendRelationship = this.GetRelationship(relationship.FriendId, relationship.ClientId); ;
+
+            relationship.AreFriends = false;
+            relationship.HasFriendRequest = false;
+
+            this.data.Remove(relationship);
+            this.data.Remove(friendRelationship);
+            this.data.SaveChanges();
+        }
+
+        public void EditProfile(EditProfileFormModel inputModel)
+        {
+            var profile = this.GetClientById(inputModel.ProfileId);
+
+            if (inputModel.PictureUrl != null) profile.ProfilePictureUrl = inputModel.PictureUrl;
+
+            if (inputModel.Description != null) profile.Description = inputModel.Description;
+
+            profile.AreFriendsPrivate = inputModel.AreFriendsPrivate;
+            profile.AreGamesPrivate = inputModel.AreGamesPrivate;
+
+            this.data.SaveChanges();
+        }
+
+        public void RemoveProfilePicture(int profileId)
+        {
+            this.GetClientById(profileId).ProfilePictureUrl = DefaultProfilePictureUrl;
+
+            this.data.SaveChanges();
+        }
+
+        public bool ClientOwnsGame(int clientId, int gameId)
+            => this.data.ClientGames.Any(cg => cg.ClientId == clientId && cg.GameId == gameId);
     }
 }
