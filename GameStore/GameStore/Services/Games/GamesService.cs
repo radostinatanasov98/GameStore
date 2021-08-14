@@ -3,6 +3,7 @@
     using GameStore.Data;
     using GameStore.Data.Models;
     using GameStore.Models.Games;
+    using GameStore.Models.Home;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -27,22 +28,26 @@
                     PegiRating = g.PegiRating.Name,
                     Genres = GetGameGenreNames(g, data),
                     DateAdded = g.DateAdded.ToString(),
-                    Rating = this.data.Reviews.Any(r => r.GameId == g.Id) ? this.data.Reviews.Where(r => r.GameId == g.Id).Average(r => r.Rating) : 0
+                    Rating = GetGameRating(g.Id, this.data)
                 })
                 .ToList();
 
-        public List<GameHoverViewModel> GetGamesForHoverModel(int profileId)
+        public List<GameHoverViewModel> GetGamesForHoverModel()
             => this.data
-                    .ClientGames
-                    .Where(cg => cg.ClientId == profileId)
-                    .Select(cg => new GameHoverViewModel
+                    .Games
+                    .Select(g => new GameHoverViewModel
                     {
-                        GameId = cg.GameId,
-                        CoverImageUrl = this.data.Games.First(g => g.Id == cg.GameId).CoverImageUrl,
-                        Name = this.data.Games.First(g => g.Id == cg.GameId).Name
+                        GameId = g.Id,
+                        CoverImageUrl = g.CoverImageUrl,
+                        Name = g.Name,
+                        Rating = GetGameRating(g.Id, this.data)
                     })
-                    .Take(6)
                     .ToList();
+
+        public List<GameHoverViewModel> SortHoverModelByProfile(List<int> ids)
+            => this.GetGamesForHoverModel()
+                .Where(g => ids.Contains(g.GameId))
+                .ToList();
 
         public List<GameListingViewModel> GetGamesForLibraryView(string userId)
         {
@@ -236,5 +241,31 @@
                         Genres = GetGameGenreNames(g, this.data)
                     })
                     .First();
+
+        public Game GetGameById(int gameId)
+            => this.data
+            .Games
+            .FirstOrDefault(g => g.Id == gameId);
+
+        public void RemoveGame(Game game, Requirements minRequirements, Requirements recRequirements)
+        {
+            this.data.Games.Remove(game);
+            this.data.Requirements.RemoveRange(minRequirements, recRequirements);
+            this.data.SaveChanges();
+        }
+
+        private static double GetGameRating(int gameId, GameStoreDbContext data)
+            => data
+            .Reviews
+            .Any(r => r.GameId == gameId) ?
+            data.Reviews.Where(r => r.GameId == gameId)
+            .Average(r => r.Rating) : 0;
+
+        public HomePageViewModel GetGamesForHomePage()
+            => new HomePageViewModel
+            {
+                TopRatedGames = GetGamesForHoverModel().OrderByDescending(g => g.Rating),
+                LatestGames = GetGamesForHoverModel().OrderByDescending(g => g.GameId)
+            };
     }
 }

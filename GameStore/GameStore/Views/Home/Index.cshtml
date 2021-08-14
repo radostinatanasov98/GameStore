@@ -7,46 +7,8 @@
 <link rel="stylesheet" href="~/css/HomePage.css"/>
 
 <div class="text-center">
-    @if (!Model.BecomeUserType.IsClient && !Model.BecomeUserType.IsPublisher)
-    {
-        <h1 class="display-4">Welcome</h1>
-        <p style="font-size: 30px;">
-            In order to be able to fully use our services, you should become a
-            <a asp-area="" asp-controller="Publishers" asp-action="Become" class="btn btn-primary">Publisher</a>
-            or a
-            <a asp-area="" asp-controller="Clients" asp-action="Become" class="btn btn-primary">Client</a>.
-            <span>
-                If you do not have an account, you can create one
-                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary">Here</a>.
-            </span>
-        </p>
-        <h6>*Note: Choosing one is permanent. If you change your mind, you have to make a new account.</h6>
-    }
+    @await Component.InvokeAsync("ChooseUserTypePrompt")
 
-    @if (Model.BecomeUserType.IsClient && Model.ReccommendedGames.Count() > 0)
-    {
-        <div style="margin-bottom: 20px;">
-            <div class="card text-center">
-                <div class="card-header" style="font-weight: bold; font-size: 25px">
-                    Reccommended Games
-                </div>
-                <div class="card-body">
-                    @foreach (var game in Model.ReccommendedGames)
-                    {
-                        <div class="img-container">
-                            <img src="@game.CoverImageUrl" class="image">
-                            <a asp-area="" asp-controller="Games" asp-action="Details" asp-route-GameId="@game.GameId" class="overlay">
-                                <div class="text">@game.Name</div>
-                            </a>
-                        </div>
-                    }
-                </div>
-                <div class="card-footer text-muted">
-                    <a asp-area="" asp-controller="Games" asp-action="All" class="btn btn-primary">All Games By Release Date</a>
-                </div>
-            </div>
-        </div>
-    }
     <div style="margin-bottom: 20px;">
         <div class="card text-center">
             <div class="card-header" style="font-weight: bold; font-size: 25px">

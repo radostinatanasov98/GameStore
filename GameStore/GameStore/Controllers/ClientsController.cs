@@ -10,7 +10,6 @@
     using Services.Clients;
     using Services.Games;
     using Services.ShoppingCart;
-    using Services.Reviews;
 
     public class ClientsController : Controller
     {

@@ -10,6 +10,8 @@
 
         public int GetClientId(string userId);
 
+        public List<int> GetOwnedGameIds(int profileId);
+
         public Client GetClientById(int profileId);
 
         public Client GetClientByUserId(string userId);

@@ -4,6 +4,7 @@
     using GameStore.Data.Models;
     using System.Collections.Generic;
     using System.Linq;
+    using GameStore.Models.Home;
 
     public interface IGamesService
     {
@@ -11,7 +12,9 @@
 
         public List<GameShoppingCartViewModel> GetGamesForShoppingCartView(IQueryable<ShoppingCartProduct> shoppingCartProductsQuery);
 
-        public List<GameHoverViewModel> GetGamesForHoverModel(int profileId);
+        public List<GameHoverViewModel> GetGamesForHoverModel();
+
+        public List<GameHoverViewModel> SortHoverModelByProfile(List<int> ids);
 
         public List<GameListingViewModel> GetGamesForAllView();
 
@@ -34,5 +37,11 @@
         public void CreateGame(AddGameFormModel model, Requirements minimumRequirements, Requirements recommendedRequirements, int publisherId);
 
         public GameDetailsViewModel GetGameDetailsViewModel(int gameId);
+
+        public Game GetGameById(int gameId);
+
+        public void RemoveGame(Game game, Requirements minRequirements, Requirements recRequirements);
+
+        public HomePageViewModel GetGamesForHomePage();
     }
 }

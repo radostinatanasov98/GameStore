@@ -14,6 +14,6 @@
 
         public int UserId { get; init; }
 
-        public IEnumerable<int> Ratings { get; init; } = new List<int>();
+        public IEnumerable<int> Ratings { get; set; } = new List<int>();
     }
 }

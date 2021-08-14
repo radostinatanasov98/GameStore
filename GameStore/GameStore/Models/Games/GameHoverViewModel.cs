@@ -7,5 +7,7 @@
         public int GameId { get; init; }
 
         public string Name { get; init; }
+
+        public double Rating { get; init; }
     }
 }

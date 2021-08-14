@@ -9,5 +9,7 @@
         public string Content { get; init; }
 
         public int Rating { get; init; }
+
+        public int GameId { get; init; }
     }
 }

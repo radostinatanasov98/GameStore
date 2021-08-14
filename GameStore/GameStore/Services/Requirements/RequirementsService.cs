@@ -2,6 +2,8 @@
 {
     using GameStore.Data;
     using GameStore.Data.Models;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class RequirementsService : IRequirementsService
     {
@@ -22,5 +24,10 @@
                 Storage = storage,
                 OS = OS
             };
+
+        public Requirements GetRequirementsById(int id)
+            => this.data
+            .Requirements
+            .FirstOrDefault(r => r.Id == id);
     }
 }

@@ -13,6 +13,12 @@ namespace GameStore.Services.Publishers
             this.data = data;
         }
 
+        public Publisher GetPublisherByGameId(int gameId)
+        {
+            var publisherId = this.data.Games.First(g => g.Id == gameId).PublisherId;
+            return this.data.Publishers.First(p => p.Id == publisherId);
+        }
+
         public int GetPublisherId(string userId)
             => this.data
             .Publishers

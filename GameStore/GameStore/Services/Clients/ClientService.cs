@@ -91,13 +91,13 @@
                 ProfileId = profileId,
                 AreFriends = hasRelation,
                 Username = profile.Name,
-                Games = this.gamesService.GetGamesForHoverModel(profileId),
+                Games = this.gamesService.SortHoverModelByProfile(this.GetOwnedGameIds(profileId)),
                 AreGamesPrivate = profile.AreGamesPrivate,
                 AreFriendsPrivate = profile.AreFriendsPrivate,
                 Description = profile.Description,
                 Friends = this.GetFriendsAndRequests(profileId, clientId),
                 ProfilePictureUrl = profile.ProfilePictureUrl,
-                Reviews = this.reviewService.GetReviewsForViewModel(profile),
+                Reviews = this.reviewService.SortByUser(profile.Name),
                 ReviewsCount = this.data.Reviews.Where(r => r.ClientId == profileId).Count(),
                 AvarageRating = this.data.Reviews.Any(r => r.ClientId == profileId) ? this.data.Reviews.Where(r => r.ClientId == profileId).Average(r => r.Rating) : -1
             };
@@ -180,5 +180,12 @@
 
         public bool ClientOwnsGame(int clientId, int gameId)
             => this.data.ClientGames.Any(cg => cg.ClientId == clientId && cg.GameId == gameId);
+
+        public List<int> GetOwnedGameIds(int profileId)
+            => this.data
+            .ClientGames
+            .Where(cg => cg.ClientId == profileId)
+            .Select(cg => cg.GameId)
+            .ToList();      
     }
 }

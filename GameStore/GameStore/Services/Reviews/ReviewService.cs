@@ -15,17 +15,49 @@
             this.data = data;
         }
 
-        public List<ReviewViewModel> GetReviewsForViewModel(Client profile)
+        public List<ReviewViewModel> GetReviewsForViewModel()
             => this.data
                     .Reviews
-                    .Where(r => r.ClientId == profile.Id && r.Content != null && r.Caption != null)
+                    .Where(r => r.Content != null && r.Caption != null)
                     .Select(r => new ReviewViewModel
                     {
-                        Username = profile.Name,
+                        Username = this.data.Clients.First(c => c.Id == r.ClientId).Name,
                         Caption = r.Caption,
                         Content = r.Content,
-                        Rating = r.Rating
+                        Rating = r.Rating,
+                        GameId = r.GameId
                     })
                     .ToList();
+
+        public List<ReviewViewModel> SortByUser(string username)
+            => this.GetReviewsForViewModel()
+            .Where(r => r.Username == username)
+            .ToList();
+
+        public List<ReviewViewModel> SortByGame(int gameId)
+            => this.GetReviewsForViewModel()
+            .Where(r => r.GameId == gameId)
+            .ToList();
+
+        public bool HasReviewed(int clientId, int gameId)
+            => this.data
+            .Reviews
+            .Any(r => r.ClientId == clientId && r.GameId == gameId);
+
+        public void CreateReview(string content, string caption, int rating, int clientId, int gameId)
+        {
+            this.data
+                .Reviews
+                .Add(new Review
+                {
+                    Content = content,
+                    Caption = caption,
+                    Rating = rating,
+                    ClientId = clientId,
+                    GameId = gameId
+                });
+
+            this.data.SaveChanges();
+        }
     }
 }
