@@ -44,7 +44,7 @@
                     })
                     .ToList();
 
-        public List<GameHoverViewModel> SortHoverModelByProfile(List<int> ids)
+        public List<GameHoverViewModel> GetHoverModelForProfile(List<int> ids)
             => this.GetGamesForHoverModel()
                 .Where(g => ids.Contains(g.GameId))
                 .ToList();

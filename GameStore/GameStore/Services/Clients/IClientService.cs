@@ -2,6 +2,8 @@
 {
     using GameStore.Data.Models;
     using GameStore.Models.Clients;
+    using GameStore.Models.Games;
+    using GameStore.Models.Reviews;
     using System.Collections.Generic;
 
     public interface IClientService
@@ -26,7 +28,13 @@
 
         public List<FriendsViewModel> GetFriendsAndRequests(int profileId, int clientId);
 
-        public ClientProfileViewModel GetClientProfileViewModel(int clientId, int profileId, int? relationId, bool hasRelation, Client profile);
+        public ClientProfileViewModel GetClientProfileViewModel(int clientId,
+            int profileId,
+            int? relationId,
+            bool hasRelation,
+            Client profile,
+            List<GameHoverViewModel> games,
+            List<ReviewViewModel> reviews);
 
         public void SendFriendRequest(int clientId, int profileId);
 

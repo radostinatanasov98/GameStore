@@ -14,7 +14,7 @@
 
         public List<GameHoverViewModel> GetGamesForHoverModel();
 
-        public List<GameHoverViewModel> SortHoverModelByProfile(List<int> ids);
+        public List<GameHoverViewModel> GetHoverModelForProfile(List<int> ids);
 
         public List<GameListingViewModel> GetGamesForAllView();
 

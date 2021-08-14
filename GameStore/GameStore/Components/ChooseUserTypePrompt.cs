@@ -20,8 +20,8 @@ namespace GameStore.Components
 
             if(this.User.Identity.IsAuthenticated)
             {
-                render = !this.userService.IsUserClient(this.UserClaimsPrincipal.GetId()) &&
-                !this.userService.IsUserPublisher(this.UserClaimsPrincipal.GetId());
+                render = this.userService.IsUserClient(this.UserClaimsPrincipal.GetId()) ||
+                this.userService.IsUserPublisher(this.UserClaimsPrincipal.GetId());
             }
 
             return View(render);

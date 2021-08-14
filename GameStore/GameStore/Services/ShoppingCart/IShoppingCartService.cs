@@ -7,9 +7,7 @@
     using System.Linq;
 
     public interface IShoppingCartService
-    {
-        public ShoppingCart CreateShoppingCart(Client client);
-
+    { 
         public IQueryable<ShoppingCartProduct> GetShoppingCartProducts(int shoppingCartId);
 
         public ShoppingCartViewModel GetShoppingCartViewModel(List<GameShoppingCartViewModel> games);

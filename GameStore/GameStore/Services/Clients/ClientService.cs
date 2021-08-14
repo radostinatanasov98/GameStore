@@ -3,9 +3,8 @@
     using GameStore.Data;
     using GameStore.Data.Models;
     using GameStore.Models.Clients;
-    using GameStore.Services.Games;
-    using GameStore.Services.Reviews;
-    using GameStore.Services.ShoppingCart;
+    using GameStore.Models.Games;
+    using GameStore.Models.Reviews;
     using System.Collections.Generic;
     using System.Linq;
     using static GameStore.Data.DataConstants.Client;
@@ -13,25 +12,23 @@
     public class ClientService : IClientService
     {
         private readonly GameStoreDbContext data;
-        private readonly IShoppingCartService shoppingCartService;
-        private readonly IGamesService gamesService;
-        private readonly IReviewService reviewService;
 
         public ClientService(GameStoreDbContext data)
         {
             this.data = data;
-            this.shoppingCartService = new ShoppingCartService(data);
-            this.gamesService = new GamesService(data);
-            this.reviewService = new ReviewService(data);
         }
 
         public void BecomeClient(BecomeClientFormModel inputModel, string userId)
         {
-            var client = CreateClient(inputModel, userId);
+            var client = this.CreateClient(inputModel, userId);
 
             this.data.Clients.Add(client);
 
-            this.data.ShoppingCarts.Add(this.shoppingCartService.CreateShoppingCart(client));
+            this.data.ShoppingCarts
+                .Add(new ShoppingCart
+                {
+                    Client = client
+                });
 
             this.data.SaveChanges();
         }
@@ -83,7 +80,13 @@
                     })
                     .ToList();
 
-        public ClientProfileViewModel GetClientProfileViewModel(int clientId, int profileId, int? relationId, bool hasRelation, Client profile)
+        public ClientProfileViewModel GetClientProfileViewModel(int clientId, 
+            int profileId, 
+            int? relationId, 
+            bool hasRelation, 
+            Client profile, 
+            List<GameHoverViewModel> games,
+            List<ReviewViewModel> reviews)
             => new ClientProfileViewModel
             {
                 RelationId = relationId,
@@ -91,13 +94,13 @@
                 ProfileId = profileId,
                 AreFriends = hasRelation,
                 Username = profile.Name,
-                Games = this.gamesService.SortHoverModelByProfile(this.GetOwnedGameIds(profileId)),
+                Games = games,
                 AreGamesPrivate = profile.AreGamesPrivate,
                 AreFriendsPrivate = profile.AreFriendsPrivate,
                 Description = profile.Description,
                 Friends = this.GetFriendsAndRequests(profileId, clientId),
                 ProfilePictureUrl = profile.ProfilePictureUrl,
-                Reviews = this.reviewService.SortByUser(profile.Name),
+                Reviews = reviews,
                 ReviewsCount = this.data.Reviews.Where(r => r.ClientId == profileId).Count(),
                 AvarageRating = this.data.Reviews.Any(r => r.ClientId == profileId) ? this.data.Reviews.Where(r => r.ClientId == profileId).Average(r => r.Rating) : -1
             };

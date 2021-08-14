@@ -27,12 +27,6 @@
             this.data.SaveChanges();
         }
 
-        public ShoppingCart CreateShoppingCart(Client client)
-            => new ShoppingCart
-            {
-                Client = client
-            };
-
         public ShoppingCartProduct GetProduct(int gameId, int shoppingCartId)
             => this.data.ShoppingCartProducts.FirstOrDefault(scp => scp.GameId == gameId && scp.ShoppingCartId == shoppingCartId);
 

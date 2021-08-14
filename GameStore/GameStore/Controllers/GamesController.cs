@@ -155,7 +155,7 @@
         [HttpPost]
         public IActionResult PostReview(int gameId, PostReviewFormModel model)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("Error");
+            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("~/Shared/Error");
 
             if ((model.Caption == null && model.Content != null) || (model.Caption != null && model.Content == null))
             {
@@ -170,7 +170,7 @@
 
             var alreadyReviewed = this.reviewService.HasReviewed(clientId, gameId);
 
-            if (!ownsGame || alreadyReviewed) return Redirect("Error");
+            if (!ownsGame || alreadyReviewed) return View();
 
             this.reviewService.CreateReview(model.Content,
                 model.Caption,
