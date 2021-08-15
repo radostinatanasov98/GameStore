@@ -8,25 +8,21 @@
 
     public interface IClientService
     {
+        public void AcceptFriendRequest(ClientRelationship relationship);
+
         public void BecomeClient(BecomeClientFormModel inputModel, string userId);
 
-        public int GetClientId(string userId);
+        public bool ClientOwnsGame(int clientId, int gameId);
 
-        public List<int> GetOwnedGameIds(int profileId);
+        public void DeclineFriendRequest(ClientRelationship relationship);
+
+        public void EditProfile(EditProfileFormModel inputModel);
 
         public Client GetClientById(int profileId);
 
         public Client GetClientByUserId(string userId);
 
-        public bool RelationCheck(ClientRelationship relationship);
-
-        public ClientRelationship GetRelationship(int clientId, int profileId);
-
-        public ClientRelationship GetRelationshipById(int id);
-
-        public int? GetRelationId(bool hasRelation, ClientRelationship profile);
-
-        public List<FriendsViewModel> GetFriendsAndRequests(int profileId, int clientId);
+        public int GetClientId(string userId);
 
         public ClientProfileViewModel GetClientProfileViewModel(int clientId,
             int profileId,
@@ -36,18 +32,22 @@
             List<GameHoverViewModel> games,
             List<ReviewViewModel> reviews);
 
-        public void SendFriendRequest(int clientId, int profileId);
+        public List<FriendsViewModel> GetFriendsAndRequests(int profileId, int clientId);
 
-        public bool IsFriendRequestValid(int clientId, int profileId);
+        public List<int> GetOwnedGameIds(int profileId);
 
-        public void AcceptFriendRequest(ClientRelationship relationship);
+        public ClientRelationship GetRelationship(int clientId, int profileId);
 
-        public void DeclineFriendRequest(ClientRelationship relationship);
+        public ClientRelationship GetRelationshipById(int id);
 
-        public void EditProfile(EditProfileFormModel inputModel);
+        public int? GetRelationId(ClientRelationship profile);
+
+        public bool IsFriendRequestInvalid(int clientId, int profileId);
+
+        public bool RelationCheck(ClientRelationship relationship);
 
         public void RemoveProfilePicture(int profileId);
 
-        public bool ClientOwnsGame(int clientId, int gameId);
+        public void SendFriendRequest(int clientId, int profileId);
     }
 }
