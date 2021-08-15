@@ -137,8 +137,8 @@
         public ClientRelationship GetRelationshipById(int id)
             => this.data.ClientRelationships.First(cr => cr.Id == id);
 
-        public int? GetRelationId(ClientRelationship relationship)
-            => relationship.AreFriends ? relationship.Id : null;
+        public int? GetRelationId(bool hasRelation, ClientRelationship relationship)
+            => hasRelation ? relationship.Id : null;
 
         public bool IsFriendRequestInvalid(int clientId, int profileId)
             => clientId == profileId || this.data.ClientRelationships.Any(cr => cr.ClientId == clientId && cr.FriendId == profileId);

@@ -39,7 +39,7 @@
 
             var relationship = this.clientService.GetRelationship(this.clientService.GetClientId(this.User.GetId()), profileId);
             var hasRelation = this.clientService.RelationCheck(relationship);
-            int? relationId = this.clientService.GetRelationId(relationship);
+            int? relationId = this.clientService.GetRelationId(hasRelation, relationship);
 
             var model = this.clientService.GetClientProfileViewModel(
                 this.clientService.GetClientId(this.User.GetId()),

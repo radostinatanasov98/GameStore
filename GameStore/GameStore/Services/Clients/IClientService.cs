@@ -40,7 +40,7 @@
 
         public ClientRelationship GetRelationshipById(int id);
 
-        public int? GetRelationId(ClientRelationship profile);
+        public int? GetRelationId(bool hasRelation, ClientRelationship profile);
 
         public bool IsFriendRequestInvalid(int clientId, int profileId);
 

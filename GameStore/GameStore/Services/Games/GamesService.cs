@@ -138,7 +138,7 @@
                 Genres = genres
             };
 
-        public IEnumerable<PegiRatingViewModel> GetPegiRatings()
+        public List<PegiRatingViewModel> GetPegiRatings()
             => this.data
             .PegiRatings
             .Select(pr => new PegiRatingViewModel
@@ -164,11 +164,6 @@
                 PegiRatings = this.GetPegiRatings(),
                 Genres = this.GetGenres()
             };
-
-        List<PegiRatingViewModel> IGamesService.GetPegiRatings()
-        {
-            throw new NotImplementedException();
-        }
 
         private string GetEmbedUrl(string url)
         {

@@ -465,7 +465,7 @@
             var clientService = new ClientService(data);
 
             // Act
-            var result = clientService.GetRelationId(clientRelationship);
+            var result = clientService.GetRelationId(true, clientRelationship);
 
             // Assert
             Assert.Equal(1, result);
@@ -490,7 +490,7 @@
             var clientService = new ClientService(data);
 
             // Act
-            var result = clientService.GetRelationId(clientRelationship);
+            var result = clientService.GetRelationId(false, clientRelationship);
 
             // Assert
             Assert.Null(result);

@@ -64,7 +64,7 @@
             this.data.SaveChanges();
         }
 
-        public void RemoveProdutc(ShoppingCartProduct product)
+        public void RemoveProduct(ShoppingCartProduct product)
         {
             this.data
                 .ShoppingCartProducts

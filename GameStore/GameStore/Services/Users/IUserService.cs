@@ -2,8 +2,8 @@
 {
     public interface IUserService
     {
-        public bool IsUserPublisher(string userId);
-
         public bool IsUserClient(string userId);
+
+        public bool IsUserPublisher(string userId);
     }
 }

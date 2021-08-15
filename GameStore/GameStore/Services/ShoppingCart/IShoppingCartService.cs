@@ -7,21 +7,21 @@
     using System.Linq;
 
     public interface IShoppingCartService
-    { 
+    {
+        public void AddShoppingCartProduct(int id, int gameId);
+
+        public ShoppingCartProduct GetProduct(int gameId, int shoppingCartId);
+
+        public List<int> GetProducts(int shoppingCartId);
+
+        public ShoppingCart GetShoppingCart(string userId);
+
         public IQueryable<ShoppingCartProduct> GetShoppingCartProducts(int shoppingCartId);
 
         public ShoppingCartViewModel GetShoppingCartViewModel(List<GameShoppingCartViewModel> games);
 
-        public List<int> GetProducts(int shoppingCartId);
-
         public void Purchase(List<int> products, int clientId);
 
-        public ShoppingCartProduct GetProduct(int gameId, int shoppingCartId);
-
-        public void RemoveProdutc(ShoppingCartProduct product);
-
-        public ShoppingCart GetShoppingCart(string userId);
-
-        public void AddShoppingCartProduct(int id, int gameId);
+        public void RemoveProduct(ShoppingCartProduct product);
     }
 }

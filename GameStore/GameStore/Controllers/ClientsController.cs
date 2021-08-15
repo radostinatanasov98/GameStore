@@ -121,7 +121,7 @@
 
             if (productQuery == null) return Redirect("Error");
 
-            this.shoppingCartService.RemoveProdutc(productQuery);
+            this.shoppingCartService.RemoveProduct(productQuery);
 
             return Redirect("/Clients/ShoppingCart");
         }

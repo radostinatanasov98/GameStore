@@ -4,9 +4,8 @@
 
     public interface IPublisherService
     {
-        public int GetPublisherId(string userId);
-
         public Publisher GetPublisherByGameId(int gameId);
 
+        public int GetPublisherId(string userId);
     }
 }
