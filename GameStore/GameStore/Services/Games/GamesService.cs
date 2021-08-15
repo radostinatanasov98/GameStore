@@ -49,11 +49,10 @@
                 .Where(g => ids.Contains(g.GameId))
                 .ToList();
 
-        public List<GameListingViewModel> GetGamesForLibraryView(string userId)
-        {
-            return this.data
+        public List<GameListingViewModel> GetGamesForLibraryView(int clientId)
+            => this.data
                 .ClientGames
-                .Where(cg => cg.Client.UserId == userId)
+                .Where(cg => cg.ClientId == clientId)
                 .Select(g => new GameListingViewModel
                 {
                     Id = g.Game.Id,
@@ -63,7 +62,7 @@
                     Genres = GetGameGenreNames(g.Game, data)
                 })
                 .ToList();
-        }
+
 
         public List<GameShoppingCartViewModel> GetGamesForShoppingCartView(IQueryable<ShoppingCartProduct> shoppingCartProductsQuery)
             => shoppingCartProductsQuery

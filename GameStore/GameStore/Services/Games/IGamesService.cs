@@ -8,7 +8,7 @@
 
     public interface IGamesService
     {
-        public List<GameListingViewModel> GetGamesForLibraryView(string userId);
+        public List<GameListingViewModel> GetGamesForLibraryView(int clientId);
 
         public List<GameShoppingCartViewModel> GetGamesForShoppingCartView(IQueryable<ShoppingCartProduct> shoppingCartProductsQuery);
 

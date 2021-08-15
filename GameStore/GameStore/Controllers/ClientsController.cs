@@ -76,7 +76,9 @@
 
             if (!userService.IsUserClient(userId)) return Redirect("Error");
 
-            var gamesQuery = this.gamesService.GetGamesForLibraryView(this.User.GetId());
+            var client = this.data.Clients.First(c => c.UserId == userId);
+
+            var gamesQuery = this.gamesService.GetGamesForLibraryView(client.Id);
 
             return View(gamesQuery);
         }

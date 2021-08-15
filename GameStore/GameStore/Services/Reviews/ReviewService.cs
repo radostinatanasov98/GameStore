@@ -21,7 +21,7 @@
                     .Where(r => r.Content != null && r.Caption != null)
                     .Select(r => new ReviewViewModel
                     {
-                        Username = this.data.Clients.First(c => c.Id == r.ClientId).Name,
+                        Username = this.data.Clients.FirstOrDefault(c => c.Id == r.ClientId).Name,
                         Caption = r.Caption,
                         Content = r.Content,
                         Rating = r.Rating,
