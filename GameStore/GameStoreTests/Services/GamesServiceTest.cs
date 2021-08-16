@@ -196,6 +196,100 @@
             Assert.True(result.Genres.Count() == 1);
         }
 
+        [Fact]
+        public void GetPegiRatingsShouldReturnCorrectViewModel()
+        {
+            // Arrange
+            using var data = this.GetData();
+
+            var gamesService = new GamesService(data);
+            // Act
+            var result = gamesService.GetPegiRatings();
+
+            // Assert
+            Assert.True(result.Count == 1);
+            Assert.Equal(1, result[0].Id);
+            Assert.Equal("test", result[0].Name);
+        }
+
+        [Fact]
+        public void CreateAddGameFormModelShouldReturnCorrectViewModel()
+        {
+            // Arrange
+            using var data = this.GetData();
+
+            var gamesService = new GamesService(data);
+            // Act
+            var result = gamesService.CreateAddGameFormModel();
+
+            // Assert
+            Assert.True(result.PegiRatings.Count() == 1);
+            Assert.True(result.Genres.Count() == 1);
+            Assert.Equal("test", result.PegiRatings.First().Name);
+            Assert.Equal("test", result.Genres.First().Name);
+        }
+
+        [Fact]
+        public void CreateGameShouldCreateCorrectDataEntries()
+        {
+            // Arrange
+            using var data = this.GetData();
+
+            var gamesService = new GamesService(data);
+
+            // Act
+            gamesService.CreateGame(new AddGameFormModel
+            {
+                Description = "specialDescriptionForThisTest",
+                TrailerUrl = "https://www.youtube.com/watch?v=oHfGhuidwBg",
+                Price = 39.99M,
+                CoverImageUrl = "test",
+                Name = "specialNameForThisTest",
+                PegiRatingId = 1,
+                GenreIds = new List<int>() { 1 },
+                MinimumCPU = "test",
+                MinimumGPU = "test",
+                MinimumOS = "test",
+                MinimumRAM = 4,
+                MinimumStorage = 4,
+                MinimumVRAM = 4,
+                RecommendedCPU = "test",
+                RecommendedGPU = "test",
+                RecommendedOS = "test",
+                RecommendedRAM = 4,
+                RecommendedStorage = 4,
+                RecommendedVRAM = 4
+            }, null, null, 1);
+
+            var result = data.Games.FirstOrDefault(g => g.Name == "specialNameForThisTest");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(result.Name == "specialNameForThisTest");
+            Assert.Null(result.MinimumRequirements);
+            Assert.Null(result.RecommendedRequirements);
+            Assert.Equal(1, result.PegiRatingId);
+            Assert.Equal("https://www.youtube.com/embed/oHfGhuidwBg", result.TrailerUrl);
+            Assert.Equal(39.99M, result.Price);
+        }
+
+        [Fact]
+        public void GetGameByIdShouldReturnCorrectGame()
+        {
+            // Arrange
+            var data = this.GetData();
+
+            var gamesService = new GamesService(data);
+
+            // Act
+            var result = gamesService.GetGameById(1);
+
+            // Assert
+            Assert.True(result.Name == "test0");
+            Assert.True(result.CoverImageUrl == "none0");
+            Assert.True(result.Id == 1);
+        }
+
         private GameStoreDbContext GetData()
         {
             var data = DatabaseMock.Instance;
@@ -246,9 +340,9 @@
                     Price = 39.99M,
                     CoverImageUrl = $"none{i}",
                     MinimumRequirements = null,
-                    MinimumRequirementsId = 1,
+                    MinimumRequirementsId = i + 1,
                     RecommendedRequirements = null,
-                    RecommendedRequirementsId = 1,
+                    RecommendedRequirementsId = i + 2,
                     Name = $"test{i}",
                     PegiRating = data.PegiRatings.First(pr => pr.Id == 1),
                     PegiRatingId = 1,
