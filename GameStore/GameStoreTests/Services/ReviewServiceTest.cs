@@ -57,7 +57,7 @@
             {
                 data.Reviews.Add(new Review
                 {
-                    Client = i < 3 ? new Client { Name = "test"} : null,
+                    Client = i < 3 ? new Client { DisplayName = "test"} : null,
                     Caption = caption,
                     Content = content,
                     Rating = i,

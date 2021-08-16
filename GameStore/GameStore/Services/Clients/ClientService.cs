@@ -95,7 +95,7 @@
                 ClientId = clientId,
                 ProfileId = profileId,
                 AreFriends = hasRelation,
-                Username = profile.Name,
+                Username = profile.DisplayName,
                 Games = games,
                 AreGamesPrivate = profile.AreGamesPrivate,
                 AreFriendsPrivate = profile.AreFriendsPrivate,
@@ -120,7 +120,7 @@
                         HasRequest = cr.HasFriendRequest,
                         AreFriends = cr.AreFriends,
                         ProfilePictureUrl = this.data.Clients.First(c => c.Id == cr.FriendId).ProfilePictureUrl,
-                        Username = this.data.Clients.First(c => c.Id == cr.FriendId).Name
+                        Username = this.data.Clients.First(c => c.Id == cr.FriendId).DisplayName
                     })
                     .ToList();
 
@@ -183,7 +183,7 @@
         private Client CreateClient(BecomeClientFormModel inputModel, string userId)
             => new Client
             {
-                Name = inputModel.Name,
+                DisplayName = inputModel.Name,
                 UserId = userId,
                 ProfilePictureUrl = inputModel.ProfilePictureUrl == null ? DefaultProfilePictureUrl : inputModel.ProfilePictureUrl,
                 Description = inputModel.Description,

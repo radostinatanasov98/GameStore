@@ -301,7 +301,7 @@
                 Description = "empty",
                 AreFriendsPrivate = true,
                 AreGamesPrivate = true,
-                Name = "test",
+                DisplayName = "test",
                 ProfilePictureUrl = "none",
                 UserId = "testId"
             });
@@ -311,7 +311,7 @@
             data.Publishers.Add(new Publisher
             {
                 Id = 1,
-                Name = "test",
+                DisplayName = "test",
                 UserId = "testId1"
             });
 

@@ -12,7 +12,7 @@
 
         [Required]
         [MaxLength(NameMaxLength)]
-        public string Name { get; init; }
+        public string DisplayName { get; init; }
 
         [Required]
         public string UserId { get; init; }

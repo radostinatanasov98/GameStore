@@ -42,7 +42,7 @@
 
             var validPublisher = new Publisher
             {
-                Name = publisher.Name,
+                DisplayName = publisher.Name,
                 UserId = this.User.GetId()
             };
 

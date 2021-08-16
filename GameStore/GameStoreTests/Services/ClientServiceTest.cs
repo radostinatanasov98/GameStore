@@ -79,7 +79,7 @@
             Assert.NotNull(shoppingCart);
             Assert.True(data.Clients.Any(c => c.UserId == userId));
             Assert.True(data.ShoppingCarts.Any(sc => sc.Client == client));
-            Assert.True(client.Name == model.Name);
+            Assert.True(client.DisplayName == model.Name);
             Assert.True(client.ProfilePictureUrl == model.ProfilePictureUrl);
             Assert.True(client.Description == model.Description);
             Assert.True(client.AreFriendsPrivate == model.AreFriendsPrivate);
@@ -259,7 +259,7 @@
             var client = new Client
             {
                 Id = clientId,
-                Name = "Peter",
+                DisplayName = "Peter",
                 UserId = userId,
                 Description = null,
                 AreGamesPrivate = true,
@@ -290,7 +290,7 @@
             Assert.Null(result.RelationId);
             Assert.Equal(clientId, result.ClientId);
             Assert.Equal(clientId, result.ProfileId);
-            Assert.Equal(client.Name, result.Username);
+            Assert.Equal(client.DisplayName, result.Username);
             Assert.Equal(client.Description, result.Description);
             Assert.Equal(client.ProfilePictureUrl, result.ProfilePictureUrl);
             Assert.True(result.AreGamesPrivate);

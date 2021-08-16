@@ -5,7 +5,7 @@
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
 
-    public class GameStoreDbContext : IdentityDbContext
+    public class GameStoreDbContext : IdentityDbContext<User>
     {
         public GameStoreDbContext(DbContextOptions<GameStoreDbContext> options)
             : base(options)
@@ -40,7 +40,7 @@
         {
             builder
                 .Entity<Client>()
-                .HasOne<IdentityUser>()
+                .HasOne<User>()
                 .WithOne()
                 .HasForeignKey<Client>(c => c.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -68,7 +68,7 @@
 
             builder
                 .Entity<Publisher>()
-                .HasOne<IdentityUser>()
+                .HasOne<User>()
                 .WithOne()
                 .HasForeignKey<Publisher>(p => p.UserId)
                 .OnDelete(DeleteBehavior.Restrict);

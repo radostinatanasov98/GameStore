@@ -1,6 +1,7 @@
 namespace GameStore
 {
     using GameStore.Data;
+    using GameStore.Data.Models;
     using GameStore.Infrastructure;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -25,9 +26,10 @@ namespace GameStore
             services.AddDbContext<GameStoreDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => 
+            services.AddDefaultIdentity<User>(options => 
             {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireDigit = false;
@@ -35,6 +37,7 @@ namespace GameStore
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<GameStoreDbContext>();
 
             services.AddControllersWithViews(options =>

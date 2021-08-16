@@ -70,7 +70,7 @@
                 {
                     Id = p.Game.Id,
                     Name = p.Game.Name,
-                    Publisher = p.Game.Publisher.Name,
+                    Publisher = p.Game.Publisher.DisplayName,
                     PegiRating = p.Game.PegiRating.Name,
                     Price = p.Game.Price,
                     ImageUrl = p.Game.CoverImageUrl
@@ -221,7 +221,7 @@
                     {
                         Id = gameId,
                         Name = g.Name,
-                        PublisherName = this.data.Publishers.First(p => p.Id == g.PublisherId).Name,
+                        PublisherName = this.data.Publishers.First(p => p.Id == g.PublisherId).DisplayName,
                         Price = g.Price,
                         Description = g.Description,
                         CoverImageUrl = g.CoverImageUrl,
@@ -258,8 +258,8 @@
         public HomePageViewModel GetGamesForHomePage()
             => new HomePageViewModel
             {
-                TopRatedGames = GetGamesForHoverModel().OrderByDescending(g => g.Rating),
-                LatestGames = GetGamesForHoverModel().OrderByDescending(g => g.GameId)
+                TopRatedGames = GetGamesForHoverModel().OrderByDescending(g => g.Rating).Take(6),
+                LatestGames = GetGamesForHoverModel().OrderByDescending(g => g.GameId).Take(6)
             };
     }
 }

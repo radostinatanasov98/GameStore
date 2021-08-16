@@ -48,7 +48,7 @@
                 hasRelation,
                 profile,
                 this.gamesService.GetHoverModelForProfile(this.clientService.GetOwnedGameIds(profileId)),
-                this.reviewService.SortByUser(profile.Name));
+                this.reviewService.SortByUser(profile.DisplayName));
 
             return View(model);
         }

@@ -33,7 +33,7 @@
         {
             // Arrange
             const int gameId = 1;
-            var publisher = new Publisher { Name = "test", Id = 1};
+            var publisher = new Publisher { DisplayName = "test", Id = 1};
 
             using var data = DatabaseMock.Instance;
 
