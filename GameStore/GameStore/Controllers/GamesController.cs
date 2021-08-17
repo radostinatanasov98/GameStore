@@ -96,14 +96,14 @@
         [ActionName("Details")]
         public IActionResult DetailsPost(int gameId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("Error");
+            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
 
             var shoppingCartQuery = this.shoppingCartService.GetShoppingCart(this.User.GetId());
 
             var client = this.clientService.GetClientByUserId(this.User.GetId());
 
-            if (this.clientService.ClientOwnsGame(client.Id, gameId)) return Redirect("Error");
-            if (this.shoppingCartService.GetShoppingCart(this.User.GetId()).ShoppingCartProducts.Any(scp => scp.GameId == gameId)) return Redirect("Error");
+            if (this.clientService.ClientOwnsGame(client.Id, gameId)) return Redirect("/Home/Error");
+            if (this.shoppingCartService.GetShoppingCart(this.User.GetId()).ShoppingCartProducts.Any(scp => scp.GameId == gameId)) return Redirect("/Home/Error");
 
             this.shoppingCartService.AddShoppingCartProduct(shoppingCartQuery.Id, gameId);
 
@@ -113,16 +113,16 @@
         [Authorize]
         public IActionResult Remove(int gameId)
         {
-            if (this.userService.IsUserPublisher(this.User.GetId()) && !this.User.IsAdmin()) return BadRequest();
+            if (!this.userService.IsUserPublisher(this.User.GetId()) && !this.User.IsAdmin()) return Redirect("/Home/Error");
 
             var game = this.gamesService.GetGameById(gameId);
 
-            if (game == null) return Redirect("Error");
+            if (game == null) return Redirect("/Home/Error");
 
             var publisherId = this.data.Games.FirstOrDefault(g => g.Id == gameId).PublisherId;
             var publisher = this.data.Publishers.FirstOrDefault(p => p.Id == publisherId);
 
-            if (publisher.UserId != this.User.GetId() && !this.User.IsAdmin()) return BadRequest();
+            if (publisher.UserId != this.User.GetId() && !this.User.IsAdmin()) return Redirect("/Home/Error");
 
             var minRequirements = this.requirementsService.GetRequirementsById(game.MinimumRequirementsId);
             var recRequirements = this.requirementsService.GetRequirementsById(game.RecommendedRequirementsId);

@@ -141,7 +141,7 @@
                         Rating = 5,
                         GameId = 6
                     })
-                    .WithData(new GameGenre 
+                    .WithData(new GameGenre
                     {
                         GameId = 6,
                         GenreId = 1
@@ -178,6 +178,190 @@
                 .ShouldReturn()
                 .Redirect("/Home/Error"));
 
+        [Fact]
+        public void DetailsPostShouldAddGameToShoppingCartAndRedirectToShoppingCart()
+            => MyController<GamesController>
+                .Instance(controller => controller
+                    .WithUser(user => user
+                        .WithIdentifier("testId"))
+                    .WithData(GetClient())
+                    .WithData(GetShoppingCart()))
+                .Calling(c => c.DetailsPost(1))
+                .ShouldHave()
+                .ActionAttributes(attributes => attributes
+                    .RestrictingForHttpMethod(HttpMethod.Post)
+                    .RestrictingForAuthorizedRequests())
+                .ValidModelState()
+                .Data(data => data
+                    .WithSet<ShoppingCartProduct>(scp => scp
+                        .Any(p =>
+                            p.ShoppingCartId == 1 &&
+                            p.GameId == 1)))
+                .AndAlso()
+                .ShouldReturn()
+                .Redirect("/Clients/ShoppingCart");
+
+        [Fact]
+        public void DetailsPostShouldRedirectToErrorPageWhenGameIsPresentInShoppingCart()
+            => MyController<GamesController>
+                .Instance(controller => controller
+                    .WithUser(user => user
+                        .WithIdentifier("testId"))
+                    .WithData(GetClient())
+                    .WithData(GetShoppingCart())
+                    .WithData(new ShoppingCartProduct
+                    {
+                        GameId = 1,
+                        ShoppingCartId = 1
+                    }))
+                .Calling(c => c.DetailsPost(1))
+                .ShouldHave()
+                .ActionAttributes(attributes => attributes
+                    .RestrictingForHttpMethod(HttpMethod.Post)
+                    .RestrictingForAuthorizedRequests())
+                .AndAlso()
+                .ShouldReturn()
+                .Redirect("/Home/Error");
+
+        [Fact]
+        public void DetailsPostShouldRedirectToErrorPageWhenGameIsOwned()
+            => MyController<GamesController>
+                .Instance(controller => controller
+                    .WithUser(user => user
+                        .WithIdentifier("testId"))
+                    .WithData(GetClient())
+                    .WithData(GetShoppingCart())
+                    .WithData(new ClientGame
+                    {
+                        GameId = 1,
+                        ClientId = 1
+                    }))
+                .Calling(c => c.DetailsPost(1))
+                .ShouldHave()
+                .ActionAttributes(attributes => attributes
+                    .RestrictingForHttpMethod(HttpMethod.Post)
+                    .RestrictingForAuthorizedRequests())
+                .AndAlso()
+                .ShouldReturn()
+                .Redirect("/Home/Error");
+
+        [Fact]
+        public void DetailsPostShouldRedirectToErrorPageWhenUserIsNotAClient()
+            => MyController<GamesController>
+                .Instance(controller => controller
+                    .WithUser(user => user
+                        .WithIdentifier("testId1"))
+                    .WithData(GetClient())
+                    .WithData(GetShoppingCart()))
+                .Calling(c => c.DetailsPost(1))
+                .ShouldHave()
+                .ActionAttributes(attributes => attributes
+                    .RestrictingForHttpMethod(HttpMethod.Post)
+                    .RestrictingForAuthorizedRequests())
+                .AndAlso()
+                .ShouldReturn()
+                .Redirect("/Home/Error");
+
+        [Fact]
+        public void RemoveShouldRemoveGameFromDatabaseIfClientsIsPublisherAndIsOwnerOfTheGame()
+            => MyController<GamesController>
+                .Instance(controller => controller
+                    .WithUser(user => user
+                        .WithIdentifier("testId"))
+                    .WithData(GetPublisher())
+                    .WithData(GetGenre())
+                    .WithData(GetPegiRating())
+                    .WithData(GetRequirements())
+                    .WithData(new Game
+                    {
+                        PublisherId = 1,
+                        Description = "test",
+                        RecommendedRequirementsId = 1,
+                        MinimumRequirementsId = 2,
+                        Name = "test",
+                        PegiRatingId = 1,
+                        Price = 39.99M,
+                        DateAdded = DateTime.UtcNow,
+                        CoverImageUrl = null,
+                        TrailerUrl = "https://www.youtube.com/embed/bjN-3EyXNyE"
+                    }))
+                .Calling(c => c.Remove(1))
+                .ShouldHave()
+                .ActionAttributes(attributes => attributes
+                    .RestrictingForAuthorizedRequests())
+                .Data(data => data
+                    .WithSet<Game>(game => game
+                        .All(g => g.Id != 1)))
+                .AndAlso()
+                .ShouldReturn()
+                .Redirect("/Games/All");
+
+        [Fact]
+        public void RemoveShouldRedirectToErrorPageWhenUsersIsNotAPublisher()
+            => MyController<GamesController>
+                .Instance(controller => controller
+                    .WithUser(user => user
+                        .WithIdentifier("invalidId")))
+                .Calling(c => c.Remove(1))
+                .ShouldHave()
+                .ActionAttributes(attributes => attributes
+                    .RestrictingForAuthorizedRequests())
+                .AndAlso()
+                .ShouldReturn()
+                .Redirect("/Home/Error");
+
+        [Fact]
+        public void RemoveShouldRedirectToErrorPageWhenGameDoesNotExist()
+            => MyController<GamesController>
+                .Instance(controller => controller
+                    .WithUser(user => user
+                        .WithIdentifier("testId"))
+                    .WithData(GetPublisher()))
+                .Calling(c => c.Remove(1))
+                .ShouldHave()
+                .ActionAttributes(attributes => attributes
+                    .RestrictingForAuthorizedRequests())
+                .AndAlso()
+                .ShouldReturn()
+                .Redirect("/Home/Error");
+
+        [Fact]
+        public void RemoveShouldRedirectToErrorPageWhenUserIsPublisherButIsNotOwnerOfTheGame()
+            => MyController<GamesController>
+                .Instance(controller => controller
+                    .WithUser(user => user
+                        .WithIdentifier("testId"))
+                    .WithData(GetPublisher())
+                    .WithData(new Publisher
+                    {
+                        Id = 2,
+                        UserId = "invalid"
+                    })
+                    .WithData(GetGenre())
+                    .WithData(GetPegiRating())
+                    .WithData(GetRequirements())
+                    .WithData(new Game
+                    {
+                        Id = 1,
+                        PublisherId = 2,
+                        Description = "test",
+                        RecommendedRequirementsId = 1,
+                        MinimumRequirementsId = 2,
+                        Name = "test",
+                        PegiRatingId = 1,
+                        Price = 39.99M,
+                        DateAdded = DateTime.UtcNow,
+                        CoverImageUrl = null,
+                        TrailerUrl = "https://www.youtube.com/embed/bjN-3EyXNyE"
+                    }))
+                .Calling(c => c.Remove(1))
+                .ShouldHave()
+                .ActionAttributes(attributes => attributes
+                    .RestrictingForAuthorizedRequests())
+                .AndAlso()
+                .ShouldReturn()
+                .Redirect("/Home/Error");
+
         private static Publisher GetPublisher()
         {
             var publisher = new Publisher
@@ -187,6 +371,32 @@
             };
 
             return publisher;
+        }
+
+        private static Client GetClient()
+        {
+            var client = new Client
+            {
+                UserId = "testId",
+                DisplayName = "testName",
+                Description = null,
+                AreFriendsPrivate = true,
+                AreGamesPrivate = true,
+                ProfilePictureUrl = null,
+                ShoppingCartId = 1,
+            };
+
+            return client;
+        }
+
+        private static ShoppingCart GetShoppingCart()
+        {
+            var shoppingCart = new ShoppingCart
+            {
+                ClientId = 1
+            };
+
+            return shoppingCart;
         }
 
         private static PegiRating GetPegiRating()
@@ -208,6 +418,17 @@
                 DateAdded = DateTime.UtcNow,
                 CoverImageUrl = null,
                 TrailerUrl = "https://www.youtube.com/embed/bjN-3EyXNyE"
+            });
+
+        private IEnumerable<Requirements> GetRequirements()
+            => Enumerable.Range(0, 10).Select(r => new Requirements
+            {
+                GPU = "test",
+                CPU = "test",
+                OS = "test",
+                RAM = 4,
+                Storage = 4,
+                VRAM = 4
             });
     }
 }
