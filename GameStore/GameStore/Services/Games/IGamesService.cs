@@ -8,6 +8,8 @@
 
     public interface IGamesService
     {
+        public bool GameExists(int gameId);
+
         public List<GameListingViewModel> GetGamesForLibraryView(int clientId);
 
         public List<GameShoppingCartViewModel> GetGamesForShoppingCartView(IQueryable<ShoppingCartProduct> shoppingCartProductsQuery);

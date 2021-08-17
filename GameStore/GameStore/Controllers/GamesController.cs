@@ -3,10 +3,8 @@
     using GameStore.Data;
     using GameStore.Infrastructure;
     using GameStore.Models.Games;
-    using GameStore.Models.Reviews;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using System.Collections.Generic;
     using System.Linq;
     using Services.Games;
     using GameStore.Services.Users;
@@ -14,7 +12,6 @@
     using GameStore.Services.Publishers;
     using GameStore.Services.ShoppingCart;
     using GameStore.Services.Clients;
-    using GameStore.Services.Reviews;
 
     public class GamesController : Controller
     {
@@ -25,7 +22,6 @@
         private readonly IPublisherService publisherService;
         private readonly IShoppingCartService shoppingCartService;
         private readonly IClientService clientService;
-        private readonly IReviewService reviewService;
 
         public GamesController(GameStoreDbContext data)
         {
@@ -36,7 +32,6 @@
             this.publisherService = new PublisherService(data);
             this.shoppingCartService = new ShoppingCartService(data);
             this.clientService = new ClientService(data);
-            this.reviewService = new ReviewService(data);
         }
 
         public IActionResult All(string searchQuery, string sortQuery, string searchByQuery)
@@ -49,7 +44,7 @@
         [Authorize]
         public IActionResult Add()
         {
-            if (!this.userService.IsUserPublisher(this.User.GetId())) return Redirect("Error");
+            if (!this.userService.IsUserPublisher(this.User.GetId())) return Redirect("/Home/Error");
 
             return View(this.gamesService.CreateAddGameFormModel());
         }
@@ -90,7 +85,11 @@
         }
 
         public IActionResult Details(int gameId)
-            => View(this.gamesService.GetGameDetailsViewModel(gameId));
+        {
+            if (!this.gamesService.GameExists(gameId)) return Redirect("/Home/Error");
+
+            return View(this.gamesService.GetGameDetailsViewModel(gameId));
+        }
 
         [Authorize]
         [HttpPost]

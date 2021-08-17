@@ -214,7 +214,10 @@
         }
 
         public GameDetailsViewModel GetGameDetailsViewModel(int gameId)
-            => this.data
+        {
+            var genres = this.data.GameGenres.Where(gg => gg.GameId == gameId).Select(gg => gg.Genre.Name).ToList();
+
+            return this.data
                     .Games
                     .Where(g => g.Id == gameId)
                     .Select(g => new GameDetailsViewModel
@@ -232,9 +235,10 @@
                         Rating = this.data.Reviews.Any(r => r.GameId == gameId) ? this.data.Reviews.Where(r => r.GameId == gameId).Average(r => r.Rating) : 0,
                         ReviewsCount = this.data.Reviews.Count(r => r.GameId == gameId && r.Content != null && r.Caption != null),
                         RatingsCount = this.data.Reviews.Count(r => r.GameId == gameId),
-                        Genres = GetGameGenreNames(g, this.data)
+                        Genres = genres
                     })
                     .First();
+        }
 
         public Game GetGameById(int gameId)
             => this.data
@@ -261,5 +265,10 @@
                 TopRatedGames = GetGamesForHoverModel().OrderByDescending(g => g.Rating).Take(6),
                 LatestGames = GetGamesForHoverModel().OrderByDescending(g => g.GameId).Take(6)
             };
+
+        public bool GameExists(int gameId)
+            => this.data
+            .Games
+            .Any(g => g.Id == gameId);
     }
 }
