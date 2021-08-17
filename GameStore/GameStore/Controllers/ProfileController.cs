@@ -31,15 +31,21 @@
         [Authorize]
         public IActionResult Main(int profileId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("Error");
+            bool isAdmin = this.User.IsAdmin();
+
+            if (!this.userService.IsUserClient(this.User.GetId()) && !isAdmin) return Redirect("Error");
 
             var profile = this.clientService.GetClientById(profileId);
 
             if (profile == null) return BadRequest();
 
-            var relationship = this.clientService.GetRelationship(this.clientService.GetClientId(this.User.GetId()), profileId);
+            var clientId = this.clientService.GetClientId(this.User.GetId());
+
+            var relationship = this.clientService.GetRelationship(clientId, profileId);
             var hasRelation = this.clientService.RelationCheck(relationship);
             int? relationId = this.clientService.GetRelationId(hasRelation, relationship);
+
+            var reviews = this.reviewService.GetReviewsForViewModel(isAdmin, clientId);
 
             var model = this.clientService.GetClientProfileViewModel(
                 this.clientService.GetClientId(this.User.GetId()),
@@ -48,7 +54,7 @@
                 hasRelation,
                 profile,
                 this.gamesService.GetHoverModelForProfile(this.clientService.GetOwnedGameIds(profileId)),
-                this.reviewService.SortByUser(profile.DisplayName));
+                this.reviewService.SortByUser(reviews, profile.DisplayName));
 
             return View(model);
         }

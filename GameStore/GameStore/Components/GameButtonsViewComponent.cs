@@ -21,13 +21,13 @@
         {
             bool isPublisher = false;
             bool isOwned = false;
-
+            
             if (this.User.Identity.IsAuthenticated)
             {
                 isPublisher = this.data
                     .Publishers
                     .Where(p => p.UserId == this.UserClaimsPrincipal.GetId())
-                    .Any(p => p.Games.Any(g => g.Id == GameId));
+                    .Any(p => p.Games.Any(g => g.Id == GameId)) || this.UserClaimsPrincipal.IsInRole("Administrator");
 
                 var client = this.data
                     .Clients

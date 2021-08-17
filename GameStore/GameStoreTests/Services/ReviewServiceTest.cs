@@ -1,8 +1,10 @@
 ﻿namespace GameStore.Tests.Services
 {
     using GameStore.Data.Models;
+    using GameStore.Models.Reviews;
     using GameStore.Services.Reviews;
     using GameStore.Tests.Mocks;
+    using System.Collections.Generic;
     using System.Linq;
     using Xunit;
 
@@ -34,7 +36,7 @@
             var reviewService = new ReviewService(data);
 
             // Act
-            var result = reviewService.GetReviewsForViewModel();
+            var result = reviewService.GetReviewsForViewModel(false, null);
 
             // Assert
             for (int i = 0; i < 5; i++)
@@ -70,7 +72,8 @@
             var reviewService = new ReviewService(data);
 
             // Act
-            var result = reviewService.SortByUser("test");
+            var reviews = reviewService.GetReviewsForViewModel(false, null);
+            var result = reviewService.SortByUser(reviews, "test");
 
             // Assert
             Assert.True(result.Count == 3);
@@ -106,7 +109,8 @@
             var reviewService = new ReviewService(data);
 
             // Act
-            var result = reviewService.SortByGame(1);
+            var reviews = reviewService.GetReviewsForViewModel(false, null);
+            var result = reviewService.SortByGame(reviews, 1);
 
             // Assert
             Assert.True(result.Count == 3);

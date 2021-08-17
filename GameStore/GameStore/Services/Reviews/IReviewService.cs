@@ -6,13 +6,19 @@
 
     public interface IReviewService
     {
-        public List<ReviewViewModel> GetReviewsForViewModel();
+        public List<ReviewViewModel> GetReviewsForViewModel(bool isAdmin, int? clientId);
 
-        public List<ReviewViewModel> SortByUser(string username);
+        public List<ReviewViewModel> SortByUser(List<ReviewViewModel> reviews, string username);
 
-        public List<ReviewViewModel> SortByGame(int gameId);
+        public List<ReviewViewModel> SortByGame(List<ReviewViewModel> reviews, int gameId);
 
-        public bool HasReviewed(int clientId, int gameId);
+        public void Edit(int clientId, int gameId, PostReviewFormModel model);
+
+        public void Remove(int clientId, int gameId);
+
+        public bool HasReviewed(int? clientId, int gameId);
+
+        public bool IsOwner(int clientId, int reviewId);
 
         public void CreateReview(string content,
             string caption,

@@ -10,12 +10,12 @@
         public int Id { get; init; }
 
         [MaxLength(CaptionLength)]
-        public string Caption { get; init; }
+        public string Caption { get; set; }
 
         [MaxLength(ContentMaxLength)]
-        public string Content { get; init; }
+        public string Content { get; set; }
 
-        public int Rating { get; init; }
+        public int Rating { get; set; }
 
         [Required]
         public int GameId { get; init; }

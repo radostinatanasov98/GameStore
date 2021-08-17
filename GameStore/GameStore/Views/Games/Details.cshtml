@@ -22,9 +22,16 @@
                         <div class="content text-center">
                             <div class="ratings">
                                 <h3>Ratings & Reveiws</h3>
-                                <span class="product-rating">@Model.Rating.ToString("F2")</span><span>/5</span>
-                                <div class="rating-text"> <span>@Model.RatingsCount ratings & @Model.ReviewsCount reviews</span> </div>
-                                <a asp-area="" asp-controller="Games" asp-action="Reviews" asp-route-GameId="@Model.Id" class="btn btn-primary">View Reveiws</a>
+                                @if (Model.ReviewsCount > 0 || Model.RatingsCount > 0)
+                                {
+                                    <span class="product-rating">@Model.Rating.ToString("F2")</span><span>/5</span>
+                                    <div class="rating-text"> <span>@Model.RatingsCount ratings & @Model.ReviewsCount reviews</span> </div>
+                                }
+                                else
+                                {
+                                    <div>This games still hasn't been reviewd or rated</div>
+                                }
+                                <a asp-area="" asp-controller="Reviews" asp-action="All" asp-route-GameId="@Model.Id" class="btn btn-primary">View Reveiws</a>
                             </div>
                         </div>
                     </div>

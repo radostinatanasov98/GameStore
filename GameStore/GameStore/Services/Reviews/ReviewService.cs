@@ -15,31 +15,61 @@
             this.data = data;
         }
 
-        public List<ReviewViewModel> GetReviewsForViewModel()
+        public List<ReviewViewModel> GetReviewsForViewModel(bool isAdmin, int? clientId)
             => this.data
                     .Reviews
                     .Where(r => r.Content != null && r.Caption != null)
                     .Select(r => new ReviewViewModel
                     {
+                        Id = r.Id,
                         Username = this.data.Clients.FirstOrDefault(c => c.Id == r.ClientId).DisplayName,
+                        ClientId = r.ClientId,
                         Caption = r.Caption,
                         Content = r.Content,
                         Rating = r.Rating,
-                        GameId = r.GameId
+                        GameId = r.GameId,
+                        GameName = this.data.Games.FirstOrDefault(g => g.Id == r.GameId).Name,
+                        CanEdit = isAdmin || clientId == r.ClientId
                     })
+                    .OrderByDescending(r => r.ClientId == clientId)
                     .ToList();
 
-        public List<ReviewViewModel> SortByUser(string username)
-            => this.GetReviewsForViewModel()
-            .Where(r => r.Username == username)
-            .ToList();
+        public void Edit(int clientId, int gameId, PostReviewFormModel model)
+        {
+            var review = this.data
+                .Reviews
+                .First(r => r.ClientId == clientId && r.GameId == gameId);
 
-        public List<ReviewViewModel> SortByGame(int gameId)
-            => this.GetReviewsForViewModel()
+            review.Rating = model.Rating;
+            review.Caption = model.Caption;
+            review.Content = model.Content;
+
+            this.data.SaveChanges();
+        }
+
+        public void Remove(int clientId, int gameId)
+        {
+            var review = this.data
+                .Reviews
+                .First(r => r.ClientId == clientId && r.GameId == gameId);
+
+            this.data.Remove(review);
+
+            this.data.SaveChanges();
+        }
+
+        public List<ReviewViewModel> SortByUser(List<ReviewViewModel> reviews, string username)
+            => reviews
+                .Where(r => r.Username == username)
+                .ToList();
+
+
+        public List<ReviewViewModel> SortByGame(List<ReviewViewModel> reviews, int gameId)
+            => reviews
             .Where(r => r.GameId == gameId)
             .ToList();
 
-        public bool HasReviewed(int clientId, int gameId)
+        public bool HasReviewed(int? clientId, int gameId)
             => this.data
             .Reviews
             .Any(r => r.ClientId == clientId && r.GameId == gameId);
@@ -58,6 +88,11 @@
                 });
 
             this.data.SaveChanges();
+        }
+
+        public bool IsOwner(int clientId, int reviewId)
+        {
+            return this.data.Reviews.Any(r => r.Id == reviewId && r.ClientId == clientId);
         }
     }
 }

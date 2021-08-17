@@ -1,0 +1,15 @@
+﻿@model AllReviewsViewModel
+
+@if (!Model.HasReviewed)
+{
+    <a asp-area="" asp-controller="Reviews" asp-action="Write" asp-route-GameId="@Model.GameId" class="btn btn-primary">Write a review</a>
+}
+
+<div class="container" style="margin-bottom: 50px; margin-top: 25px;">
+    <div class="card" style="margin-top: 10px; width: auto; height: auto;">
+        <div class="card-header" style="text-align: center; font-weight: bold; font-size: 150%;">
+            All Reviews for '@Model.Name'
+        </div>
+        @await Component.InvokeAsync("DisplayReviews", new { reviews = Model.Reviews })
+    </div>
+</div>

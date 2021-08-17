@@ -9,6 +9,8 @@
 
         public int GameId { get; init; }
 
+        public bool HasReviewed { get; init; }
+
         public IEnumerable<ReviewViewModel> Reviews { get; init; } = new List<ReviewViewModel>();
     }
 }

@@ -114,7 +114,7 @@
         [Authorize]
         public IActionResult Remove(int gameId)
         {
-            if (this.userService.IsUserPublisher(this.User.GetId())) return Redirect("Error");
+            if (this.userService.IsUserPublisher(this.User.GetId()) && !this.User.IsAdmin()) return BadRequest();
 
             var game = this.gamesService.GetGameById(gameId);
 
@@ -123,7 +123,7 @@
             var publisherId = this.data.Games.FirstOrDefault(g => g.Id == gameId).PublisherId;
             var publisher = this.data.Publishers.FirstOrDefault(p => p.Id == publisherId);
 
-            if (publisher.UserId != this.User.GetId()) return BadRequest();
+            if (publisher.UserId != this.User.GetId() && !this.User.IsAdmin()) return BadRequest();
 
             var minRequirements = this.requirementsService.GetRequirementsById(game.MinimumRequirementsId);
             var recRequirements = this.requirementsService.GetRequirementsById(game.RecommendedRequirementsId);
@@ -131,54 +131,6 @@
             this.gamesService.RemoveGame(game, minRequirements, recRequirements);
 
             return Redirect("/Games/All");
-        }
-
-        public IActionResult Reviews(int gameId)
-        {
-            var model = new AllReviewsViewModel
-            {
-                Name = this.gamesService.GetGameById(gameId).Name,
-                GameId = gameId,
-                Reviews = this.reviewService.SortByGame(gameId)
-            };
-
-            return View(model);
-        }
-
-        public IActionResult PostReview()
-            => View(new PostReviewFormModel
-            {
-                Ratings = new List<int> { 1, 2, 3, 4, 5 }
-            });
-
-        [Authorize]
-        [HttpPost]
-        public IActionResult PostReview(int gameId, PostReviewFormModel model)
-        {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("~/Shared/Error");
-
-            if ((model.Caption == null && model.Content != null) || (model.Caption != null && model.Content == null))
-            {
-                model.Ratings = new List<int> { 1, 2, 3, 4, 5 };
-
-                return View(model);
-            }
-
-            var clientId = this.clientService.GetClientByUserId(this.User.GetId()).Id;
-
-            var ownsGame = this.clientService.ClientOwnsGame(clientId, gameId);
-
-            var alreadyReviewed = this.reviewService.HasReviewed(clientId, gameId);
-
-            if (!ownsGame || alreadyReviewed) return View();
-
-            this.reviewService.CreateReview(model.Content,
-                model.Caption,
-                model.Rating,
-                clientId,
-                gameId);
-
-            return Redirect("/Games/Reviews?GameId=" + gameId);
         }
     }
 }

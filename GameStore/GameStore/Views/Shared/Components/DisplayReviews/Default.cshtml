@@ -1,0 +1,25 @@
+﻿@model List<ReviewViewModel>
+
+@foreach (var review in Model)
+{
+    <div class="card-body">
+        <div class="card">
+            <div class="card-header">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Main" asp-route-ProfileId="@review.ClientId" style="float: left; font-weight: bold;">@review.Username</a>
+                <a class="nav-link text-dark" asp-area="" asp-controller="Games" asp-action="Details" asp-route-GameId="@review.GameId" style="float: right; font-weight: bold;">@review.GameName</a>
+            </div>
+            <div class="card-body">
+                <blockquote class="blockquote mb-0">
+                    <h3>@review.Caption</h3>
+                    <p>@review.Content</p>
+                    <footer style="font-size: 15px; color: dimgray; float: left;">@review.Rating / 5</footer>
+                    @if (review.CanEdit)
+                    {
+                        <a class="btn btn-primary" asp-area="" asp-controller="Reviews" asp-action="Write" asp-route-GameId="@review.GameId" style="float: right; margin-left: 5px;">Edit</a>
+                        <a class="btn btn-primary" asp-area="" asp-controller="Reviews" asp-action="Remove" asp-route-ReviewId="@review.Id" asp-route-GameId="@review.GameId" style="background-color: red; float: right;">Remove</a>
+                    }
+                </blockquote>
+            </div>
+        </div>
+    </div>
+}

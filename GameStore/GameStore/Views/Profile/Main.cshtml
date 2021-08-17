@@ -133,21 +133,7 @@
                                 <div class="card-header" style="text-align: center; font-weight: bold; font-size: 150%;">
                                     All reviews from this user:
                                 </div>
-                                @foreach (var review in Model.Reviews)
-                                 {
-                                    <div class="card-body">
-                                        <div class="card">
-                                            <div class="card-header">@review.Username</div>
-                                            <div class="card-body">
-                                                <blockquote class="blockquote mb-0">
-                                                    <h3>@review.Caption</h3>
-                                                    <p>@review.Content</p>
-                                                    <footer style="font-size: 15px; color: dimgray;">@review.Rating / 5</footer>
-                                                </blockquote>
-                                            </div>
-                                        </div>
-                                    </div>
-                                 }
+                                @await Component.InvokeAsync("DisplayReviews", new { reviews = Model.Reviews })
                             </div>
                          }
                     </div>
