@@ -1,52 +1,70 @@
-﻿namespace GameStore.Tests.Controller
+﻿namespace GameStore.Tests.Controllers
 {
     using GameStore.Controllers;
     using GameStore.Data.Models;
     using GameStore.Models.Home;
-    using GameStore.Tests.Mocks;
-    using Microsoft.AspNetCore.Mvc;
+    using MyTested.AspNetCore.Mvc;
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Xunit;
 
     public class HomecontrollerTest
     {
         [Fact]
-        public void ErrorShouldReturnView()
-        {
-            // Arrange
-            var homeController = new HomeController(null);
-
-            // Act
-            var result = homeController.Error();
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.IsType<ViewResult>(result);
-        }
+        public void IndexShouldReturnCorrectAmountOfGames()
+            => MyMvc
+                .Pipeline()
+                .ShouldMap("/")
+                .To<HomeController>(c => c.Index())
+                .Which(controller => controller
+                    .WithData(GetPublisher())
+                    .WithData(GetGenre())
+                    .WithData(GetPegiRating())
+                    .WithData(GetGames()))
+                .ShouldReturn()
+                .View(view => view
+                    .WithModelOfType<HomePageViewModel>()
+                    .Passing(m => m.TopRatedGames.Count() == 5 && m.LatestGames.Count() == 5));
 
         [Fact]
-        public void GetIndexShoulTakeCorrectAmountOfGames()
+        public void ErrorShouldReturnView()
+        => MyController<HomeController>
+            .Instance()
+            .Calling(c => c.Error())
+            .ShouldReturn()
+            .View();
+
+        private static Publisher GetPublisher()
         {
-            // Arrange
-            var data = DatabaseMock.Instance;
-            data.Games.AddRange(Enumerable.Range(0, 8).Select(g => new Game()));
-            data.SaveChanges();
+            var publisher = new Publisher
+            {
+                UserId = "testId",
+                DisplayName = "testName"
+            };
 
-            var homeController = new HomeController(data);
-
-            // Act
-            var result = homeController.Index();
-
-            // Assert
-            Assert.NotNull(result);
-            var viewResult = Assert.IsType<ViewResult>(result);
-
-            var model = viewResult.Model;
-
-            var indexViewModel = Assert.IsType<HomePageViewModel>(model);
-
-            Assert.Equal(6, indexViewModel.TopRatedGames.Count());
-            Assert.Equal(6, indexViewModel.LatestGames.Count());
+            return publisher;
         }
+
+        private static PegiRating GetPegiRating()
+            => new PegiRating();
+
+        private static Genre GetGenre()
+            => new Genre { Name = "test" };
+
+        private static IEnumerable<Game> GetGames()
+            => Enumerable.Range(0, 5).Select(g => new Game
+            {
+                PublisherId = 1,
+                Description = "test",
+                RecommendedRequirementsId = 1,
+                MinimumRequirementsId = 1,
+                Name = "test",
+                PegiRatingId = 1,
+                Price = 39.99M,
+                DateAdded = DateTime.UtcNow,
+                CoverImageUrl = null,
+                TrailerUrl = "https://www.youtube.com/embed/bjN-3EyXNyE"
+            });
     }
 }
