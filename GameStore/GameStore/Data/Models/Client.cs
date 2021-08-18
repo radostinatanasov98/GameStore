@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+
+    using static DataConstants.Shared;
     using static DataConstants.Client;
 
     public class Client
@@ -17,8 +19,10 @@
         [Required]
         public string UserId { get; init; }
 
+        [MaxLength(DescriptionMaxLength)]
         public string Description { get; set; }
 
+        [RegularExpression(ImageUrlRegularExpression)]
         public string ProfilePictureUrl { get; set; }
 
         public bool AreFriendsPrivate { get; set; }

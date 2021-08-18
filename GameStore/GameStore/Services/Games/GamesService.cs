@@ -23,6 +23,7 @@
                 .Select(g => new GameListingViewModel
                 {
                     Id = g.Id,
+                    PublisherName = this.data.Publishers.First(p => p.Id == g.PublisherId).DisplayName,
                     Name = g.Name,
                     CoverImageUrl = g.CoverImageUrl,
                     PegiRating = g.PegiRating.Name,
@@ -107,14 +108,24 @@
             return games;
         }
 
+        public List<GameListingViewModel> GetGamesListingByPublisher(List<string> tokens)
+        {
+            var games = new List<GameListingViewModel>();
+
+            tokens.ForEach(t => games.AddRange(GetGamesForAllView().Where(g => g.PublisherName.ToLower().Contains(t.ToLower()) && !games.Any(ga => ga.Name == g.Name))));
+
+            return games;
+        }
+
         public List<GameListingViewModel> HandleSearchQueries(string searchQuery, string searchByQuery)
         {
             if (searchQuery != null)
             {
                 var tokens = searchQuery.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                if (searchByQuery == null || searchByQuery == "Name") return this.GetGamesListingSortedByName(tokens);
+                if (searchByQuery == null) return this.GetGamesListingSortedByName(tokens);
                 else if (searchByQuery == "Genre") return this.GetGamesListingByGenre(tokens);
+                else if (searchByQuery == "Publisher") return this.GetGamesListingByPublisher(tokens);
             }
 
             return this.GetGamesForAllView();
@@ -247,6 +258,11 @@
 
         public void RemoveGame(Game game, Requirements minRequirements, Requirements recRequirements)
         {
+            var clientGames = this.data.ClientGames.Where(cg => cg.GameId == game.Id);
+            var shoppingCartProducts = this.data.ShoppingCartProducts.Where(scp => scp.GameId == game.Id);
+
+            this.data.ShoppingCartProducts.RemoveRange(shoppingCartProducts);
+            this.data.ClientGames.RemoveRange(clientGames);
             this.data.Games.Remove(game);
             this.data.Requirements.RemoveRange(minRequirements, recRequirements);
             this.data.SaveChanges();

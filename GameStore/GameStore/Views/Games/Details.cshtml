@@ -13,11 +13,13 @@
                 <div style="text-align: center; margin-top: 20px;">
                     <h5 class="card-title">@string.Join(", ", Model.Genres)</h5>
                     <p>@Model.Description</p>
-                    <p class="card-text">@Model.PegiRating</p>
+                    <p class="card-text" style="font-weight: bold;">@Model.PegiRating</p>
                     <p style="float: left;"></p>
                     <p style="float: right;"></p>
                     @await Component.InvokeAsync("Requirements", new { minId = Model.MinimumRequirementsId, recId = Model.RecommendedRequirementsId })
-                    <h6>Publisher: @Model.PublisherName</h6>
+                    <h6>Publisher: 
+                        <a asp-area="" asp-controller="Games" asp-action="All" asp-route-SearchQuery="@Model.PublisherName" asp-route-SearchByQuery="Publisher">@Model.PublisherName</a>
+                    </h6>
                     <div class="d-flex justify-content-center">
                         <div class="content text-center">
                             <div class="ratings">

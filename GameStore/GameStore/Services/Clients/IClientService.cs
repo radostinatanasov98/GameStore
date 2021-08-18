@@ -24,6 +24,8 @@
 
         public int GetClientId(string userId);
 
+        public List<ClientsAllViewModel> GetClientsForAllView();
+
         public ClientProfileViewModel GetClientProfileViewModel(int clientId,
             int profileId,
             int? relationId,

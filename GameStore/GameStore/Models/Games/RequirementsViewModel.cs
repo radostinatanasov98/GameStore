@@ -6,11 +6,11 @@
 
         public string GPU { get; init; }
 
-        public int VRAM { get; init; }
+        public string VRAM { get; init; }
 
-        public int RAM { get; init; }
+        public string RAM { get; init; }
 
-        public int Storage { get; init; }
+        public string Storage { get; init; }
 
         public string OS { get; init; }
     }

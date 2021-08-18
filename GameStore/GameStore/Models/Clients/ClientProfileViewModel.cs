@@ -15,6 +15,8 @@
 
         public bool AreFriends { get; init; }
 
+        public bool HasRequest { get; init; }
+
         public string Username { get; init; }
 
         public string Description { get; init; }

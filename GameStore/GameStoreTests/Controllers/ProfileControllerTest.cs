@@ -87,7 +87,7 @@
                 .WithSet<ClientRelationship>(cr => cr.Count() == 2))
             .AndAlso()
             .ShouldReturn()
-            .Redirect("~/");
+            .Redirect("/Profile/Main?ProfileId=2");
 
         [Fact]
         public void MainPostShouldRedirectToErrorPageIfUserIsNotClient()

@@ -250,15 +250,15 @@
                 MinimumCPU = "test",
                 MinimumGPU = "test",
                 MinimumOS = "test",
-                MinimumRAM = 4,
-                MinimumStorage = 4,
-                MinimumVRAM = 4,
+                MinimumRAM = "test",
+                MinimumStorage = "test",
+                MinimumVRAM = "test",
                 RecommendedCPU = "test",
                 RecommendedGPU = "test",
                 RecommendedOS = "test",
-                RecommendedRAM = 4,
-                RecommendedStorage = 4,
-                RecommendedVRAM = 4
+                RecommendedRAM = "test",
+                RecommendedStorage = "test",
+                RecommendedVRAM = "test"
             }, null, null, 1);
 
             var result = data.Games.FirstOrDefault(g => g.Name == "specialNameForThisTest");

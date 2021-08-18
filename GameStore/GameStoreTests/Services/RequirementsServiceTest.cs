@@ -10,9 +10,9 @@
         private const string cpu = "testCpu";
         private const string gpu = "testCpu";
         private const string os = "testCpu";
-        private const int ram = 5;
-        private const int vram = 5;
-        private const int storage = 5;
+        private const string ram = "test";
+        private const string vram = "test";
+        private const string storage = "test";
         [Fact]
         public void CreateRequirementsCreatesCorrectEntity()
         {

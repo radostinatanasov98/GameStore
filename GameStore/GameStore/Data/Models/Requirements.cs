@@ -10,21 +10,27 @@
         public int Id { get; init; }
 
         [Required]
-        [MaxLength(CPULength)]
+        [MaxLength(CPUMaxLength)]
         public string CPU { get; init; }
 
         [Required]
-        [MaxLength(GPULength)]
+        [MaxLength(GPUMaxLength)]
         public string GPU { get; init; }
 
-        public int VRAM { get; init; }
-
-        public int RAM { get; init; }
-
-        public int Storage { get; init; }
+        [Required]
+        [RegularExpression(MemoryRegularExpression)]
+        public string VRAM { get; init; }
 
         [Required]
-        [MaxLength(OSLength)]
+        [RegularExpression(MemoryRegularExpression)]
+        public string RAM { get; init; }
+
+        [Required]
+        [RegularExpression(StorageRegularExpression)]
+        public string Storage { get; init; }
+
+        [Required]
+        [MaxLength(OSMaxLength)]
         public string OS { get; init; }
     }
 }

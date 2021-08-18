@@ -95,6 +95,7 @@
                 ClientId = clientId,
                 ProfileId = profileId,
                 AreFriends = hasRelation,
+                HasRequest = this.data.ClientRelationships.Any(cr => cr.ClientId == clientId && cr.FriendId == profileId),
                 Username = profile.DisplayName,
                 Games = games,
                 AreGamesPrivate = profile.AreGamesPrivate,
@@ -190,5 +191,17 @@
                 AreFriendsPrivate = inputModel.AreFriendsPrivate,
                 AreGamesPrivate = inputModel.AreGamesPrivate
             };
+
+        public List<ClientsAllViewModel> GetClientsForAllView()
+            => this.data
+            .Clients
+            .Select(c => new ClientsAllViewModel
+            {
+                Id = c.Id,
+                PictureUrl = c.ProfilePictureUrl,
+                Name = c.DisplayName
+            })
+            .ToList();
+        
     }
 }

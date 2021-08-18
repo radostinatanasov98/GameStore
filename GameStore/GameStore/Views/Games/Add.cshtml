@@ -1,135 +1,140 @@
 ﻿@model AddGameFormModel
 
-<h1>Add Game</h1>
-<form method="post">
-    <div class="col-md-6 offset-md-3 col-sm-3 text-center bold">
-
-        <div class="form-group">
-            <label asp-for="Name"></label>
-            <input asp-for="Name" class="form-control" placeholder="Enter name.">
-            <span asp-validation-for="Name" class="text-danger"></span>
+<h1 style="text-align: center;">Add Game</h1>
+<div style="display: block;">
+    <form method="post">
+        <div class="col-md-6 offset-md-3 col-sm-3 text-center bold">
+            <div id="info" style="display: block;">
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter name.">
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description">Description of the game</label>
+                    <textarea asp-for="Description" class="form-control" placeholder="Enter description." rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CoverImageUrl">Cover Image Url</label>
+                    <input asp-for="CoverImageUrl" class="form-control" placeholder="Enter image url ending in .jpg or .png.">
+                    <span asp-validation-for="CoverImageUrl" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TrailerUrl">Trailer Url</label>
+                    <input asp-for="TrailerUrl" class="form-control" placeholder="Enter youtube url.">
+                    <span asp-validation-for="TrailerUrl" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Price">Game price</label>
+                    <input asp-for="Price" class="form-control" placeholder="Enter price.">
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PegiRatingId">Pegi Rating</label>
+                    <select asp-for="PegiRatingId" class="form-control">
+                        @foreach (var pegiRating in Model.PegiRatings)
+                        {
+                            <option value="@pegiRating.Id">@pegiRating.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="PegiRatingId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>Game Genres</label>
+                    <ul style="column-count: 3; list-style: none;">
+                        @foreach (var genre in Model.Genres)
+                        {
+                            <li style="text-align: left">
+                                <input name="GenreIds" asp-for="@genre.Selected" type="checkbox" value="@genre.Id" />@genre.Name
+                            </li>
+                        }
+                    </ul>
+                    <span asp-validation-for="GenreIds" class="text-danger"></span>
+                </div>
+                <div style="text-align: right">
+                    <button type="button" class="btn btn-primary" id="first">Next</button>
+                </div>
+            </div>
+            <div id="minReq" style="display: none;">
+                <div class="form-group">
+                    <label asp-for="MinimumCPU">Minimum CPU Name</label>
+                    <input asp-for="MinimumCPU" class="form-control" placeholder="Enter CPU name.">
+                    <span asp-validation-for="MinimumCPU" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MinimumGPU">Minimum GPU Name</label>
+                    <input asp-for="MinimumGPU" class="form-control" placeholder="Enter GPU name.">
+                    <span asp-validation-for="MinimumGPU" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MinimumRAM">Minimum RAM</label>
+                    <input asp-for="MinimumRAM" class="form-control" placeholder="Enter RAM.">
+                    <span asp-validation-for="MinimumRAM" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MinimumVRAM">Minimum VRAM</label>
+                    <input asp-for="MinimumVRAM" class="form-control" placeholder="Enter VRAM.">
+                    <span asp-validation-for="MinimumVRAM" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MinimumStorage">Minimum storage</label>
+                    <input asp-for="MinimumStorage" class="form-control" placeholder="Enter storage in GB.">
+                    <span asp-validation-for="MinimumStorage" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MinimumOS">Minimum OS</label>
+                    <input asp-for="MinimumOS" class="form-control" placeholder="Enter OS names.">
+                    <span asp-validation-for="MinimumOS" class="text-danger"></span>
+                </div>
+                    <div style="text-align: left; float: left;">
+                        <button type="button" class="btn btn-primary" id="secondBack">Back</button>
+                    </div>
+                    <div style="text-align: right;">
+                        <button type="button" class="btn btn-primary" id="secondNext">Next</button>
+                    </div>
+            </div>
+            <div id="recReq" style="display: none;">
+                <div class="form-group">
+                    <label asp-for="RecommendedCPU">Recommended CPU Name</label>
+                    <input asp-for="RecommendedCPU" class="form-control" placeholder="Enter CPU name.">
+                    <span asp-validation-for="RecommendedCPU" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RecommendedGPU">Recommended GPU Name</label>
+                    <input asp-for="RecommendedGPU" class="form-control" placeholder="Enter GPU name.">
+                    <span asp-validation-for="RecommendedGPU" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RecommendedRAM">Recommended RAM</label>
+                    <input asp-for="RecommendedRAM" class="form-control" placeholder="Enter RAM.">
+                    <span asp-validation-for="RecommendedRAM" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RecommendedVRAM">Recommended VRAM</label>
+                    <input asp-for="RecommendedVRAM" class="form-control" placeholder="Enter VRAM.">
+                    <span asp-validation-for="RecommendedVRAM" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RecommendedStorage">Recommended storage</label>
+                    <input asp-for="RecommendedStorage" class="form-control" placeholder="Enter storage in GB.">
+                    <span asp-validation-for="RecommendedStorage" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RecommendedOS">Recommended OS</label>
+                    <input asp-for="RecommendedOS" class="form-control" placeholder="Enter OS names.">
+                    <span asp-validation-for="RecommendedOS" class="text-danger"></span>
+                </div>
+                <div style="text-align: left; float: left;">
+                    <button type="button" class="btn btn-primary" id="thirdBack">Back</button>
+                </div>
+                <div style="text-align: right;">
+                    <button type="submit" class="btn btn-primary">Publish</button>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label asp-for="Description">Description of the game</label>
-            <textarea asp-for="Description" class="form-control" placeholder="Enter description." rows="6"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="CoverImageUrl">Cover Image Url</label>
-            <input asp-for="CoverImageUrl" class="form-control" placeholder="Enter shortened url.">
-            <span asp-validation-for="CoverImageUrl" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="TrailerUrl">Trailer Url</label>
-            <input asp-for="TrailerUrl" class="form-control" placeholder="Enter shortened url.">
-            <span asp-validation-for="TrailerUrl" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Price">Game price</label>
-            <input asp-for="Price" class="form-control" placeholder="Enter price.">
-            <span asp-validation-for="Price" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="PegiRatingId">Pegi Rating</label>
-            <select asp-for="PegiRatingId" class="form-control">
-                @foreach (var pegiRating in Model.PegiRatings)
-                {
-                    <option value="@pegiRating.Id">@pegiRating.Name</option>
-                }
-            </select>
-            <span asp-validation-for="PegiRatingId" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label>Game Genres</label>
-            <ul style="column-count: 3; list-style: none;">
-                @foreach (var genre in Model.Genres)
-                {
-                    <li style="text-align: left">
-                        <input name="GenreIds" asp-for="@genre.Selected" type="checkbox" value="@genre.Id" />@genre.Name
-                    </li>
-                }
-            </ul>
-            <span asp-validation-for="Genres" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="MinimumCPU">Minimum CPU Name</label>
-            <input asp-for="MinimumCPU" class="form-control" placeholder="Enter CPU name.">
-            <span asp-validation-for="MinimumCPU" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="MinimumGPU">Minimum GPU Name</label>
-            <input asp-for="MinimumGPU" class="form-control" placeholder="Enter GPU name.">
-            <span asp-validation-for="MinimumGPU" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="MinimumRAM">Minimum RAM</label>
-            <input asp-for="MinimumRAM" class="form-control" placeholder="Enter RAM.">
-            <span asp-validation-for="MinimumRAM" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="MinimumVRAM">Minimum VRAM</label>
-            <input asp-for="MinimumVRAM" class="form-control" placeholder="Enter VRAM.">
-            <span asp-validation-for="MinimumVRAM" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="MinimumStorage">Minimum storage</label>
-            <input asp-for="MinimumStorage" class="form-control" placeholder="Enter storage in GB.">
-            <span asp-validation-for="MinimumStorage" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="MinimumOS">Minimum OS</label>
-            <input asp-for="MinimumOS" class="form-control" placeholder="Enter OS names.">
-            <span asp-validation-for="MinimumOS" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="RecommendedCPU">Recommended CPU Name</label>
-            <input asp-for="RecommendedCPU" class="form-control" placeholder="Enter CPU name.">
-            <span asp-validation-for="RecommendedCPU" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="RecommendedGPU">Recommended GPU Name</label>
-            <input asp-for="RecommendedGPU" class="form-control" placeholder="Enter GPU name.">
-            <span asp-validation-for="RecommendedGPU" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="RecommendedRAM">Recommended RAM</label>
-            <input asp-for="RecommendedRAM" class="form-control" placeholder="Enter RAM.">
-            <span asp-validation-for="RecommendedRAM" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="RecommendedVRAM">Recommended VRAM</label>
-            <input asp-for="RecommendedVRAM" class="form-control" placeholder="Enter VRAM.">
-            <span asp-validation-for="RecommendedVRAM" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="RecommendedStorage">Recommended storage</label>
-            <input asp-for="RecommendedStorage" class="form-control" placeholder="Enter storage in GB.">
-            <span asp-validation-for="RecommendedStorage" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="RecommendedOS">Recommended OS</label>
-            <input asp-for="RecommendedOS" class="form-control" placeholder="Enter OS names.">
-            <span asp-validation-for="RecommendedOS" class="text-danger"></span>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Publish</button>
-    </div>
-</form>
+    </form>
+</div>
+ 
+<script src="~/js/Add.js"></script>
+<script>document.onload = Listen()</script>

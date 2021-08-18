@@ -63,7 +63,11 @@
                  }
                  else if (Model.ProfileId != Model.ClientId)
                  {
-                    if (!Model.AreFriends)
+                    if (!Model.AreFriends && Model.HasRequest)
+                    {
+                        <button disabled class="btn btn-primary">Request Sent</button>
+                    }
+                    else if (!Model.AreFriends)
                     {
                         <input type="submit" asp-area="" asp-controller="Profile" asp-action="Main" asp-route-ProfileId="@Model.ProfileId" class="btn btn-primary" value="Add Friend" style="margin-top: 5px;" />
                     }
@@ -165,7 +169,7 @@
                                         <div class="row">
                                         @foreach (var friend in Model.Friends)
                                          {
-                                            @if (friend.AreFriends)
+                                            @if (friend.AreFriends && friend.OwnerId == friend.ClientId)
                                             {
                                                 <div class="cold-md-4">
                                                     <div class="card" style="margin: 5px; width: 325px; height: 300px;">
@@ -178,16 +182,22 @@
                                                                 </a>
                                                             </div>
                                                             <div>
-                                                            @if (friend.OwnerId == friend.ClientId)
-                                                             {
                                                                 <a type="submit" asp-area="" asp-controller="Profile" asp-action="Decline" asp-route-RequestId="@friend.Id" class="btn btn-primary">Unfriend</a>
-                                                             }
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             }
-                                            else if (friend.OwnerId == friend.ClientId && friend.HasRequest)
+                                            else if (friend.AreFriends && friend.OwnerId != friend.ClientId)
+                                            {
+                                                <div class="img-container" style="width: 150px; height: 225px;">
+                                                    <img src="@friend.ProfilePictureUrl" class="image" style="height: 225px; width: 150px;">
+                                                    <a asp-area="" asp-controller="Profile" asp-action="Main" asp-route-ProfileId="@friend.Id" class="overlay">
+                                                        <div class="text">@friend.Username</div>
+                                                    </a>
+                                                </div>
+                                            }
+                                            if (friend.OwnerId == friend.ClientId && friend.HasRequest)
                                             {
                                                 <div class="cold-md-6">
                                                     <div class="card" style="margin: 5px; width: 325px; height: 300px;">

@@ -14,7 +14,7 @@
             this.data = data;
         }
 
-        public Requirements CreateRequirements(string CPU, string GPU, int RAM, int VRAM, int storage, string OS)
+        public Requirements CreateRequirements(string CPU, string GPU, string RAM, string VRAM, string storage, string OS)
             => new Requirements
             {
                 CPU = CPU,

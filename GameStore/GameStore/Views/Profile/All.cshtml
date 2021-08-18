@@ -1,0 +1,22 @@
+﻿@model List<ClientsAllViewModel>
+
+<link rel="stylesheet" href="~/css/ProfileAll.css" />
+
+<div style="margin-bottom: 20px;">
+    <div class="card text-center">
+        <div class="card-header" style="font-weight: bold; font-size: 25px">
+            All Clients
+        </div>
+        <div class="card-body">
+            @foreach (var client in Model)
+            {
+                <div class="img-container">
+                    <img src="@client.PictureUrl" class="image" style="height: 225px; width: 150px;">
+                    <a asp-area="" asp-controller="Profile" asp-action="Main" asp-route-ProfileId="@client.Id" class="overlay">
+                        <div class="text">@client.Name</div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

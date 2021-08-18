@@ -8,18 +8,19 @@
     public class AddGameFormModel
     {
         [Required]
-        [MaxLength(Game.NameMaxLength)]
+        [StringLength(Game.NameMaxLength, MinimumLength = Game.NameMinLength)]
         public string Name { get; init; }
 
         [Required]
-        [MinLength(Game.DescriptionMinLength)]
-        [MaxLength(Game.DescriptionMaxLength)]
+        [StringLength(Game.DescriptionMaxLength, MinimumLength = Game.DescriptionMinLength)]
         public string Description { get; set; }
 
         [Required]
+        [RegularExpression(Shared.ImageUrlRegularExpression)]
         public string CoverImageUrl { get; init; }
 
         [Required]
+        [RegularExpression(Game.TrailerUrlRegularExpression)]
         public string TrailerUrl { get; init; }
 
         public decimal Price { get; init; }
@@ -27,42 +28,54 @@
         public int PegiRatingId { get; init; }
 
         [Required]
-        [MaxLength(Requirements.CPULength)]
+        [StringLength(Requirements.CPUMaxLength, MinimumLength = Requirements.CPUMinLength)]
         public string MinimumCPU { get; init; }
 
         [Required]
-        [MaxLength(Requirements.GPULength)]
+        [StringLength(Requirements.GPUMaxLength, MinimumLength = Requirements.GPUMinLength)]
         public string MinimumGPU { get; init; }
 
-        public int MinimumRAM { get; init; }
+        [Required(ErrorMessage = "RAM must begin with up to 3 numbers and then size in format 'MB/GB'.")]
+        [RegularExpression(Requirements.MemoryRegularExpression)]
+        public string MinimumRAM { get; init; }
 
-        public int MinimumVRAM { get; init; }
+        [Required(ErrorMessage = "RAM must begin with up to 3 numbers and then size in format 'MB/GB'.")]
+        [RegularExpression(Requirements.MemoryRegularExpression)]
+        public string MinimumVRAM { get; init; }
 
-        public int MinimumStorage { get; init; }
+        [Required(ErrorMessage = "Storage must begin with up to 3 numbers and then size in format 'MB/GB/TB'.")]
+        [RegularExpression(Requirements.StorageRegularExpression)]
+        public string MinimumStorage { get; init; }
 
         [Required]
-        [MaxLength(Requirements.OSLength)]
+        [StringLength(Requirements.OSMaxLength, MinimumLength = Requirements.OSMinLength)]
         public string MinimumOS { get; init; }
 
         [Required]
-        [MaxLength(Requirements.CPULength)]
+        [StringLength(Requirements.CPUMaxLength, MinimumLength = Requirements.CPUMinLength)]
         public string RecommendedCPU { get; init; }
 
         [Required]
-        [MaxLength(Requirements.GPULength)]
+        [StringLength(Requirements.GPUMaxLength, MinimumLength = Requirements.GPUMinLength)]
         public string RecommendedGPU { get; init; }
 
-        public int RecommendedRAM { get; init; }
+        [Required(ErrorMessage = "RAM must begin with up to 3 numbers and then size in format 'MB/GB'.")]
+        [RegularExpression(Requirements.MemoryRegularExpression)]
+        public string RecommendedRAM { get; init; }
 
-        public int RecommendedVRAM { get; init; }
+        [Required(ErrorMessage = "RAM must begin with up to 3 numbers and then size in format 'MB/GB'.")]
+        [RegularExpression(Requirements.MemoryRegularExpression)]
+        public string RecommendedVRAM { get; init; }
 
-        public int RecommendedStorage { get; init; }
+        [Required(ErrorMessage = "Storage must begin with up to 3 numbers and then size in format 'MB/GB/TB'.")]
+        [RegularExpression(Requirements.StorageRegularExpression)]
+        public string RecommendedStorage { get; init; }
 
         [Required]
-        [MaxLength(Requirements.OSLength)]
+        [StringLength(Requirements.OSMaxLength, MinimumLength = Requirements.OSMinLength)]
         public string RecommendedOS { get; init; }
-
-        [Required]
+        
+        [Required(ErrorMessage = "Games must have at least 1 genre.")]
         public IEnumerable<int> GenreIds { get; set; }
 
         public IEnumerable<PegiRatingViewModel> PegiRatings { get; set; }

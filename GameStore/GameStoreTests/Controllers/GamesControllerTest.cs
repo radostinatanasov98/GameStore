@@ -426,9 +426,9 @@
                 GPU = "test",
                 CPU = "test",
                 OS = "test",
-                RAM = 4,
-                Storage = 4,
-                VRAM = 4
+                RAM = "test",
+                Storage = "test",
+                VRAM = "test"
             });
     }
 }

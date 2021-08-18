@@ -4,7 +4,9 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+
     using static DataConstants.Game;
+    using static DataConstants.Shared;
 
     public class Game
     {
@@ -21,9 +23,11 @@
         public string Description { get; set; }
 
         [Required]
+        [RegularExpression(ImageUrlRegularExpression)]
         public string CoverImageUrl { get; set; }
 
         [Required]
+        [RegularExpression(TrailerUrlRegularExpression)]
         public string TrailerUrl { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]

@@ -6,6 +6,8 @@ namespace GameStore.Models.Games
     {
         public int Id { get; init; }
 
+        public string PublisherName { get; init; }
+
         public string Name { get; init; }
 
         public double Rating { get; init; }

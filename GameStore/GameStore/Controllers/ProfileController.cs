@@ -69,7 +69,7 @@
 
             this.clientService.SendFriendRequest(client.Id, profileId);
 
-            return Redirect("~/");
+            return Redirect("/Profile/Main?ProfileId=" + profileId);
         }
 
         [Authorize]
@@ -133,6 +133,12 @@
             this.clientService.RemoveProfilePicture(profileId);
 
             return Redirect("/Profile/Main?ProfileId=" + profileId);
+        }
+
+        [Authorize]
+        public IActionResult All()
+        {
+            return View(this.clientService.GetClientsForAllView());
         }
     }
 }
