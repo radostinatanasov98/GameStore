@@ -36,15 +36,15 @@
         [StringLength(Requirements.GPUMaxLength, MinimumLength = Requirements.GPUMinLength)]
         public string MinimumGPU { get; init; }
 
-        [Required(ErrorMessage = "RAM must begin with up to 3 numbers and then size in format 'MB/GB'.")]
+        [Required(ErrorMessage = Requirements.MemoryErrorMessage)]
         [RegularExpression(Requirements.MemoryRegularExpression)]
         public string MinimumRAM { get; init; }
 
-        [Required(ErrorMessage = "RAM must begin with up to 3 numbers and then size in format 'MB/GB'.")]
+        [Required(ErrorMessage = Requirements.MemoryErrorMessage)]
         [RegularExpression(Requirements.MemoryRegularExpression)]
         public string MinimumVRAM { get; init; }
 
-        [Required(ErrorMessage = "Storage must begin with up to 3 numbers and then size in format 'MB/GB/TB'.")]
+        [Required(ErrorMessage = Requirements.StorageErrorMEssage)]
         [RegularExpression(Requirements.StorageRegularExpression)]
         public string MinimumStorage { get; init; }
 
@@ -60,15 +60,15 @@
         [StringLength(Requirements.GPUMaxLength, MinimumLength = Requirements.GPUMinLength)]
         public string RecommendedGPU { get; init; }
 
-        [Required(ErrorMessage = "RAM must begin with up to 3 numbers and then size in format 'MB/GB'.")]
+        [Required(ErrorMessage = Requirements.MemoryErrorMessage)]
         [RegularExpression(Requirements.MemoryRegularExpression)]
         public string RecommendedRAM { get; init; }
 
-        [Required(ErrorMessage = "RAM must begin with up to 3 numbers and then size in format 'MB/GB'.")]
+        [Required(ErrorMessage = Requirements.MemoryErrorMessage)]
         [RegularExpression(Requirements.MemoryRegularExpression)]
         public string RecommendedVRAM { get; init; }
 
-        [Required(ErrorMessage = "Storage must begin with up to 3 numbers and then size in format 'MB/GB/TB'.")]
+        [Required(ErrorMessage = Requirements.StorageErrorMEssage)]
         [RegularExpression(Requirements.StorageRegularExpression)]
         public string RecommendedStorage { get; init; }
 

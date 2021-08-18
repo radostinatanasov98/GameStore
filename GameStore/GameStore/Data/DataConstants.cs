@@ -55,6 +55,8 @@
             public const int OSMinLength = 10;
             public const string StorageRegularExpression = "[0-9]{1,3}(TB|MB|GB)";
             public const string MemoryRegularExpression = "[0-9]{1,3}(MB|GB)";
+            public const string MemoryErrorMessage = "RAM must begin with up to 3 numbers and then size in format 'MB/GB'.";
+            public const string StorageErrorMEssage = "Storage must begin with up to 3 numbers and then size in format 'MB/GB/TB'.";
         }
 
         public class Review

@@ -8,7 +8,7 @@
     {
         [Required]
         [RegularExpression(ImageUrlRegularExpression, 
-            ErrorMessage = "Provie a valid url ending in .jpg or .png.")]
+            ErrorMessage = InvalidUrlErrorMessage)]
         public string Url { get; init; }
 
         public int Id { get; set; }
