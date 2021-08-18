@@ -1,4 +1,4 @@
-﻿namespace GameStore.Models.Games
+﻿namespace GameStore.Models.Requriements
 {
     public class RequirementsViewModel
     {

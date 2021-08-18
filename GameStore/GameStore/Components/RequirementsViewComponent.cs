@@ -2,6 +2,7 @@
 {
     using GameStore.Data;
     using GameStore.Models.Games;
+    using GameStore.Models.Requriements;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
 

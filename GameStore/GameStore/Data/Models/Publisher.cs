@@ -17,6 +17,8 @@
         [Required]
         public string UserId { get; init; }
 
+        public string PictureUrl { get; set; }
+
         public IEnumerable<Game> Games { get; init; } = new List<Game>();
     }
 }

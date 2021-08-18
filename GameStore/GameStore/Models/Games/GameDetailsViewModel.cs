@@ -30,6 +30,8 @@
 
         public int ReviewsCount { get; init; }
 
+        public bool Owned { get; set; }
+
         public IEnumerable<string> Genres { get; init; } = new List<string>();
     }
 }

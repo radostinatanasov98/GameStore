@@ -44,5 +44,31 @@
 
             return Redirect("/Games/Add");
         }
+
+        public IActionResult All()
+            => View(this.publisherService.GetPublishers());
+
+        [Authorize]
+        public IActionResult EditLogo()
+        {
+            if (!this.userService.IsUserPublisher(this.User.GetId())) return Redirect("/Home/Error");
+
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult EditLogo(EditLogoFormModel model)
+        {
+            if (!this.userService.IsUserPublisher(this.User.GetId())) Redirect("/Home/Error");
+
+            model.Id = this.publisherService.GetPublisherId(this.User.GetId());
+
+            if (!ModelState.IsValid) return View(model);
+
+            this.publisherService.EditLogo(model);
+
+            return Redirect("/Publishers/All");
+        }
     }
 }

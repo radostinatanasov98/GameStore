@@ -1,0 +1,22 @@
+﻿@model List<PublisherViewModel>
+
+<link rel="stylesheet" href="~/css/PublishersAll.css" />
+
+<div style="margin-bottom: 20px;">
+    <div class="card text-center">
+        <div class="card-header" style="font-weight: bold; font-size: 25px">
+            All Publishers
+        </div>
+        <div class="card-body">
+            @foreach (var publisher in Model)
+            {
+                <div class="img-container">
+                    <img src="@publisher.PictureUrl" class="image" style="height: 225px; width: 150px;">
+                    <a asp-area="" asp-controller="Games" asp-action="All" asp-route-SearchByQuery="Publisher" asp-route-SearchQuery="@publisher.Name" class="overlay">
+                        <div class="text">@publisher.Name</div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

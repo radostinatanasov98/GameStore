@@ -52,7 +52,8 @@
                         .WithIdentifier("testId")))
                 .Calling(c => c.Become(new BecomePublisherFormModel 
                 {
-                    Name = "test"
+                    Name = "test",
+                    PictureUrl= "https://www.clipartkey.com/mpngs/m/152-1520367_user-profile-default-image-png-clipart-png-download.png"
                 }))
             .ShouldHave()
             .ValidModelState()
@@ -75,10 +76,9 @@
                         .WithData(GetClient()))
                 .Calling(c => c.Become(new BecomePublisherFormModel
                 {
-                    Name = "test"
+                    Name = "test",
                 }))
             .ShouldHave()
-            .ValidModelState()
             .Data(data => data
                 .WithSet<Publisher>(p => p
                     .Count() == 0))

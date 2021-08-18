@@ -9,9 +9,10 @@
 }
 else
 {
-    @foreach (var game in Model)
-    {<h1 style="text-align: center">Library</h1>
-        <div class="row">
+    <h1 style="text-align: center">Library</h1>
+    <div class="row">
+        @foreach (var game in Model)
+        {
             <div class="col-sm-4">
                 <div class="card" style="margin-top: 10px; width: 370px; height: 325px;">
                     <div class="card-header" style="text-align: center; font-weight: bold; font-size: 150%;">
@@ -29,7 +30,7 @@ else
                     </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 }
 

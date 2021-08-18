@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using GameStore.Models.Home;
+    using GameStore.Models.PegiRatings;
 
     public interface IGamesService
     {
@@ -38,7 +39,7 @@
 
         public void CreateGame(AddGameFormModel model, Requirements minimumRequirements, Requirements recommendedRequirements, int publisherId);
 
-        public GameDetailsViewModel GetGameDetailsViewModel(int gameId);
+        public GameDetailsViewModel GetGameDetailsViewModel(int gameId, int clientId);
 
         public Game GetGameById(int gameId);
 

@@ -4,6 +4,7 @@
     using GameStore.Data.Models;
     using GameStore.Models.Games;
     using GameStore.Models.Home;
+    using GameStore.Models.PegiRatings;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -224,7 +225,7 @@
             }
         }
 
-        public GameDetailsViewModel GetGameDetailsViewModel(int gameId)
+        public GameDetailsViewModel GetGameDetailsViewModel(int gameId, int clientId)
         {
             var genres = this.data.GameGenres.Where(gg => gg.GameId == gameId).Select(gg => gg.Genre.Name).ToList();
 
@@ -240,6 +241,7 @@
                         Description = g.Description,
                         CoverImageUrl = g.CoverImageUrl,
                         TrailerUrl = g.TrailerUrl,
+                        Owned = this.data.ClientGames.Any(cg => cg.GameId == gameId && cg.ClientId == clientId),
                         PegiRating = this.data.PegiRatings.First(pr => pr.Id == g.PegiRatingId).Name,
                         MinimumRequirementsId = g.MinimumRequirementsId,
                         RecommendedRequirementsId = g.RecommendedRequirementsId,

@@ -30,7 +30,7 @@
         public IActionResult All(int gameId)
         {
             bool isAdmin = false;
-            int? clientId = null;
+            int clientId = -1;
 
             if (this.User.Identity.IsAuthenticated)
             {
@@ -43,13 +43,10 @@
 
             var reviews = this.reviewService.GetReviewsForViewModel(isAdmin, clientId);
 
-            var model = new AllReviewsViewModel
-            {
-                Name = this.gamesService.GetGameById(gameId).Name,
-                GameId = gameId,
-                Reviews = this.reviewService.SortByGame(reviews, gameId),
-                HasReviewed = this.reviewService.HasReviewed(clientId, gameId)
-            };
+            var model = this.reviewService.GetAllReviewsModel(reviews,
+                clientId,
+                gameId,
+                this.gamesService.GetGameById(gameId).Name);
 
             return View(model);
         }

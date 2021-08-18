@@ -1,0 +1,10 @@
+﻿@model EditLogoFormModel
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="@Model.Url">Company Logo</label>
+        <input asp-for="@Model.Url" type="text" class="form-control" placeholder="Enter logo url.">
+    </div>
+    <span asp-validation-for="@Model.Url" class="text-danger"></span>
+    <button type="submit" class="btn btn-primary" style="float: right;">Submit</button>
+</form>

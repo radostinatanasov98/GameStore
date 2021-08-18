@@ -88,7 +88,12 @@
         {
             if (!this.gamesService.GameExists(gameId)) return Redirect("/Home/Error");
 
-            return View(this.gamesService.GetGameDetailsViewModel(gameId));
+            var isClient = this.User.Identity.IsAuthenticated ?
+                this.userService.IsUserClient(this.User.GetId()) : false;
+            var clientId = isClient ?
+                this.data.Clients.First(c => c.UserId == this.User.GetId()).Id : -1;
+            
+            return View(this.gamesService.GetGameDetailsViewModel(gameId, clientId));
         }
 
         [Authorize]

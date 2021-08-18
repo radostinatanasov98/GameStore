@@ -17,7 +17,8 @@
                     <p style="float: left;"></p>
                     <p style="float: right;"></p>
                     @await Component.InvokeAsync("Requirements", new { minId = Model.MinimumRequirementsId, recId = Model.RecommendedRequirementsId })
-                    <h6>Publisher: 
+                    <h6>
+                        Publisher:
                         <a asp-area="" asp-controller="Games" asp-action="All" asp-route-SearchQuery="@Model.PublisherName" asp-route-SearchByQuery="Publisher">@Model.PublisherName</a>
                     </h6>
                     <div class="d-flex justify-content-center">
@@ -28,12 +29,20 @@
                                 {
                                     <span class="product-rating">@Model.Rating.ToString("F2")</span><span>/5</span>
                                     <div class="rating-text"> <span>@Model.RatingsCount ratings & @Model.ReviewsCount reviews</span> </div>
+                                    <a asp-area="" asp-controller="Reviews" asp-action="All" asp-route-GameId="@Model.Id" class="btn btn-primary">View Reveiws</a>
                                 }
                                 else
                                 {
                                     <div>This games still hasn't been reviewd or rated</div>
+                                    if (Model.Owned)
+                                    {
+                                        <a asp-area="" asp-controller="Reviews" asp-action="Write" asp-route-GameId="@Model.Id" class="btn btn-primary">Write review</a>
+                                    }
+                                    else
+                                    {
+                                        <button disabled class="btn btn-primary">Write review</button>
+                                    }
                                 }
-                                <a asp-area="" asp-controller="Reviews" asp-action="All" asp-route-GameId="@Model.Id" class="btn btn-primary">View Reveiws</a>
                             </div>
                         </div>
                     </div>

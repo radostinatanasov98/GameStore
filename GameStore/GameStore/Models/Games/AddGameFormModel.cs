@@ -1,5 +1,6 @@
 ﻿namespace GameStore.Models.Games
 {
+    using GameStore.Models.PegiRatings;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
@@ -15,11 +16,11 @@
         [StringLength(Game.DescriptionMaxLength, MinimumLength = Game.DescriptionMinLength)]
         public string Description { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = Shared.InvalidUrlErrorMessage)]
         [RegularExpression(Shared.ImageUrlRegularExpression)]
         public string CoverImageUrl { get; init; }
 
-        [Required]
+        [Required(ErrorMessage = "Trailer link should be in format: 'https://www.youtube.com/watch?v=dusPBwR8MWM'")]
         [RegularExpression(Game.TrailerUrlRegularExpression)]
         public string TrailerUrl { get; init; }
 

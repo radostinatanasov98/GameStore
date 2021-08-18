@@ -2,6 +2,7 @@
 {
     using GameStore.Data;
     using GameStore.Data.Models;
+    using GameStore.Models.Games;
     using GameStore.Models.Reviews;
     using System.Collections.Generic;
     using System.Linq;
@@ -15,7 +16,7 @@
             this.data = data;
         }
 
-        public List<ReviewViewModel> GetReviewsForViewModel(bool isAdmin, int? clientId)
+        public List<ReviewViewModel> GetReviewsForViewModel(bool isAdmin, int clientId)
             => this.data
                     .Reviews
                     .Where(r => r.Content != null && r.Caption != null)
@@ -94,5 +95,18 @@
         {
             return this.data.Reviews.Any(r => r.Id == reviewId && r.ClientId == clientId);
         }
+
+        public AllReviewsViewModel GetAllReviewsModel(List<ReviewViewModel> reviews,
+            int clientId,
+            int gameId,
+            string name)
+            => new AllReviewsViewModel
+            {
+                Name = name,
+                GameId = gameId,
+                Reviews = reviews,
+                HasReviewed = this.HasReviewed(clientId, gameId),
+                Owned = this.data.ClientGames.Any(cg => cg.ClientId == clientId && cg.GameId == gameId)
+            };
     }
 }

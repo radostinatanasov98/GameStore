@@ -36,7 +36,7 @@
             var reviewService = new ReviewService(data);
 
             // Act
-            var result = reviewService.GetReviewsForViewModel(false, null);
+            var result = reviewService.GetReviewsForViewModel(false, -1);
 
             // Assert
             for (int i = 0; i < 5; i++)
@@ -72,7 +72,7 @@
             var reviewService = new ReviewService(data);
 
             // Act
-            var reviews = reviewService.GetReviewsForViewModel(false, null);
+            var reviews = reviewService.GetReviewsForViewModel(false, -1);
             var result = reviewService.SortByUser(reviews, "test");
 
             // Assert
@@ -109,7 +109,7 @@
             var reviewService = new ReviewService(data);
 
             // Act
-            var reviews = reviewService.GetReviewsForViewModel(false, null);
+            var reviews = reviewService.GetReviewsForViewModel(false, -1);
             var result = reviewService.SortByGame(reviews, 1);
 
             // Assert

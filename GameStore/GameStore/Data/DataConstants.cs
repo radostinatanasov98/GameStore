@@ -5,6 +5,7 @@
         public class Shared
         {
             public const string ImageUrlRegularExpression = "(https:\\/\\/)([^\\s([\"<,>/]*)(\\/)[^\\s[\",><]*(.png|.jpg)(\\?[^\\s[\",><]*)?";
+            public const string InvalidUrlErrorMessage = "Url should be in valid format and end in .jpg or .png.";
         }
 
         public class User

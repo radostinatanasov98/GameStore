@@ -1,0 +1,11 @@
+﻿@model List<GameHoverViewModel>
+
+@foreach (var game in Model)
+{
+    <div class="img-container" style="margin-left: 12px; margin-bottom: 5px;">
+        <img src="@game.CoverImageUrl" class="image">
+        <a asp-area="" asp-controller="Games" asp-action="Details" asp-route-GameId="@game.GameId" class="overlay">
+            <div class="text">@game.Name</div>
+        </a>
+    </div>
+}

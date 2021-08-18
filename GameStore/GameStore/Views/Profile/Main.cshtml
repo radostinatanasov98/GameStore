@@ -105,18 +105,7 @@
                                         This users games:
                                     </div>
                                     <div class="card-body">
-                                    @foreach (var game in Model.Games)
-                                     {
-                                        <div class="img-container">
-                                            <img src="@game.CoverImageUrl" class="image">
-                                            <a asp-area="" asp-controller="Games" asp-action="Details" asp-route-GameId="@game.GameId" class="overlay">
-                                                <div class="text">@game.Name</div>
-                                            </a>
-                                        </div>
-                                     }
-                                    </div>
-                                    <div class="card-footer text-muted">
-                                        <a asp-area="" asp-controller="Clients" asp-action="Library" class="btn btn-primary">View library</a>
+                                        @await Component.InvokeAsync("RenderGamesInCard", new { games = Model.Games.ToList() })
                                     </div>
                                 </div>
                             </div>
