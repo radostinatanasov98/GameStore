@@ -1,5 +1,6 @@
 ﻿using GameStore.Data;
 using GameStore.Data.Models;
+using GameStore.Models.Publishers;
 using System.Linq;
 
 namespace GameStore.Services.Publishers
@@ -11,6 +12,19 @@ namespace GameStore.Services.Publishers
         public PublisherService(GameStoreDbContext data)
         {
             this.data = data;
+        }
+
+        public void CreatePublisher(BecomePublisherFormModel model, string userId)
+        {
+            var validPublisher = new Publisher
+            {
+                DisplayName = model.Name,
+                UserId = userId
+            };
+
+            this.data.Publishers.Add(validPublisher);
+
+            this.data.SaveChanges();
         }
 
         public Publisher GetPublisherByGameId(int gameId)

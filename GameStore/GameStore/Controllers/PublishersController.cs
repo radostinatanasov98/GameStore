@@ -4,59 +4,45 @@
     using GameStore.Data.Models;
     using GameStore.Infrastructure;
     using GameStore.Models.Publishers;
+    using GameStore.Services.Publishers;
+    using GameStore.Services.Users;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
 
     public class PublishersController : Controller
     {
-        private readonly GameStoreDbContext data;
+        private readonly IPublisherService publisherService;
+        private readonly IUserService userService;
 
         public PublishersController(GameStoreDbContext data)
-            => this.data = data;
+        {
+            this.publisherService = new PublisherService(data);
+            this.userService = new UserService(data);
+        }
 
         [Authorize]
         public IActionResult Become()
         {
-            if (IsUserClient() || IsUserPublisher())
-            {
-                return BadRequest();
-            }
+            if (this.userService.IsUserClient(this.User.GetId()) || this.userService.IsUserPublisher(this.User.GetId())) return Redirect("/Home/Error");
 
             return View();
         }
 
         [Authorize]
         [HttpPost]
-        public IActionResult Become(BecomePublisherFormModel publisher)
+        public IActionResult Become(BecomePublisherFormModel model)
         {
-            if (IsUserClient() || IsUserPublisher())
-            {
-                return BadRequest();
-            }
+            if (this.userService.IsUserClient(this.User.GetId()) || this.userService.IsUserPublisher(this.User.GetId())) return Redirect("/Home/Error");
 
             if (!ModelState.IsValid)
             {
-                return View(publisher);
+                return View(model);
             }
 
-            var validPublisher = new Publisher
-            {
-                DisplayName = publisher.Name,
-                UserId = this.User.GetId()
-            };
-
-            this.data.Publishers.Add(validPublisher);
-
-            this.data.SaveChanges();
+            this.publisherService.CreatePublisher(model, this.User.GetId());
 
             return Redirect("/Games/Add");
         }
-
-        private bool IsUserPublisher()
-            => data.Publishers.Any(p => p.UserId == this.User.GetId());
-
-        private bool IsUserClient()
-            => data.Clients.Any(p => p.UserId == this.User.GetId());
     }
 }

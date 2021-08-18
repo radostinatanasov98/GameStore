@@ -54,11 +54,14 @@
             return View(model);
         }
 
+        [Authorize]
         public IActionResult Write(int gameId)
         {
+            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+
             var clientId = this.clientService.GetClientByUserId(this.User.GetId()).Id;
 
-            if (!this.clientService.ClientOwnsGame(clientId, gameId)) return BadRequest();
+            if (!this.clientService.ClientOwnsGame(clientId, gameId)) return Redirect("/Home/Error");
 
             return View(new PostReviewFormModel
             {
@@ -70,22 +73,22 @@
         [HttpPost]
         public IActionResult Write(int gameId, PostReviewFormModel model)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("~/Shared/Error");
+            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
 
-            if ((model.Caption == null && model.Content != null) || (model.Caption != null && model.Content == null))
+            if ((model.Caption == null && model.Content != null) || (model.Caption != null && model.Content == null) || !ModelState.IsValid)
             {
                 model.Ratings = new List<int> { 1, 2, 3, 4, 5 };
 
                 return View(model);
             }
-
+            
             var clientId = this.clientService.GetClientByUserId(this.User.GetId()).Id;
 
             var ownsGame = this.clientService.ClientOwnsGame(clientId, gameId);
 
             var alreadyReviewed = this.reviewService.HasReviewed(clientId, gameId);
 
-            if (!ownsGame) return BadRequest();
+            if (!ownsGame) return Redirect("/Home/Error");
 
             if (alreadyReviewed) this.reviewService.Edit(clientId, gameId, model);
             else
@@ -103,9 +106,11 @@
         [Authorize]
         public IActionResult Remove(int reviewId, int gameId)
         {
+            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+
             var clientId = this.clientService.GetClientId(this.User.GetId());
 
-            if (!this.User.IsAdmin() && !this.reviewService.IsOwner(clientId, reviewId)) return BadRequest();
+            if (!this.User.IsAdmin() && !this.reviewService.IsOwner(clientId, reviewId)) return Redirect("/Home/Error");
 
             this.reviewService.Remove(clientId, gameId);
 
