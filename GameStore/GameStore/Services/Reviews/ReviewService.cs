@@ -1,5 +1,6 @@
 ﻿namespace GameStore.Services.Reviews
 {
+    using GameStore.Areas.Admin.Models.Reviews;
     using GameStore.Data;
     using GameStore.Data.Models;
     using GameStore.Models.Games;
@@ -48,11 +49,11 @@
             this.data.SaveChanges();
         }
 
-        public void Remove(int clientId, int gameId)
+        public void Remove(int reviewId)
         {
             var review = this.data
                 .Reviews
-                .First(r => r.ClientId == clientId && r.GameId == gameId);
+                .First(r => r.Id == reviewId);
 
             this.data.Remove(review);
 
@@ -108,5 +109,18 @@
                 HasReviewed = this.HasReviewed(clientId, gameId),
                 Owned = this.data.ClientGames.Any(cg => cg.ClientId == clientId && cg.GameId == gameId)
             };
+
+        public List<AllReviewsForAdminViewModel> GetReviewsAdmin()
+            => this.data
+            .Reviews
+            .Select(r => new AllReviewsForAdminViewModel
+            {
+                Caption = r.Caption,
+                Content = r.Content,
+                Username = this.data.Clients.FirstOrDefault(c => c.Id == r.ClientId).DisplayName,
+                Id = r.Id,
+                GameId = r.GameId
+            })
+            .ToList();
     }
 }

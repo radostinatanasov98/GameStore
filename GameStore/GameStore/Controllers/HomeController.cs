@@ -1,6 +1,5 @@
 ﻿namespace GameStore.Controllers
 {
-    using GameStore.Data;
     using GameStore.Services.Games;
     using Microsoft.AspNetCore.Mvc;
 

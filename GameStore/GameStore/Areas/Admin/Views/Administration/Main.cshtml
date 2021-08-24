@@ -1,0 +1,55 @@
+﻿@model AdministrationPageViewModel
+
+<ul class="nav nav-tabs">
+    <li class="nav-item" style="margin-right: 5px;">
+        <button class="nav-link btn btn-primary" id="gamesBtn">Games</button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link btn btn-primary" id="reviewsBtn">Reviews</button>
+    </li>
+</ul>
+
+<div class="row" id="games" style="display: normal;">
+    @foreach (var game in Model.Games)
+    {
+<div class="col-sm-4">
+    <div class="card" style="margin-top: 10px; width: 370px; height: 325px;">
+        <div class="card-header" style="text-align: center; font-weight: bold; font-size: 150%;">
+            @game.Name
+        </div>
+        <div class="card-body">
+            <img src="@game.CoverImageUrl" class="img" style="height: 225px; width: 150px; float: left;" />
+            <div style="text-align: center; margin-top: 50px; margin-left: 165px;">
+                <h5 class="card-title">
+                    @string.Join(", ", game.Genres)
+                </h5>
+                <p class="card-text">@game.PegiRating</p>
+                <a asp-area="" asp-controller="Games" asp-action="Remove" asp-route-GameId="@game.Id" class="btn btn-danger">Remove</a>
+            </div>
+        </div>
+    </div>
+</div>}
+</div>
+
+<div id="reviews" style="display: none;">
+    @foreach (var review in Model.Reviews)
+    {
+<div class="card-body">
+    <div class="card">
+        <div class="card-header">
+            <div style="float: left; font-weight: bold;">@review.Username</div>
+        </div>
+        <div class="card-body">
+            <blockquote class="blockquote mb-0">
+                <h3>@review.Caption</h3>
+                <p>@review.Content</p>
+                <a class="btn btn-primary" asp-area="" asp-controller="Reviews" asp-action="Remove" asp-route-ReviewId="@review.Id" asp-route-GameId="@review.GameId" style="background-color: red; float: right;">Remove</a>
+            </blockquote>
+        </div>
+    </div>
+</div>}
+</div>
+
+
+<script src="~/js/AdministrationMainButtons.js"></script>
+<script>document.onload = Listen()</script>

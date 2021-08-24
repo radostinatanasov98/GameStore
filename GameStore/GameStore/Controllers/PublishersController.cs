@@ -1,14 +1,11 @@
 ﻿namespace GameStore.Controllers
 {
-    using GameStore.Data;
-    using GameStore.Data.Models;
     using GameStore.Infrastructure;
     using GameStore.Models.Publishers;
     using GameStore.Services.Publishers;
     using GameStore.Services.Users;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using System.Linq;
 
     public class PublishersController : Controller
     {

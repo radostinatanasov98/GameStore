@@ -1,5 +1,6 @@
 ﻿namespace GameStore.Services.Reviews
 {
+    using GameStore.Areas.Admin.Models.Reviews;
     using GameStore.Data.Models;
     using GameStore.Models.Games;
     using GameStore.Models.Reviews;
@@ -7,6 +8,8 @@
 
     public interface IReviewService
     {
+        public List<AllReviewsForAdminViewModel> GetReviewsAdmin();
+
         public List<ReviewViewModel> GetReviewsForViewModel(bool isAdmin, int clientId);
 
         public List<ReviewViewModel> SortByUser(List<ReviewViewModel> reviews, string username);
@@ -20,7 +23,7 @@
 
         public void Edit(int clientId, int gameId, PostReviewFormModel model);
 
-        public void Remove(int clientId, int gameId);
+        public void Remove(int reviewId);
 
         public bool HasReviewed(int? clientId, int gameId);
 

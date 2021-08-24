@@ -1,6 +1,5 @@
 ﻿namespace GameStore.Controllers
 {
-    using GameStore.Data;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using GameStore.Infrastructure;
@@ -45,13 +44,13 @@
                 return RedirectToAction(nameof(HomeController.Error), "Home");
             }
 
-            var clientId = this.clientService.GetClientId(this.User.GetId());
+            var clientId = isAdmin ? -1 : this.clientService.GetClientId(this.User.GetId());
             var relationship = this.clientService.GetRelationship(clientId, profileId);
             var hasRelation = this.clientService.RelationCheck(relationship);
             int? relationId = this.clientService.GetRelationId(hasRelation, relationship);
             var reviews = this.reviewService.GetReviewsForViewModel(isAdmin, clientId);
             var model = this.clientService.GetClientProfileViewModel(
-                this.clientService.GetClientId(this.User.GetId()),
+                clientId,
                 profileId,
                 relationId,
                 hasRelation,

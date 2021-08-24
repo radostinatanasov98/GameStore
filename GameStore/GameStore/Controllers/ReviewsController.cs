@@ -1,8 +1,6 @@
 ﻿namespace GameStore.Controllers
 {
-    using GameStore.Data;
     using GameStore.Infrastructure;
-    using GameStore.Models.Games;
     using GameStore.Models.Reviews;
     using GameStore.Services.Clients;
     using GameStore.Services.Games;
@@ -118,7 +116,14 @@
         [Authorize]
         public IActionResult Remove(int reviewId, int gameId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId()))
+            if (this.User.IsAdmin())
+            {
+                this.reviewService.Remove(reviewId);
+
+                return RedirectToAction(nameof(Areas.Admin.Controllers.AdministrationController.Main), "Administration", new { area = nameof(Areas.Admin) });
+            }
+            
+            if (!this.userService.IsUserClient(this.User.GetId()) && !this.User.IsAdmin())
             {
                 return RedirectToAction(nameof(HomeController.Error), "Home");
             }
@@ -130,7 +135,7 @@
                 return RedirectToAction(nameof(HomeController.Error), "Home");
             }
 
-            this.reviewService.Remove(clientId, gameId);
+            this.reviewService.Remove(reviewId);
 
             return RedirectToAction(nameof(ReviewsController.All), "Reviews", new { GameId = gameId });
         }

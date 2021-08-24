@@ -1,6 +1,6 @@
 ﻿@model NavBarViewModel
 
-@if (Model.IsClient == true)
+@if (Model.IsClient)
 {
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="All">All Clients</a>
@@ -15,13 +15,19 @@
         <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Main" asp-route-ProfileId="@Model.Id">Profile</a>
     </li>
 }
-else if (Model.IsPublisher == true)
+else if (Model.IsPublisher)
 {
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="Games" asp-action="Add">Add game</a>
     </li>
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="" asp-controller="Publishers" asp-action="EditLogo">Edit Logo</a>
+    </li>
+}
+else if (Model.IsAdmin)
+{
+    <li calss="nav-item">
+        <a class="nav-link text-dark" asp-area="Admin" asp-controller="Administration" asp-action="Main">Administration</a>
     </li>
 }
 else
