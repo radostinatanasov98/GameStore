@@ -10,7 +10,7 @@
         <div class="card-body">
             @foreach (var client in Model)
             {
-                <div class="img-container">
+                <div class="img-container" style="margin-bottom: 5px; margin-left: 12px; margin-right: 12px;">
                     <img src="@client.PictureUrl" class="image" style="height: 225px; width: 150px;">
                     <a asp-area="" asp-controller="Profile" asp-action="Main" asp-route-ProfileId="@client.Id" class="overlay">
                         <div class="text">@client.Name</div>

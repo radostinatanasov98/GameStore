@@ -50,5 +50,8 @@
         public void RemoveGame(Game game, Requirements minRequirements, Requirements recRequirements);
 
         public HomePageViewModel GetGamesForHomePage();
+
+        public List<GameListingViewModel> WishedGames(int clientId);
+
     }
 }

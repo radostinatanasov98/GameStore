@@ -51,5 +51,9 @@
         public void RemoveProfilePicture(int profileId);
 
         public void SendFriendRequest(int clientId, int profileId);
+
+        public void AddGameToWishList(int clientId, int gameId);
+
+        public void Gift(int clientId, int gameId);
     }
 }

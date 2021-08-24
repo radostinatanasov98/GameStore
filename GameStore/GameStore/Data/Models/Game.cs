@@ -58,6 +58,8 @@
 
         public IEnumerable<ShoppingCartProduct> ShoppingCartProducts { get; init; } = new List<ShoppingCartProduct>();
 
+        public IEnumerable<WishListGame> WishListGames { get; init; } = new List<WishListGame>();
+
         public IEnumerable<Review> Reviews { get; init; } = new List<Review>();
 
         public IEnumerable<ClientGame> ClientGames { get; init; } = new List<ClientGame>();

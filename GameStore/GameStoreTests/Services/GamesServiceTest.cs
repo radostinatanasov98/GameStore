@@ -189,7 +189,7 @@
             var gamesService = new GamesService(data);
 
             // Act
-            var result = gamesService.CreateAllGamesViewModel(gamesService.GetGamesForAllView(), gamesService.GetGenres());
+            var result = gamesService.CreateAllGamesViewModel(null, null, null, 1, 6);
 
             // Assert
             Assert.True(result.Games.Count() == 5);

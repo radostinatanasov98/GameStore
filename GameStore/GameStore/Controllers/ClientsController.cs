@@ -147,6 +147,56 @@
             return RedirectToAction(nameof(ClientsController.ShoppingCart), "Clients");
         }
 
+        [Authorize]
+        public IActionResult WishList(int clientId)
+        {
+            if (!this.userService.IsUserClient(this.User.GetId()) && this.User.IsAdmin())
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
+
+            var model = new WishListViewModel
+            {
+                OwnerId = clientId,
+                Games = this.gamesService.WishedGames(clientId)
+            };
+
+            return View(model);
+        }
+
+        [Authorize]
+        public IActionResult WishListAdd(int gameId)
+        {
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
+
+            var clientId = this.clientService.GetClientId(this.User.GetId());
+
+            this.clientService.AddGameToWishList(clientId, gameId);
+
+            return RedirectToAction(nameof(ClientsController.WishList), "Clients", new { clientId = clientId });
+        }
+
+        [Authorize]
+        public IActionResult Gift(int clientId, int gameId)
+        {
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
+
+            if (this.clientService.GetClientId(this.User.GetId()) == clientId)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
+
+            this.clientService.Gift(clientId, gameId);
+
+            return RedirectToAction(nameof(ClientsController.WishList), "Clients", new { clientId = clientId });
+        }
+
         private string GetUserId()
             => this.User.GetId();
     }

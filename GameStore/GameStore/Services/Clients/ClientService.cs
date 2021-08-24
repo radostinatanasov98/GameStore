@@ -202,6 +202,39 @@
                 Name = c.DisplayName
             })
             .ToList();
-        
+
+        public void AddGameToWishList(int clientId, int gameId)
+        {
+            var wishListGame = new WishListGame
+            {
+                GameId = gameId,
+                ClientId = clientId
+            };
+
+            this.data.WishListGames.Add(wishListGame);
+
+            this.data.SaveChanges();
+        }
+
+        public void Gift(int clientId, int gameId)
+        {
+            this.data
+                .ClientGames
+                .Add(new ClientGame
+                {
+                    ClientId = clientId,
+                    GameId = gameId
+                });
+
+            var wishListGame = this.data
+                .WishListGames
+                .First(wlg => wlg.ClientId == clientId && wlg.GameId == gameId);
+
+            this.data
+                .WishListGames
+                .Remove(wishListGame);
+
+            this.data.SaveChanges();
+        }
     }
 }

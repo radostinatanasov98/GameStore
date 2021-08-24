@@ -37,15 +37,18 @@
         public string MinimumGPU { get; init; }
 
         [Required(ErrorMessage = Requirements.MemoryErrorMessage)]
-        [RegularExpression(Requirements.MemoryRegularExpression)]
+        [RegularExpression(Requirements.MemoryRegularExpression,
+            ErrorMessage = Requirements.MemoryErrorMessage)]
         public string MinimumRAM { get; init; }
 
         [Required(ErrorMessage = Requirements.MemoryErrorMessage)]
-        [RegularExpression(Requirements.MemoryRegularExpression)]
+        [RegularExpression(Requirements.MemoryRegularExpression,
+            ErrorMessage = Requirements.MemoryErrorMessage)]
         public string MinimumVRAM { get; init; }
 
         [Required(ErrorMessage = Requirements.StorageErrorMEssage)]
-        [RegularExpression(Requirements.StorageRegularExpression)]
+        [RegularExpression(Requirements.StorageRegularExpression,
+            ErrorMessage = Requirements.StorageErrorMEssage)]
         public string MinimumStorage { get; init; }
 
         [Required]
@@ -61,15 +64,18 @@
         public string RecommendedGPU { get; init; }
 
         [Required(ErrorMessage = Requirements.MemoryErrorMessage)]
-        [RegularExpression(Requirements.MemoryRegularExpression)]
+        [RegularExpression(Requirements.MemoryRegularExpression,
+            ErrorMessage = Requirements.MemoryErrorMessage)]
         public string RecommendedRAM { get; init; }
 
         [Required(ErrorMessage = Requirements.MemoryErrorMessage)]
-        [RegularExpression(Requirements.MemoryRegularExpression)]
+        [RegularExpression(Requirements.MemoryRegularExpression,
+            ErrorMessage = Requirements.MemoryErrorMessage)]
         public string RecommendedVRAM { get; init; }
 
         [Required(ErrorMessage = Requirements.StorageErrorMEssage)]
-        [RegularExpression(Requirements.StorageRegularExpression)]
+        [RegularExpression(Requirements.StorageRegularExpression,
+            ErrorMessage = Requirements.StorageErrorMEssage)]
         public string RecommendedStorage { get; init; }
 
         [Required]

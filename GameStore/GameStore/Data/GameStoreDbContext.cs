@@ -36,6 +36,8 @@
 
         public DbSet<ClientRelationship> ClientRelationships { get; init; }
 
+        public DbSet<WishListGame> WishListGames { get; init; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder

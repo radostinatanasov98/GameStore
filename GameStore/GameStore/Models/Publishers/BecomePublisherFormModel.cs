@@ -12,7 +12,8 @@
         public string Name { get; init; }
 
         [Required(ErrorMessage = Shared.InvalidUrlErrorMessage)]
-        [RegularExpression(Shared.ImageUrlRegularExpression)]
+        [RegularExpression(Shared.ImageUrlRegularExpression,
+            ErrorMessage = Shared.InvalidUrlErrorMessage)]
         public string PictureUrl { get; init; }
     }
 }

@@ -11,6 +11,7 @@ else
     if (!Model.IsOwned)
     {
         <button type="submit" class="btn btn-primary">Add To Cart</button>
+        <a asp-area="" asp-controller="Clients" asp-action="WishListAdd" asp-route-GameId="@Model.GameId" class="btn btn-primary" style="margin-top: 5px;">Add to wishlist</a>
     }
     else
     {

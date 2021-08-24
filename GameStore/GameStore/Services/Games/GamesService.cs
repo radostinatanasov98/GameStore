@@ -304,5 +304,30 @@
             => this.data
             .Games
             .Any(g => g.Id == gameId);
+
+        public List<GameListingViewModel> WishedGames(int clientId)
+        {
+            var ids = this.data
+                .WishListGames
+                .Where(wlg => wlg.ClientId == clientId)
+                .Select(wlg => wlg.GameId)
+                .ToList();
+
+            return this.data
+                .Games
+                .Where(g => ids.Contains(g.Id))
+                .Select(g => new GameListingViewModel
+                {
+                    Id = g.Id,
+                    PublisherName = this.data.Publishers.First(p => p.Id == g.PublisherId).DisplayName,
+                    Name = g.Name,
+                    CoverImageUrl = g.CoverImageUrl,
+                    PegiRating = g.PegiRating.Name,
+                    Genres = GetGameGenreNames(g, data),
+                    DateAdded = g.DateAdded.ToString(),
+                    Rating = GetGameRating(g.Id, this.data)
+                })
+                .ToList();
+        }
     }
 }
