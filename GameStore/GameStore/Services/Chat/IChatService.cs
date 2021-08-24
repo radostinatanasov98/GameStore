@@ -11,5 +11,7 @@
         public ChatViewModel GetChat(int clientId, int friendId);
 
         public void SendMessage(int clientId, int friendId, string message);
+
+        public ChatsViewModel GetChatsViewModel(int clientId, List<FriendChatsViewModel> friends);
     }
 }

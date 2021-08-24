@@ -33,11 +33,9 @@
             }
 
             var id = this.clientService.GetClientId(this.User.GetId());
-            var model = new ChatsViewModel
-            {
-                Id = id,
-                Friends = this.chatService.GetFriendsForChat(id)
-            };
+            var model = this.chatService
+                .GetChatsViewModel(id,
+                this.chatService.GetFriendsForChat(id));
 
             return View(model);
         }

@@ -59,6 +59,13 @@
             };
         }
 
+        public ChatsViewModel GetChatsViewModel(int clientId, List<FriendChatsViewModel> friends)
+            => new ChatsViewModel
+            {
+                Id = clientId,
+                Friends = friends
+            };
+
         public List<FriendChatsViewModel> GetFriendsForChat(int clientId)
         {
             var friendIds = this.data
