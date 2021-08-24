@@ -3,6 +3,7 @@ namespace GameStore
     using GameStore.Data;
     using GameStore.Data.Models;
     using GameStore.Infrastructure;
+    using GameStore.Services.Chat;
     using GameStore.Services.Clients;
     using GameStore.Services.Games;
     using GameStore.Services.Publishers;
@@ -59,6 +60,7 @@ namespace GameStore
             services.AddTransient<IReviewService, ReviewService>();
             services.AddTransient<IShoppingCartService, ShoppingCartService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IChatService, ChatService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

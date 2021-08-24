@@ -1,0 +1,61 @@
+﻿@model ChatViewModel
+
+<link rel="stylesheet" href="~/css/Chat.css" />
+
+<div class="page-content page-container" id="page-content">
+    <div class="padding">
+        <div class="row container d-flex justify-content-center">
+            <div class="col-md-6">
+                <div class="card card-bordered">
+                    <div class="card-header">
+                        <h4 class="card-title"><strong>@Model.FriendName</strong></h4>
+                    </div>
+                    <div class="ps-container ps-theme-default ps-active-y" id="chat-content" style="overflow-y: scroll !important; height:400px !important;">
+                        @foreach (var message in Model.Messages)
+                         {
+                            if (message.OwnerId != Model.ClientId)
+                            {
+                                <div class="media media-chat" style="margin-bottom: -60px;">
+                                    <img class="avatar" src="@message.PictureUrl">
+                                    <div class="media-body">
+                                        <p>@message.Content</p>
+                                        <p class="meta">@message.TimeStamp</p>
+                                    </div>
+                                </div>
+                            }
+                            else if (message.OwnerId == Model.ClientId)
+                            {
+                                <div class="media media-chat media-chat-reverse" style="margin-bottom: -60px;">
+                                    <div class="media-body">
+                                        <p>@message.Content</p>
+                                        <p class="meta">@message.TimeStamp</p>
+                                    </div>
+                                </div>
+                            }
+                         }
+
+
+                        <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 0px;">
+                            <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                        </div>
+                        <div class="ps-scrollbar-y-rail" style="top: 0px; height: 0px; right: 2px;">
+                            <div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 2px;"></div>
+                        </div>
+                    </div>
+                    <div class="publisher bt-1 border-light">
+                        <img class="avatar avatar-xs" src="@Model.ProfilePictureUrl" alt="...">
+                        <form method="post">
+                            <input asp-for="Message" class="publisher-input" type="text" placeholder="Write something">
+                            <input asp-for="ClientId" value="@Model.ClientId" type="hidden">
+                            <input asp-for="FriendId" value="@Model.FriendId" type="hidden">
+                            <input asp-for="FriendName" value="@Model.FriendName" type="hidden">
+                            <input asp-for="Messages" value="@Model.Messages" type="hidden">
+                            <button class="btn btn-primary float-right" type="submit">Send</button>
+                        </form>
+                        <span class="publisher-btn file-group"> <i class="fa fa-paperclip file-browser"></i> <input type="file"> </span> <a class="publisher-btn" href="#" data-abc="true"><i class="fa fa-smile"></i></a> <a class="publisher-btn text-info" href="#" data-abc="true"><i class="fa fa-paper-plane"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

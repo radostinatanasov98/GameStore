@@ -1,0 +1,28 @@
+﻿@model ChatsViewModel
+
+<div class="row">
+    @foreach (var friend in Model.Friends)
+    {
+        <div class="col-xl-3 col-md-6 col-12">
+            <div class="card">
+                <div class="text-center">
+                    <div class="card-body">
+                        <img src="@friend.ImageUrl" class="rounded-circle  height-150" alt="Card image" style="height: 225px; width: 150px;">
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">@friend.Username</h4>
+                    </div>
+                    <div class="text-center">
+                        <a class="btn btn-primary"
+                           asp-area=""
+                           asp-controller="Chats"
+                           asp-action="Chat"
+                           asp-route-ClientId="@Model.Id"
+                           asp-route-FriendId="@friend.FriendId"
+                           style="margin-bottom: 10px;">Enter Chat</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -38,6 +38,7 @@
 
         public DbSet<WishListGame> WishListGames { get; init; }
 
+        public DbSet<Message> Messages { get; init; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder
