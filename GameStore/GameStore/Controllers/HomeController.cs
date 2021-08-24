@@ -8,8 +8,8 @@
     {
         private readonly IGamesService gamesService;
 
-        public HomeController(GameStoreDbContext data)
-            => this.gamesService = new GamesService(data);
+        public HomeController(IGamesService gamesService)
+            => this.gamesService = gamesService;
 
         public IActionResult Index()
             => View(this.gamesService.GetGamesForHomePage());

@@ -23,15 +23,21 @@
         private readonly IShoppingCartService shoppingCartService;
         private readonly IClientService clientService;
 
-        public GamesController(GameStoreDbContext data)
+        public GamesController(GameStoreDbContext data,
+            IGamesService gamesService,
+            IUserService userService,
+            IRequirementsService requirementsService,
+            IPublisherService publisherService,
+            IShoppingCartService shoppingCartService,
+            IClientService clientService)
         {
             this.data = data;
-            this.gamesService = new GamesService(data);
-            this.userService = new UserService(data);
-            this.requirementsService = new RequirementsService(data);
-            this.publisherService = new PublisherService(data);
-            this.shoppingCartService = new ShoppingCartService(data);
-            this.clientService = new ClientService(data);
+            this.gamesService = gamesService;
+            this.userService = userService;
+            this.requirementsService = requirementsService;
+            this.publisherService = publisherService;
+            this.shoppingCartService = shoppingCartService;
+            this.clientService = clientService;
         }
 
         public IActionResult All(string searchQuery, string sortQuery, string searchByQuery)
@@ -44,7 +50,10 @@
         [Authorize]
         public IActionResult Add()
         {
-            if (!this.userService.IsUserPublisher(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserPublisher(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             return View(this.gamesService.CreateAddGameFormModel());
         }
@@ -53,7 +62,10 @@
         [HttpPost]
         public IActionResult Add(AddGameFormModel inputModel)
         {
-            if (!this.userService.IsUserPublisher(this.User.GetId())) return Redirect("Error");
+            if (!this.userService.IsUserPublisher(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             if (!ModelState.IsValid)
             {
@@ -81,12 +93,15 @@
                     inputModel.RecommendedOS),
                 this.publisherService.GetPublisherId(this.User.GetId()));
 
-            return Redirect("All");
+            return RedirectToAction(nameof(GamesController.All), "Games");
         }
 
         public IActionResult Details(int gameId)
         {
-            if (!this.gamesService.GameExists(gameId)) return Redirect("/Home/Error");
+            if (!this.gamesService.GameExists(gameId))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var isClient = this.User.Identity.IsAuthenticated ?
                 this.userService.IsUserClient(this.User.GetId()) : false;
@@ -101,40 +116,57 @@
         [ActionName("Details")]
         public IActionResult DetailsPost(int gameId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var shoppingCartQuery = this.shoppingCartService.GetShoppingCart(this.User.GetId());
-
             var client = this.clientService.GetClientByUserId(this.User.GetId());
 
-            if (this.clientService.ClientOwnsGame(client.Id, gameId)) return Redirect("/Home/Error");
-            if (this.shoppingCartService.GetShoppingCart(this.User.GetId()).ShoppingCartProducts.Any(scp => scp.GameId == gameId)) return Redirect("/Home/Error");
+            if (this.clientService.ClientOwnsGame(client.Id, gameId))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
+
+            if (this.shoppingCartService.GetProduct(gameId, client.ShoppingCartId) != null)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             this.shoppingCartService.AddShoppingCartProduct(shoppingCartQuery.Id, gameId);
 
-            return Redirect("/Clients/ShoppingCart");
+            return RedirectToAction(nameof(ClientsController.ShoppingCart), "Clients");
         }
 
         [Authorize]
         public IActionResult Remove(int gameId)
         {
-            if (!this.userService.IsUserPublisher(this.User.GetId()) && !this.User.IsAdmin()) return Redirect("/Home/Error");
+            if (!this.userService.IsUserPublisher(this.User.GetId()) && !this.User.IsAdmin())
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var game = this.gamesService.GetGameById(gameId);
 
-            if (game == null) return Redirect("/Home/Error");
+            if (game == null)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var publisherId = this.data.Games.FirstOrDefault(g => g.Id == gameId).PublisherId;
             var publisher = this.data.Publishers.FirstOrDefault(p => p.Id == publisherId);
 
-            if (publisher.UserId != this.User.GetId() && !this.User.IsAdmin()) return Redirect("/Home/Error");
+            if (publisher.UserId != this.User.GetId() && !this.User.IsAdmin())
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var minRequirements = this.requirementsService.GetRequirementsById(game.MinimumRequirementsId);
             var recRequirements = this.requirementsService.GetRequirementsById(game.RecommendedRequirementsId);
-
             this.gamesService.RemoveGame(game, minRequirements, recRequirements);
 
-            return Redirect("/Games/All");
+            return RedirectToAction(nameof(GamesController.All), "Games");
         }
     }
 }

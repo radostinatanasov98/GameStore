@@ -3,6 +3,13 @@ namespace GameStore
     using GameStore.Data;
     using GameStore.Data.Models;
     using GameStore.Infrastructure;
+    using GameStore.Services.Clients;
+    using GameStore.Services.Games;
+    using GameStore.Services.Publishers;
+    using GameStore.Services.Requirements;
+    using GameStore.Services.Reviews;
+    using GameStore.Services.ShoppingCart;
+    using GameStore.Services.Users;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
@@ -29,7 +36,7 @@ namespace GameStore
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<User>(options => 
+            services.AddDefaultIdentity<User>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireDigit = false;
@@ -44,6 +51,14 @@ namespace GameStore
             {
                 options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
             });
+
+            services.AddTransient<IClientService, ClientService>();
+            services.AddTransient<IGamesService, GamesService>();
+            services.AddTransient<IPublisherService, PublisherService>();
+            services.AddTransient<IRequirementsService, RequirementsService>();
+            services.AddTransient<IReviewService, ReviewService>();
+            services.AddTransient<IShoppingCartService, ShoppingCartService>();
+            services.AddTransient<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

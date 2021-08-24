@@ -15,16 +15,20 @@
         private readonly IPublisherService publisherService;
         private readonly IUserService userService;
 
-        public PublishersController(GameStoreDbContext data)
+        public PublishersController(IPublisherService publisherService,
+            IUserService userService)
         {
-            this.publisherService = new PublisherService(data);
-            this.userService = new UserService(data);
+            this.publisherService = publisherService;
+            this.userService = userService;
         }
 
         [Authorize]
         public IActionResult Become()
         {
-            if (this.userService.IsUserClient(this.User.GetId()) || this.userService.IsUserPublisher(this.User.GetId())) return Redirect("/Home/Error");
+            if (this.userService.IsUserClient(this.User.GetId()) || this.userService.IsUserPublisher(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             return View();
         }
@@ -33,7 +37,10 @@
         [HttpPost]
         public IActionResult Become(BecomePublisherFormModel model)
         {
-            if (this.userService.IsUserClient(this.User.GetId()) || this.userService.IsUserPublisher(this.User.GetId())) return Redirect("/Home/Error");
+            if (this.userService.IsUserClient(this.User.GetId()) || this.userService.IsUserPublisher(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             if (!ModelState.IsValid)
             {
@@ -42,7 +49,7 @@
 
             this.publisherService.CreatePublisher(model, this.User.GetId());
 
-            return Redirect("/Games/Add");
+            return RedirectToAction(nameof(GamesController.Add), "Games");
         }
 
         public IActionResult All()
@@ -51,7 +58,10 @@
         [Authorize]
         public IActionResult EditLogo()
         {
-            if (!this.userService.IsUserPublisher(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserPublisher(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             return View();
         }
@@ -60,7 +70,10 @@
         [HttpPost]
         public IActionResult EditLogo(EditLogoFormModel model)
         {
-            if (!this.userService.IsUserPublisher(this.User.GetId())) Redirect("/Home/Error");
+            if (!this.userService.IsUserPublisher(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             model.Id = this.publisherService.GetPublisherId(this.User.GetId());
 
@@ -68,7 +81,7 @@
 
             this.publisherService.EditLogo(model);
 
-            return Redirect("/Publishers/All");
+            return RedirectToAction(nameof(PublishersController.All), "Publishers");
         }
     }
 }

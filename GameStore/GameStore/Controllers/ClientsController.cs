@@ -19,16 +19,18 @@
         private readonly IClientService clientService;
         private readonly IGamesService gamesService;
         private readonly IShoppingCartService shoppingCartService;
-        private readonly IReviewService reviewService;
 
-        public ClientsController(GameStoreDbContext data)
+        public ClientsController(GameStoreDbContext data,
+            IUserService userService,
+            IClientService clientService,
+            IGamesService gamesService,
+            IShoppingCartService shoppingCartService)
         {
             this.data = data;
-            this.userService = new UserService(data);
-            this.clientService = new ClientService(data);
-            this.gamesService = new GamesService(data);
-            this.shoppingCartService = new ShoppingCartService(data);
-            this.reviewService = new ReviewService(data);
+            this.userService = userService;
+            this.clientService = clientService;
+            this.gamesService = gamesService;
+            this.shoppingCartService = shoppingCartService;
         }
 
         [Authorize]
@@ -38,7 +40,7 @@
 
             if (this.userService.IsUserClient(userId) || this.userService.IsUserPublisher(userId))
             {
-                return Redirect("/Home/Error");
+                return RedirectToAction(nameof(HomeController.Error), "Home");
             }
 
             return View();
@@ -48,13 +50,16 @@
         [HttpPost]
         public IActionResult Become(BecomeClientFormModel inputModel)
         {
-            if (!this.User.Identity.IsAuthenticated) Redirect("/Home/Error");
+            if (!this.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var userId = GetUserId();
 
             if (this.userService.IsUserClient(userId) || this.userService.IsUserPublisher(userId))
             {
-                return Redirect("/Home/Error");
+                return RedirectToAction(nameof(HomeController.Error), "Home");
             }
 
             if (!ModelState.IsValid)
@@ -64,7 +69,7 @@
 
             this.clientService.BecomeClient(inputModel, userId);
 
-            return Redirect("/Games/All");
+            return RedirectToAction(nameof(GamesController.All), "Games");
         }
 
         [Authorize]
@@ -72,7 +77,10 @@
         {
             var userId = GetUserId();
 
-            if (!userService.IsUserClient(userId)) return Redirect("/Home/Error");
+            if (!userService.IsUserClient(userId))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var client = this.data.Clients.First(c => c.UserId == userId);
 
@@ -86,7 +94,10 @@
         {
             var userId = GetUserId();
 
-            if (!this.userService.IsUserClient(userId)) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(userId))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var clientQuery = clientService.GetClientByUserId(userId);
 
@@ -104,7 +115,10 @@
         [ActionName("ShoppingCart")]
         public IActionResult ShoppingCartPost()
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var clientQuery = this.clientService.GetClientByUserId(this.User.GetId());
 
@@ -112,23 +126,26 @@
 
             this.shoppingCartService.Purchase(shoppingCartProductsQuery, clientQuery.Id);
 
-            return Redirect("/Clients/Library");
+            return RedirectToAction(nameof(ClientsController.Library), "Clients");
         }
 
         [Authorize]
         public IActionResult ShoppingCartRemove(int gameId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var clientQuery = this.clientService.GetClientByUserId(GetUserId());
 
             var productQuery = this.shoppingCartService.GetProduct(gameId, clientQuery.ShoppingCartId);
 
-            if (productQuery == null) return Redirect("/Home/Error");
+            if (productQuery == null) return RedirectToAction(nameof(HomeController.Error));
 
             this.shoppingCartService.RemoveProduct(productQuery);
 
-            return Redirect("/Clients/ShoppingCart");
+            return RedirectToAction(nameof(ClientsController.ShoppingCart), "Clients");
         }
 
         private string GetUserId()

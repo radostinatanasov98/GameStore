@@ -19,12 +19,15 @@
         private readonly IClientService clientService;
         private readonly IGamesService gamesService;
 
-        public ReviewsController(GameStoreDbContext data)
+        public ReviewsController(IReviewService reviewService,
+            IUserService userService,
+            IClientService clientService,
+            IGamesService gamesService)
         {
-            this.reviewService = new ReviewService(data);
-            this.userService = new UserService(data);
-            this.clientService = new ClientService(data);
-            this.gamesService = new GamesService(data);
+            this.reviewService = reviewService;
+            this.userService = userService;
+            this.clientService = clientService;
+            this.gamesService = gamesService;
         }
 
         public IActionResult All(int gameId)
@@ -54,11 +57,17 @@
         [Authorize]
         public IActionResult Write(int gameId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var clientId = this.clientService.GetClientByUserId(this.User.GetId()).Id;
 
-            if (!this.clientService.ClientOwnsGame(clientId, gameId)) return Redirect("/Home/Error");
+            if (!this.clientService.ClientOwnsGame(clientId, gameId))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             return View(new PostReviewFormModel
             {
@@ -70,7 +79,10 @@
         [HttpPost]
         public IActionResult Write(int gameId, PostReviewFormModel model)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             if ((model.Caption == null && model.Content != null) || (model.Caption != null && model.Content == null) || !ModelState.IsValid)
             {
@@ -85,7 +97,10 @@
 
             var alreadyReviewed = this.reviewService.HasReviewed(clientId, gameId);
 
-            if (!ownsGame) return Redirect("/Home/Error");
+            if (!ownsGame)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             if (alreadyReviewed) this.reviewService.Edit(clientId, gameId, model);
             else
@@ -97,21 +112,27 @@
                 gameId);
             }
             
-            return Redirect("/Reviews/All?GameId=" + gameId);
+            return RedirectToAction(nameof(ReviewsController.All), "Reviews", new { GameId = gameId });
         }
 
         [Authorize]
         public IActionResult Remove(int reviewId, int gameId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var clientId = this.clientService.GetClientId(this.User.GetId());
 
-            if (!this.User.IsAdmin() && !this.reviewService.IsOwner(clientId, reviewId)) return Redirect("/Home/Error");
+            if (!this.User.IsAdmin() && !this.reviewService.IsOwner(clientId, reviewId))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             this.reviewService.Remove(clientId, gameId);
 
-            return Redirect("/Reviews/All?GameId=" + gameId);
+            return RedirectToAction(nameof(ReviewsController.All), "Reviews", new { GameId = gameId });
         }
     }
 }

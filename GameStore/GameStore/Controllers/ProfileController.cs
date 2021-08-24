@@ -17,12 +17,15 @@
         private readonly IGamesService gamesService;
         private readonly IReviewService reviewService;
 
-        public ProfileController(GameStoreDbContext data)
+        public ProfileController(IUserService userService,
+            IClientService clientService,
+            IGamesService gamesService,
+            IReviewService reviewService)
         {
-            this.userService = new UserService(data);
-            this.clientService = new ClientService(data);
-            this.gamesService = new GamesService(data);
-            this.reviewService = new ReviewService(data);
+            this.userService = userService;
+            this.clientService = clientService;
+            this.gamesService = gamesService;
+            this.reviewService = reviewService;
         }
 
         [Authorize]
@@ -30,20 +33,23 @@
         {
             bool isAdmin = this.User.IsAdmin();
 
-            if (!this.userService.IsUserClient(this.User.GetId()) && !isAdmin) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()) && !isAdmin)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var profile = this.clientService.GetClientById(profileId);
 
-            if (profile == null) return Redirect("/Home/Error");
+            if (profile == null)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var clientId = this.clientService.GetClientId(this.User.GetId());
-
             var relationship = this.clientService.GetRelationship(clientId, profileId);
             var hasRelation = this.clientService.RelationCheck(relationship);
             int? relationId = this.clientService.GetRelationId(hasRelation, relationship);
-
             var reviews = this.reviewService.GetReviewsForViewModel(isAdmin, clientId);
-
             var model = this.clientService.GetClientProfileViewModel(
                 this.clientService.GetClientId(this.User.GetId()),
                 profileId,
@@ -61,51 +67,75 @@
         [ActionName("Main")]
         public IActionResult MainPost(int profileId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var client = this.clientService.GetClientByUserId(this.User.GetId());
 
-            if (this.clientService.IsFriendRequestInvalid(client.Id, profileId)) return Redirect("/Home/Error");
+            if (this.clientService.IsFriendRequestInvalid(client.Id, profileId))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             this.clientService.SendFriendRequest(client.Id, profileId);
 
-            return Redirect("/Profile/Main?ProfileId=" + profileId);
+            return RedirectToAction(nameof(ProfileController.Main), "Profile", new { profileId = profileId });
         }
 
         [Authorize]
         public IActionResult Accept(int requestId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var clientRelationship = this.clientService.GetRelationshipById(requestId);
 
-            if (this.clientService.GetClientId(this.User.GetId()) != clientRelationship.ClientId) return Redirect("/Home/Error");
+            if (this.clientService.GetClientId(this.User.GetId()) != clientRelationship.ClientId)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             this.clientService.AcceptFriendRequest(clientRelationship);
 
-            return Redirect("/Profile/Main?ProfileId=" + clientRelationship.ClientId);
+            return RedirectToAction(nameof(ProfileController.Main), "Profile", new { profileId = clientRelationship.ClientId });
         }
 
         [Authorize]
         public IActionResult Decline(int requestId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             var clientRelationship = this.clientService.GetRelationshipById(requestId);
 
-            if (this.clientService.GetClientId(this.User.GetId()) != clientRelationship.ClientId) return Redirect("/Home/Error");
+            if (this.clientService.GetClientId(this.User.GetId()) != clientRelationship.ClientId)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             this.clientService.DeclineFriendRequest(clientRelationship);
 
-            return Redirect("/Profile/Main?ProfileId=" + clientRelationship.ClientId);
+            return RedirectToAction(nameof(ProfileController.Main), "Profile", new { profileId = clientRelationship.ClientId });
         }
 
         [Authorize]
         public IActionResult Edit(int profileId, EditProfileFormModel model)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
-            if (profileId != this.clientService.GetClientId(this.User.GetId())) return Redirect("/Home/Error");
+            if (profileId != this.clientService.GetClientId(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             model.ProfileId = profileId;
 
@@ -116,29 +146,42 @@
         [HttpPost]
         public IActionResult Edit(EditProfileFormModel inputModel)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
-            if (inputModel.ProfileId != this.clientService.GetClientId(this.User.GetId())) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
+
+            if (inputModel.ProfileId != this.clientService.GetClientId(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             this.clientService.EditProfile(inputModel);
 
-            return Redirect("/Profile/Main?ProfileId=" + inputModel.ProfileId);
+            return RedirectToAction(nameof(ProfileController.Main), "Profile", new { profileId = inputModel.ProfileId });
         }
 
         [Authorize]
         public IActionResult RemoveProfilePicture(int profileId)
         {
-            if (!this.userService.IsUserClient(this.User.GetId())) return Redirect("/Home/Error");
-            if (this.clientService.GetClientId(this.User.GetId()) != profileId) return Redirect("/Home/Error");
+            if (!this.userService.IsUserClient(this.User.GetId()))
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
+
+            if (this.clientService.GetClientId(this.User.GetId()) != profileId)
+            {
+                return RedirectToAction(nameof(HomeController.Error), "Home");
+            }
 
             this.clientService.RemoveProfilePicture(profileId);
 
-            return Redirect("/Profile/Main?ProfileId=" + profileId);
+            return RedirectToAction(nameof(ProfileController.Main), "Profile", new { profileId = profileId });
         }
 
         [Authorize]
         public IActionResult All()
-        {
-            return View(this.clientService.GetClientsForAllView());
-        }
+            => View(this.clientService.GetClientsForAllView());
+
     }
 }
