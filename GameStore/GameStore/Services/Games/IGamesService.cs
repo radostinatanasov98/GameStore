@@ -29,7 +29,11 @@
 
         public List<GameListingViewModel> HandleSortQuery(string sortQuery, List<GameListingViewModel> games);
 
-        public AllGamesViewModel CreateAllGamesViewModel(List<GameListingViewModel> games, List<GenreViewModel> genres);
+        public AllGamesViewModel CreateAllGamesViewModel(string sortQuery,
+            string searchByQuery,
+            string searchQuery,
+            int currentPage,
+            int gamesPerPage = 6);
 
         public List<PegiRatingViewModel> GetPegiRatings();
 

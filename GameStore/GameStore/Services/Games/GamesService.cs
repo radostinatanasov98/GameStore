@@ -14,9 +14,7 @@
         private readonly GameStoreDbContext data;
 
         public GamesService(GameStoreDbContext data)
-        {
-            this.data = data;
-        }
+            => this.data = data;
 
         public List<GameListingViewModel> GetGamesForAllView()
             => this.data
@@ -142,12 +140,30 @@
                 _ => games.OrderBy(gq => gq.Id).ToList(),
             };
 
-        public AllGamesViewModel CreateAllGamesViewModel(List<GameListingViewModel> games, List<GenreViewModel> genres)
-            => new AllGamesViewModel
+        public AllGamesViewModel CreateAllGamesViewModel(string sortQuery,
+            string searchByQuery,
+            string searchQuery,
+            int currentPage,
+            int gamesPerPage = 6)
+        {
+            var games = this.HandleSearchQueries(searchQuery, searchByQuery);
+            games = this.HandleSortQuery(sortQuery, games);
+
+            games = games
+                .Skip((currentPage - 1) * gamesPerPage)
+                .Take(gamesPerPage)
+                .ToList();
+
+            return new AllGamesViewModel
             {
                 Games = games,
-                Genres = genres
+                SearchByQuery = searchByQuery,
+                SearchQuery = searchQuery,
+                SortQuery = sortQuery,
+                CurrentPage = currentPage,
+                Genres = this.GetGenres()
             };
+        }
 
         public List<PegiRatingViewModel> GetPegiRatings()
             => this.data

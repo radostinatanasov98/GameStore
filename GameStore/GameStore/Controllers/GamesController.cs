@@ -40,12 +40,20 @@
             this.clientService = clientService;
         }
 
-        public IActionResult All(string searchQuery, string sortQuery, string searchByQuery)
-            => View(
-                this.gamesService.CreateAllGamesViewModel(
-                this.gamesService.HandleSortQuery(sortQuery, this.gamesService.HandleSearchQueries(searchQuery, searchByQuery)),
-                this.gamesService.GetGenres()
-                ));
+        public IActionResult All([FromQuery] AllGamesViewModel query)
+        {
+            var result = this.gamesService.CreateAllGamesViewModel(
+                query.SortQuery,
+                query.SearchByQuery,
+                query.SearchQuery,
+                query.CurrentPage,
+                query.GamesPerPage);
+
+            query.Games = result.Games;
+            query.Genres = result.Genres;
+
+            return View(query);
+        }
 
         [Authorize]
         public IActionResult Add()
