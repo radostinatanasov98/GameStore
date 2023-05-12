@@ -3,7 +3,7 @@ pipeline {
     
     stages {
         stage("build") {
-            setps {
+            steps {
                 echo 'building the app'
                 sh 'sudo apt-get install -y dotnet-sdk-6.0'
             }
@@ -17,7 +17,7 @@ pipeline {
         }
 
         stage("deploy") {
-            setps {
+            steps {
                 echo 'deploying the app'
                 sh 'cd ../GameStore | dotnet run'
             }
@@ -26,14 +26,6 @@ pipeline {
     post {
         always {
             echo 'Cleaning the workspace'
-        }
-
-        success {
-
-        }
-
-        failure {
-
         }
     }
 }
