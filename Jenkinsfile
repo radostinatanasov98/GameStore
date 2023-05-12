@@ -5,7 +5,6 @@ pipeline {
         stage("build") {
             steps {
                 echo 'building the app'
-                sh 'sudo apt-get install -y dotnet-sdk-6.0'
             }
         }
 
