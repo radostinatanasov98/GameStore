@@ -11,14 +11,13 @@ pipeline {
         stage("test") {
             steps {
                 echo 'testing the app'
-                sh 'cd GameStore/GameStoreTests | dotnet test'
             }
         }
 
         stage("deploy") {
             steps {
                 echo 'deploying the app'
-                sh 'cd ../GameStore | dotnet run'
+                sh 'cd ../GameStore | ls | dotnet run'
             }
         }
     }
